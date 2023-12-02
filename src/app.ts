@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 
 const port = process.env.PORT ?? 8080;
 const app = express();
