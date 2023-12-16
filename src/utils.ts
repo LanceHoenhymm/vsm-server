@@ -1,23 +1,13 @@
 /* cSpell:disable */
 import admin from 'firebase-admin';
 import { RequestHandler } from 'express';
-const functions = require('firebase-functions');
-// const admin = require('firebase-admin');
-const { user } = require('firebase-functions/v1/auth');
+import functions from 'firebase-functions';
 
 import { DateTime } from 'luxon';
 
 admin.initializeApp();
 
-// const trading_time = 30 * 1000;
-// const trading_time = 60 * 1000; // trading time of 1
-// const trading_time = 2 * 60 * 1000; // trading time of 1 //[dummy]
-// const trading_time = 59 * 60 * 1000; // trading time of 1 //[dummy]
-// const trading_time = 5 * 60 * 1000; // trading time of 1 //[dummy]
-// const trading_time = 2 * 60 * 1000; // trading time of 1 //[dummy] ///
-// const trading_time = 5 * 60 * 1000; // trading time of 1 //[dummy] ///
-const trading_time = 8 * 60 * 1000; // trading time of 1 //[dummy] ///
-// const trading_time = 2 * 60 * 1000; // trading time of 1 //[ ] ///
+const trading_time = 8 * 60 * 1000;
 
 //trading time update
 
@@ -41,22 +31,15 @@ const dummyCol = admin.firestore().collection('dummy_col');
 const stocksCollectionCol = admin.firestore().collection(stocksCollectionStr);
 const newsCollection = admin.firestore().collection(newsCollectionStr);
 
+const rtdb = admin.database();
+const globalsRefRT = rtdb.ref('/globals_rt_d2'); // TODO accomodate these changes in the app
+
+const initialAmount = 1000000;
+const estimate_of_num_of_participants = 100;
+
 export const addMessage: RequestHandler = async (req, res) => {
   await dummyRun2();
   res.json({ message: 'Succesfully Populated Database' });
-
-  return;
-
-  // try {
-  //   const original = req.query.text;
-
-  //   const writeResult = await admin.firestore().collection('message').add({
-  //     original: original,
-  //   });
-  //   res.json({ result: `Message with ID: ${writeResult.id} added.` });
-  // } catch (e) {
-  //   res.json({ error: e });
-  // }
 };
 
 export const addUser: RequestHandler = async (req, res) => {
@@ -76,13 +59,10 @@ export const addUser: RequestHandler = async (req, res) => {
       password: req.query.password,
     });
 
+    // TODO change in volunteers app too [] stephen
     admin
       .database()
-      // .ref(`/dummy_teams/${dummyId}/user_state`)
-      // .ref(`/dummy_teams_d2/${dummyId}/user_state`) // TODO change in volunteers app too [] stephen
-      .ref(`/dummy_teams_d2/${dummyId}/user_state`) // TODO change in volunteers app too [] stephen
-
-      // .set("WaitingForReg");
+      .ref(`/dummy_teams_d2/${dummyId}/user_state`)
       .set(req.query.state);
 
     let docsOfStocksOfRound1 = await stocksCollectionCol
@@ -127,7 +107,7 @@ export const findNegative: RequestHandler = async (req, res) => {
       [index: string]: admin.firestore.DocumentData;
     }> = [];
     let negsTid: Array<string> = [];
-    // let negs =
+
     const data = await admin
       .firestore()
       .collectionGroup('stocks')
@@ -141,21 +121,18 @@ export const findNegative: RequestHandler = async (req, res) => {
       });
       return;
     }
-    // data = data.docs;
+
     data.docs.forEach((v) => {
       const docPathSegment = v.ref.path.split('/');
       negsTid.push(docPathSegment[1]);
       console.log(`Path For Negative: ${docPathSegment}`);
       const toPust = { [`${v.id}`]: v.data() };
-      // toPust[v.id] = v.data();
       negativesList.push(toPust);
     });
     console.log(JSON.stringify(data));
 
     res.json({
       status: '1',
-      // message: `${JSON.stringify(negativesList)}`,
-      // message: `${JSON.stringify(negativesList)}`,
       negsList: negativesList,
       negsTidList: negsTid,
     });
@@ -224,9 +201,7 @@ export const manualFixForErrorAfterTrading: RequestHandler = async (
         )}`,
       );
 
-      // let mnew_qty = oneStockData["new_qty"] + stk_data["qty_diff"];
       let mnew_qty = oneStockData['new_qty'] + stk_to_update_price;
-      // let price_diff = stk_data["qty_diff"] * oneStockDataPrice;
       let price_diff = stk_to_update_price * oneStockDataPrice;
       let mtotal_amt_invested = oneStockData['total_amt_invested'] + price_diff;
       muserBalace -= price_diff;
@@ -336,8 +311,6 @@ export const addNews: RequestHandler = async (req, res) => {
 
 export const addStocks: RequestHandler = async (req, res) => {
   try {
-    // let t = Number.parseFloat()
-    // let t = Number.parseInt
     await stocksCollectionCol
       .doc(`${req.body.round_no}`)
       .collection('stocks')
@@ -359,7 +332,7 @@ export const addStocks: RequestHandler = async (req, res) => {
   }
 };
 
-exports.makeUppercase = functions.firestore
+export const makeUppercase = functions.firestore
   .document('/messages/{documentId}')
   .onCreate((snap, context) => {
     const original = snap.data().original;
@@ -371,159 +344,18 @@ exports.makeUppercase = functions.firestore
     return snap.ref.set({ uppercase }, { merge: true });
   });
 
-const db = admin.firestore().collection('game_db');
-const stocksTable = db.doc('stocks');
-
-const usersTable = db.doc('users');
-const globalTable = db.doc('globals');
-
-const rtdb = admin.database();
-
-// const globalsRefRT = rtdb.ref("/globals_rt");
-const globalsRefRT = rtdb.ref('/globals_rt_d2'); // TODO accomodate these changes in the app
-
-const getStockInfoFromStockDB = async (stk_name) => {
-  var data = await stocksTable.get();
-  data = data.data()[stk_name];
-
-  return data;
-};
-
-// const executeOptions = async (user_data, uid) => {
-//
-
-//   const theStock = user_data["options_used_info"]["used_on_stk_name"];
-//   const stk_info = await getStockInfoFromStockDB(theStock);
-//
-//
-//   const next_stk_price = stk_info["stk_price"];
-//   const prev_stk_price = stk_info["prev_stk_price"];
-
-//   if (prev_stk_price > next_stk_price) {
-//
-//
-//     const diffAmt =
-//       (user_data.stks[theStock].qty - user_data.options_used_info.prev_qty) *
-//       prev_stk_price;
-
-//     user_data.balance += diffAmt;
-//     user_data.stks[theStock].total_amt_invested -= diffAmt;
-
-//
-
-//     user_data.qty = user_data.options_used_info.prev_qty;
-
-//     const toupdate = {};
-//     toupdate[uid] = user_data;
-
-//     const res = await usersTable.update(toupdate);
-
-//     const test = await db.doc("users", uid).get();
-//
-//
-
-//     const resRead = await usersTable.get();
-//
-//   }
-// };
-
-const initialAmount = 1000000;
-// const estimate_of_num_of_participants = 100;
-// const estimate_of_num_of_participants = 50; //change in production[]
-
-const estimate_of_num_of_participants = 100; //change in production[]
-
-const algo = (bpc, vol_traded, stk_price) => {
-  let max_buyable =
-    // (initialAmount / stk_price) * estimate_of_num_of_participants;
+const algo = (bpc: number, vol_traded: number, stk_price: number) => {
+  const max_buyable =
     ((2 * initialAmount) / stk_price) * estimate_of_num_of_participants;
 
-  //[] test this estimate_of_num_of_participants;
+  const multiplier = (bpc * -1) / max_buyable; //here issue
 
-  let multiplier = (bpc * -1) / max_buyable; //here issue
-
-  // -10 / 26666 = -0.00375
-
-  let npc = bpc + multiplier * (vol_traded * (bpc > 0 ? -1.0 : 1.0));
-
-  // 10 + -0.00375*-639 =>more pos
-
-  // -7 + +0.003*+678 => less negative
-
-  //-ve + +ve * +ve = less negative [v]
-  // negative
-  // let npc = bpc + multiplier * vol_traded; //-ve + +ve * -ve = more negative [v]
-  // let npc = bpc + multiplier * vol_traded; //+ve + -ve * -ve = more positive [v] //bullish in +ve bpc
-  // let npc = bpc + multiplier * vol_traded; //+ve + -ve * +ve = less positive [v] //bearish in +ve bpc
+  const npc = bpc + multiplier * (vol_traded * (bpc > 0 ? -1.0 : 1.0));
 
   return npc;
 };
 
 const dummyRun2 = async () => {
-  // todo stk["prev_qty"]
-  // todo stk["new_qty"]
-
-  // for this.
-  //
-  // return;
-  //
-  // let req = {
-
-  //   query: { tid: "567788990", p1: "", p2: "", password: "", t_name: "" },
-  // };
-
-  // let res = {
-  //   json: (e) => {
-  //
-  //   },
-  // };
-
-  // await doOnAddUserRequest(req, res);
-
-  // let req2 = {
-  //   query: { tid: "test1", p1: "", p2: "", password: "", t_name: "" },
-  // };
-
-  // let res2 = {
-  //   json: (e) => {
-  //
-  //   },
-  // };
-
-  // await doOnAddUserRequest(req2, res2);
-
-  // req2 = {
-  //   query: { tid: "test2", p1: "", p2: "", password: "", t_name: "" },
-  // };
-
-  // res2 = {
-  //   json: (e) => {
-  //
-  //   },
-  // };
-
-  // await doOnAddUserRequest(req2, res2);
-
-  // req2 = {
-  //   query: { tid: "811", p1: "", p2: "", password: "811", t_name: "" },
-  // };
-
-  // res2 = {
-  //   json: (e) => {
-  //
-  //   },
-  // };
-
-  // await doOnAddUserRequest(req2, res2);
-
-  // no not this
-  // globalsRefRT.set({
-  //   game_state_rt: "waiting_for_game_start_rt",
-  // });
-  //
-
-  // set the start time dynamically
-
   await globalsCollectionCol.doc('globals').set({
     start_time: '2020-03-18 10:10:10.123456', //
     curr_round: 1,
@@ -534,234 +366,24 @@ const dummyRun2 = async () => {
   await globalsRefRT.update({
     game_state_rt: 'WaitingForGameStart',
   });
-
-  return; //for production too []
-
-  // stocksCollectionCol.doc('1').collection('stocks').doc('stk1').set({
-  //   stk_price: 101,
-  //   bpc: -10,
-  //   npc: -999,
-  //   vol_traded: 0,
-  // });
-  // stocksCollectionCol.doc('1').collection('stocks').doc('stk2').set({
-  //   stk_price: 101,
-  //   bpc: -10,
-  //   npc: -999,
-  //   vol_traded: 0,
-  // });
-
-  // stocksCollectionCol.doc('2').collection('stocks').doc('stk1').set({
-  //   stk_price: 101,
-  //   bpc: -10,
-  //   npc: -999,
-  //   vol_traded: 0,
-  // });
-  // stocksCollectionCol.doc('2').collection('stocks').doc('stk2').set({
-  //   stk_price: 101,
-  //   bpc: -10,
-  //   npc: -999,
-  //   vol_traded: 0,
-  // });
-  // stocksCollectionCol.doc('3').collection('stocks').doc('stk2').set({
-  //   stk_price: 101,
-  //   bpc: -10,
-  //   npc: -999,
-  //   vol_traded: 0,
-  // });
-  // stocksCollectionCol.doc('3').collection('stocks').doc('stk1').set({
-  //   stk_price: 101,
-  //   bpc: -10,
-  //   npc: -999,
-  //   vol_traded: 0,
-  // });
-
-  // const userData = {
-  //   state: 'Playing',
-  //   options_used_info: {
-  //     prev_qty: 100,
-  //     round_used_at: 2,
-  //     used_on_stk_name: 'stk1',
-  //   },
-  //   balance: 1000,
-  //   stks: {
-  //     stk1: {
-  //       new_qty: 600,
-  //       prev_qty: 500,
-
-  //       total_amt_invested: 2000,
-  //     },
-  //   },
-  // };
-
-  // newsCollection.doc('R1').collection('news').doc('N1').set({
-  //   news: 'Over 50 smallcaps fall up to 22% as market ends week 2% down Foreign institutional investors were net sellers this week, selling equities worth Rs 7,953.66 crore. Domestic institutional investors, however, undid the damage as they bought shares worth Rs 9,233.05 crore',
-  // });
-
-  // newsCollection.doc('R1').collection('news').doc('N2').set({
-  //   news: 'Track volume PCR, trade of short-term sentiments: Shubham Agarwal Volume PCR compares Put volume with Call volume. The ratio will be higher if Put Volume is more and lower if Call volume is more.',
-  // });
-
-  // newsCollection.doc('R2').collection('news').doc('N1').set({
-  //   news: 'lorem ipsum r21',
-  // });
-
-  // newsCollection.doc('R2').collection('news').doc('N2').set({
-  //   news: 'lorem ipsum r22',
-  // });
-
-  // newsCollection.doc('R2').collection('news').doc('IN1').set({
-  //   news: 'lorem ipsum r22',
-  //   is_insider_news: true,
-  // });
-
-  // newsCollection.doc('R1').collection('news').doc('IN1').set({
-  //   news: 'lorem ipsum r22',
-  //   is_insider_news: true,
-  // });
-
-  // usersCollectionCol.doc('123').set({
-  //   muftkapaisa_used: -999,
-  //   balance: initialAmount,
-  //   options_used_info: -999,
-  //   state: 'Playing',
-  //   p1: 'req.query.p1',
-  //   p2: 'req.query.p2',
-  //   t_name: 'req.query.t_name',
-  //   password: '123',
-  // });
-
-  // usersCollectionCol
-  //   .doc('123')
-  //   .collection('stocks')
-  //   .doc('stk1')
-  //   .set({
-  //     new_qty: 500,
-  //     prev_qty: 500,
-
-  //     total_amt_invested: 500 * 100,
-  //   });
-
-  // usersCollectionCol
-  //   .doc('123')
-  //   .collection('stocks')
-  //   .doc('stk2')
-  //   .set({
-  //     new_qty: 500,
-  //     prev_qty: 500,
-  //     total_amt_invested: 500 * 100,
-  //   });
-
-  // globalsRefRT.update({
-  //   game_state_rt: 'WaitingForGameStart',
-  // });
-
-  // return;
-  // const dummyId = '123';
-  // const dummyId2 = '456';
-  // const dummyId3 = '089';
-
-  // const toSet = {};
-  // toSet[dummyId] = userData;
-  // toSet[dummyId2] = {
-  //   state: 'Playing',
-  //   options_used_info: -999,
-  //   balance: 1000,
-  //   stks: {
-  //     stk1: {
-  //       new_qty: 100,
-  //       prev_qty: 500,
-  //       total_amt_invested: 2000,
-  //     },
-  //   },
-  // };
-
-  // toSet[dummyId3] = {
-  //   state: 'Playing',
-  //   options_used_info: {
-  //     prev_qty: 100,
-  //     round_used_at: 1,
-  //     used_on_stk_name: 'stk1',
-  //   },
-  //   balance: 1000,
-  //   stks: {
-  //     stk1: {
-  //       new_qty: 1000,
-  //       prev_qty: 500,
-  //       total_amt_invested: 2000,
-  //     },
-  //   },
-  // };
-
-  // usersCollectionCol.doc(dummyId).set({
-  //   muftkapaisa_used: {
-  //     round_used_at: '2',
-  //   },
-  //   balance: 1000,
-  //   options_used_info: -999,
-  //   state: 'playing',
-  //   p1: 'player_1_name',
-  //   p2: 'player_1_name',
-  //   t_name: 'team_name',
-  // });
-
-  // usersCollectionCol
-  //   .doc(dummyId)
-  //   .collection('stocks')
-  //   .doc('stk1')
-  //   .set(toSet[dummyId]['stks']['stk1']);
-
-  // usersCollectionCol.doc(dummyId).collection('stocks').doc('stk2').set({
-  //   new_qty: 7000,
-  //   prev_qty: 500,
-  //   total_amt_invested: 2000,
-  // });
-
-  // usersCollectionCol.doc(dummyId2).set({
-  //   balance: 1000,
-  //   muftkapaisa_used: -999,
-  //   options_used_info: {
-  //     round_used_at: '2',
-  //     used_on_stk_name: 'stk2',
-  //   },
-  //   state: 'playing',
-  //   p1: 'player_1_name',
-  //   p2: 'player_1_name',
-  //   t_name: 'team_name',
-  // });
-
-  // usersCollectionCol
-  //   .doc(dummyId2)
-  //   .collection('stocks')
-  //   .doc('stk1')
-  //   .set(toSet[dummyId2]['stks']['stk1']);
-
-  // usersCollectionCol.doc(dummyId2).collection('stocks').doc('stk2').set({
-  //   new_qty: 7000,
-  //   prev_qty: 500,
-  //   total_amt_invested: 2000,
-  // });
-
-  // let test = await newsCollection
-  //   .doc('R2')
-  //   .collection('news')
-  //   .where('is_insider_news', '==', true)
-  //   .get();
-
-  // for (let n of test.docs) {
-  // }
 };
 
-exports.onDummyChanged3 = functions.firestore
+export const onDummyChanged3 = functions.firestore
   .document('/dummy_col/test')
   .onWrite(() => {
     dummyRun2();
   });
 
-const getWhatChanged = (snap) => {
-  const whatChanged = {};
-  for (const item in snap.before.data()) {
-    if (snap.after.data()[item] != snap.before.data()[item]) {
-      whatChanged[item] = snap.after.data()[item];
+const getWhatChanged = (
+  snap: functions.Change<functions.firestore.DocumentSnapshot>,
+) => {
+  const whatChanged: { [field: string]: string } = {};
+  const before = snap.before.data()!;
+  const after = snap.after.data()!;
+
+  for (const item in before) {
+    if (before[item] != after[item]) {
+      whatChanged[item] = after[item];
     }
   }
 
@@ -770,25 +392,16 @@ const getWhatChanged = (snap) => {
   return whatChanged;
 };
 
-const toDoIfStateChanged = async (snap) => {
+const toDoIfStateChanged = async (
+  snap: functions.Change<functions.firestore.DocumentSnapshot>,
+) => {
   //trading starts
 
-  const state = snap.after.data().game_state;
+  const state = snap.after.data()!.game_state;
 
   switch (state) {
     case 'trading_starts':
-      let dateStr = DateTime.now()
-        .setZone('Asia/Kolkata')
-        .toISO()
-        .split('.')[0];
-
-      // let mdate = new Date();
-      // mdate.chang
-      // // mdate.getTime()
-      //
-      //
-      //
-      //
+      const dateStr = DateTime.local().toLocaleString();
 
       await globalsCollectionCol.doc('globals').update({
         start_time: dateStr,
@@ -812,8 +425,7 @@ const toDoIfStateChanged = async (snap) => {
       break;
     case 'price_calc_starts':
       // starts from here
-
-      let globalData = snap.after.data();
+      let globalData = snap.after.data()!;
 
       ///Take current round here
       let currRound = globalData.curr_round;
@@ -825,11 +437,11 @@ const toDoIfStateChanged = async (snap) => {
 
       /// Taking stocks for single round
       let multipleStockDataForCurrentRoundVa1 = await stocksCollectionCol
-        .doc(String(currRound))
+        .doc(currRound)
         .collection('stocks')
         .get();
 
-      let stocksForCurrRoundData = {};
+      let stocksForCurrRoundData: { [id: string]: any } = {};
 
       multipleStockDataForCurrentRoundVa1.docs.forEach((e) => {
         let key = e.id;
@@ -1079,25 +691,10 @@ const toDoIfStateChanged = async (snap) => {
       });
 
       break;
-
-    case 'price_calc_ends': //
-      //update next round
-
-      // [] this changed to avoid dirty next round details
-
-      // globalsRefRT.update({
-      //   game_state_rt: "PriceCalcEnds",
-      // });
-
-      // let nextRound = await globalsCollectionCol.doc("globals").get();
-      // nextRound = nextRound.data().curr_round + 1;
-
-      // globalsCollectionCol.doc("globals").update({
-      //   curr_round: nextRound,
-      // });
-
-      let nextRound = await globalsCollectionCol.doc('globals').get();
-      nextRound = nextRound.data().curr_round + 1;
+    case 'price_calc_ends':
+      let nextRound =
+        (await globalsCollectionCol.doc('globals').get()).data()?.curr_round +
+        1;
 
       await globalsCollectionCol.doc('globals').update({
         curr_round: nextRound,
@@ -1108,13 +705,12 @@ const toDoIfStateChanged = async (snap) => {
       });
 
       break;
-
     default:
       break;
   }
 };
 
-exports.onGlobalChanged = functions.firestore
+export const onGlobalChanged = functions.firestore
   .document(`${globalsCollectionStr}/globals`)
   .onWrite(async (snap, context) => {
     //change to dummy run field add kar ad do it
