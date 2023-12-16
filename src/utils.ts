@@ -425,38 +425,38 @@ const toDoIfStateChanged = async (
       break;
     case 'price_calc_starts':
       // starts from here
-      let globalData = snap.after.data()!;
+      const globalData = snap.after.data()!;
 
       ///Take current round here
-      let currRound = globalData.curr_round;
+      const currRound = globalData.curr_round;
 
       /// Getting all user data here
-      let allUserData = await usersCollectionCol.get();
+      const allUserData = await usersCollectionCol.get();
 
       // const allUserUpdatesbatch = admin.firestore().batch();
 
       /// Taking stocks for single round
-      let multipleStockDataForCurrentRoundVa1 = await stocksCollectionCol
+      const multipleStockDataForCurrentRoundVa1 = await stocksCollectionCol
         .doc(currRound)
         .collection('stocks')
         .get();
 
-      let stocksForCurrRoundData: { [id: string]: any } = {};
+      const stocksForCurrRoundData: { [id: string]: any } = {};
 
       multipleStockDataForCurrentRoundVa1.docs.forEach((e) => {
-        let key = e.id;
-        let value = e.data();
+        const key = e.id;
+        const value = e.data();
         stocksForCurrRoundData[key] = value;
 
         console.log(`stock ${key} | stock data ${value}`);
       });
 
-      const userid_stkname_new_qty = {};
+      const userid_stkname_new_qty: { [tid: string]: any } = {};
 
       /// Iterate through all users data
       for (const e of allUserData.docs) {
-        let tid = e.id;
-        let singleUserData = e.data();
+        const tid = e.id;
+        const singleUserData = e.data();
 
         // ye point pe balance kata kya?
         console.log(
@@ -482,29 +482,22 @@ const toDoIfStateChanged = async (
           singleUserData.options_used_info.round_used_at == currRound &&
           singleUserData.options_used_info.used_on_stk_name != '-999'
         ) {
-          // if (
-          //   singleUserData.options_used_info != -999 &&
-          //   singleUserData.options_used_info.round_used_at == currRound &&
-          //   singleUserData.options_used_info.used_on_stk_name != "-999"
-          // )
-
-          //
-          let stk_data_for_apt_round = await stocksCollectionCol
-            .doc(String(currRound))
-            .collection('stocks')
-            .doc(singleUserData.options_used_info.used_on_stk_name)
-            .get();
-          stk_data_for_apt_round = stk_data_for_apt_round.data();
-
-          if (stk_data_for_apt_round.bpc <= 0) {
-            let theOptionedStockInSingleUserData = await usersCollectionCol
-              .doc(tid)
+          const stk_data_for_apt_round = (
+            await stocksCollectionCol
+              .doc(String(currRound))
               .collection('stocks')
               .doc(singleUserData.options_used_info.used_on_stk_name)
-              .get();
+              .get()
+          ).data()!;
 
-            theOptionedStockInSingleUserData =
-              theOptionedStockInSingleUserData.data();
+          if (stk_data_for_apt_round.bpc <= 0) {
+            const theOptionedStockInSingleUserData = (
+              await usersCollectionCol
+                .doc(tid)
+                .collection('stocks')
+                .doc(singleUserData.options_used_info.used_on_stk_name)
+                .get()
+            ).data()!;
 
             const diffAmt =
               (theOptionedStockInSingleUserData['new_qty'] -
@@ -531,16 +524,14 @@ const toDoIfStateChanged = async (
           }
         }
 
-        let stocksOfParticularUser = await usersCollectionCol
+        const stocksOfParticularUser = await usersCollectionCol
           .doc(tid)
           .collection('stocks')
           .get();
 
-        let stocksOfOneUserData = {};
+        const stocksOfOneUserData: { [id: string]: any } = {};
         stocksOfParticularUser.docs.forEach((e) => {
-          let key = e.id;
-          let value2 = e.data();
-          stocksOfOneUserData[key] = value2;
+          stocksOfOneUserData[e.id] = e.data();
         });
 
         const oneUserBatchForStockQty = admin.firestore().batch();
@@ -567,26 +558,9 @@ const toDoIfStateChanged = async (
             tid
           ].amt_invested += value2.total_amt_invested); // calculating total_amt_invested incorrectly
 
-          // userid_stkname_new_qty[tid] = {
-          //   amt_invested: cumulative_investment,
-          // };
-
-          // userid_stkname_new_qty[tid]["amt_invested"] += cumulative_investment; //check this[]
           userid_stkname_new_qty[tid]['amt_invested'] = cumulative_investment; //check this[]
 
           userid_stkname_new_qty[tid][stockName] = value2.new_qty;
-
-          //
-          // allUserUpdatesbatch.update(
-          //   usersCollectionCol.doc(tid).collection("stocks").doc(stockName),
-          //   {
-          //     prev_qty: value2.new_qty,
-          //   }
-          // );
-
-          // allUserUpdatesbatch.update(usersCollectionCol.doc(tid), {
-          //   amt_invested: userid_stkname_new_qty[tid][""],
-          // });
 
           //come here 1600[]
           oneUserBatchForStockQty.update(
@@ -636,22 +610,8 @@ const toDoIfStateChanged = async (
             continue;
           }
 
-          //   ` ${tid} for stkname ${stockName} newstkprice is ${newStkPrice} stkqty is ${stkqty}`
-          // );
-
           userid_stkname_new_qty[tid]['curr_port_value'] +=
             newStkPrice * stkqty;
-
-          //
-
-          //
-          //
-          // //
-          //
-          // batch.update(usersCollectionCol.doc(tid), {
-          //   amt_invested: value["amt_invested"],
-          //   curr_port_value: value["curr_port_value"],
-          // });
         }
 
         stocksCollectionCol
