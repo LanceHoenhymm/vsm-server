@@ -18,8 +18,6 @@ const cycle = {
   price_calc_ends: 'price_calc_ends',
 };
 
-let shoudlDummySet = true;
-
 let globalsCollectionStr = 'globals_col_d2';
 let usersCollectionStr = 'users_col_d2';
 let stocksCollectionStr = 'stocks_col_d2';
@@ -27,7 +25,6 @@ let newsCollectionStr = 'news_col_d2';
 
 const globalsCollectionCol = admin.firestore().collection(globalsCollectionStr);
 const usersCollectionCol = admin.firestore().collection(usersCollectionStr);
-const dummyCol = admin.firestore().collection('dummy_col');
 const stocksCollectionCol = admin.firestore().collection(stocksCollectionStr);
 const newsCollection = admin.firestore().collection(newsCollectionStr);
 
