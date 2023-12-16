@@ -150,7 +150,7 @@ export const manualFixForErrorAfterTrading: RequestHandler = async (
   try {
     const data = req.body;
     const shouldOnlyPrint = data.shouldOnlyPrint;
-    const pendingCommits = [];
+    const pendingCommits: any[] = [];
 
     console.log(`Data Received: ${JSON.stringify(data)}`);
 
