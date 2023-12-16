@@ -41,7 +41,6 @@ const dummyCol = admin.firestore().collection('dummy_col');
 const stocksCollectionCol = admin.firestore().collection(stocksCollectionStr);
 const newsCollection = admin.firestore().collection(newsCollectionStr);
 
-
 export const addMessage: RequestHandler = async (req, res) => {
   await dummyRun2();
   res.json({ message: 'Succesfully Populated Database' });
@@ -60,7 +59,7 @@ export const addMessage: RequestHandler = async (req, res) => {
   // }
 };
 
-const doOnAddUserRequest:RequestHandler = async (req, res) => {
+export const addUser: RequestHandler = async (req, res) => {
   try {
     let dummyId = req.query.tid as string;
 
@@ -91,26 +90,20 @@ const doOnAddUserRequest:RequestHandler = async (req, res) => {
       .collection('stocks')
       .get();
 
-    let stocksDataForRound1Data = {};
-    docsOfStocksOfRound1.forEach(
-      (e) => (stocksDataForRound1Data[e.id] = e.data()),
-    );
+    const addStocksBatches = admin.firestore().batch();
 
-    let addStocksBatches = admin.firestore().batch();
-
-    for (const [stk_name, stk_data] of Object.entries(
-      stocksDataForRound1Data,
-    )) {
-      let newStkData = {};
-      newStkData['prev_qty'] = 0;
-      newStkData['new_qty'] = 0;
-      newStkData['total_amt_invested'] = 0;
+    docsOfStocksOfRound1.forEach((e) => {
+      const newStkData = {
+        prev_qty: 0,
+        new_qty: 0,
+        total_amt_invested: 0,
+      };
 
       addStocksBatches.set(
-        usersCollectionCol.doc(dummyId).collection('stocks').doc(stk_name),
+        usersCollectionCol.doc(dummyId).collection('stocks').doc(e.id),
         newStkData,
       );
-    }
+    });
 
     await addStocksBatches.commit();
 
@@ -128,16 +121,19 @@ const doOnAddUserRequest:RequestHandler = async (req, res) => {
 };
 
 // CODE REVIEW:
-const doOnfindNegative: RequestHandler = async (req, res) => {
+export const findNegative: RequestHandler = async (req, res) => {
   try {
-    let negativesList = [];
-    let negsTid = [];
+    let negativesList: Array<{
+      [index: string]: admin.firestore.DocumentData;
+    }> = [];
+    let negsTid: Array<string> = [];
     // let negs =
-    const query = admin
+    const data = await admin
       .firestore()
       .collectionGroup('stocks')
-      .where('new_qty', '<', 0);
-    let data = await query.get();
+      .where('new_qty', '<', 0)
+      .get();
+
     if (data.empty) {
       res.json({
         status: '0',
@@ -146,13 +142,12 @@ const doOnfindNegative: RequestHandler = async (req, res) => {
       return;
     }
     // data = data.docs;
-    data.docs.forEach((v, i, a) => {
-      negsTid.push(v.ref.parent['_queryOptions']['parentPath']['segments'][1]);
-      console.log(
-        `Path For Negative: ${v.ref.parent['_queryOptions']['parentPath']['segments']}`,
-      );
-      let toPust = {};
-      toPust[v.id] = v.data();
+    data.docs.forEach((v) => {
+      const docPathSegment = v.ref.path.split('/');
+      negsTid.push(docPathSegment[1]);
+      console.log(`Path For Negative: ${docPathSegment}`);
+      const toPust = { [`${v.id}`]: v.data() };
+      // toPust[v.id] = v.data();
       negativesList.push(toPust);
     });
     console.log(JSON.stringify(data));
@@ -174,7 +169,10 @@ const doOnfindNegative: RequestHandler = async (req, res) => {
 // TODO: Code Review Ends 2
 
 // TODO: Code Review
-const doOnManualFixForErrorAfterTrading: RequestHandler = async (req, res) => {
+export const manualFixForErrorAfterTrading: RequestHandler = async (
+  req,
+  res,
+) => {
   try {
     const data = req.body;
     const shouldOnlyPrint = data.shouldOnlyPrint;
@@ -182,35 +180,43 @@ const doOnManualFixForErrorAfterTrading: RequestHandler = async (req, res) => {
 
     console.log(`Data Received: ${JSON.stringify(data)}`);
 
-    const globalData = (await globalsCollectionCol.doc('globals').get()).data();
+    const globalData = (
+      await globalsCollectionCol.doc('globals').get()
+    ).data()!;
     console.log('Global Data' + JSON.stringify(globalData));
 
-    const userData = (await usersCollectionCol.doc(`${data.tid}`).get()).data()!;
+    const userData = (
+      await usersCollectionCol.doc(`${data.tid}`).get()
+    ).data()!;
 
     const myBatch = admin.firestore().batch();
 
     let muserBalace = userData['balance'];
 
-    for (const [stkName, stk_data] of Object.entries(data.stk_to_update_data)) {
+    for (const stkName in data.stk_to_update_data) {
+      const stk_to_update_price = data.stk_to_update_data[stkName] as number;
+
       console.log(
         `Man Fix Stock Name: ${stkName} Stock Data: ${JSON.stringify(
-          stk_data,
+          data.stk_to_update_data[stkName],
         )}`,
       );
 
-      let oneStockData = (await usersCollectionCol
-        .doc(`${data.tid}`)
-        .collection('stocks')
-        .doc(`${stkName}`)
-        .get()).data()!;
+      const oneStockData = (
+        await usersCollectionCol
+          .doc(`${data.tid}`)
+          .collection('stocks')
+          .doc(`${stkName}`)
+          .get()
+      ).data()!;
 
-      let oneStockDataPrice = await stocksCollectionCol
-        .doc(`${globalData.curr_round}`)
-        .collection('stocks')
-        .doc(`${stkName}`)
-        .get();
-
-      oneStockDataPrice = oneStockDataPrice['stk_price'];
+      const oneStockDataPrice = (
+        await stocksCollectionCol
+          .doc(`${globalData.curr_round}`)
+          .collection('stocks')
+          .doc(`${stkName}`)
+          .get()
+      ).data()?.['stk_price'] as number;
 
       console.log(
         `Man Fix Cloud Previous Data - Stock Name: ${stkName} Stock Data: ${JSON.stringify(
@@ -219,9 +225,9 @@ const doOnManualFixForErrorAfterTrading: RequestHandler = async (req, res) => {
       );
 
       // let mnew_qty = oneStockData["new_qty"] + stk_data["qty_diff"];
-      let mnew_qty = oneStockData['new_qty'] + stk_data;
+      let mnew_qty = oneStockData['new_qty'] + stk_to_update_price;
       // let price_diff = stk_data["qty_diff"] * oneStockDataPrice;
-      let price_diff = stk_data * oneStockDataPrice;
+      let price_diff = stk_to_update_price * oneStockDataPrice;
       let mtotal_amt_invested = oneStockData['total_amt_invested'] + price_diff;
       muserBalace -= price_diff;
 
@@ -295,34 +301,26 @@ const doOnManualFixForErrorAfterTrading: RequestHandler = async (req, res) => {
 
 // TODO: Code Review Ends
 
-exports.addUser = async (req, res) => doOnAddUserRequest(req, res);
-
-exports.manualFixForErrorAfterTrading = async (req, res) =>
-  doOnManualFixForErrorAfterTrading(req, res);
-
-exports.findNegative = async (req, res) => doOnfindNegative(req, res);
-
-exports.addNews = async (req, res) => {
+export const addNews: RequestHandler = async (req, res) => {
   try {
     // doOnAddUserRequest(req, res)
-    req.query = req.body;
 
-    if (req.query.is_insider == 'Y') {
+    if (req.body.is_insider == 'Y') {
       await newsCollection
-        .doc(`R${req.query.round_no}`)
+        .doc(`R${req.body.round_no}`)
         .collection('news')
-        .doc(`IN${req.query.news_no}`)
+        .doc(`IN${req.body.news_no}`)
         .set({
-          news: `${req.query.news}`,
+          news: `${req.body.news}`,
           is_insider: true,
         });
     } else {
       await newsCollection
-        .doc(`R${req.query.round_no}`)
+        .doc(`R${req.body.round_no}`)
         .collection('news')
-        .doc(`N${req.query.news_no}`)
+        .doc(`N${req.body.news_no}`)
         .set({
-          news: `${req.query.news}`,
+          news: `${req.body.news}`,
         });
     }
 
@@ -336,7 +334,7 @@ exports.addNews = async (req, res) => {
   }
 };
 
-exports.addStocks = functions.https.onRequest(async (req, res) => {
+export const addStocks: RequestHandler = async (req, res) => {
   try {
     // let t = Number.parseFloat()
     // let t = Number.parseInt
