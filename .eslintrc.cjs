@@ -17,14 +17,45 @@ module.exports = {
   plugins: ['@typescript-eslint', 'jest'],
   root: true,
   rules: {
+    'prefer-const': 'warn',
+    'no-shadow': 'off',
     '@typescript-eslint/no-unused-vars': [
-      'error',
+      'warn',
       {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
       },
     ],
     '@typescript-eslint/no-misused-promises': 'off',
+    '@typescript-eslint/no-shadow': 'warn',
+    '@typescript-eslint/no-unnecessary-condition': 'warn',
+    '@typescript-eslint/naming-convention': [
+      'warn',
+      {
+        selector: 'default',
+        format: ['camelCase'],
+        leadingUnderscore: 'forbid',
+      },
+      {
+        selector: 'typeLike',
+        format: ['PascalCase'],
+      },
+      {
+        selector: 'typeParameter',
+        format: ['PascalCase'],
+        prefix: ['T', 'K'],
+      },
+      {
+        selector: 'enumMember',
+        format: ['UPPER_CASE'],
+      },
+      {
+        selector: ['memberLike', 'variableLike'],
+        types: ['boolean'],
+        format: ['PascalCase'],
+        prefix: ['can', 'did', 'has', 'is', 'must', 'needs', 'should', 'will'],
+      },
+    ],
   },
   ignorePatterns: [
     '.eslintrc.cjs',
