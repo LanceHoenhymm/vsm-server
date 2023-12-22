@@ -1,10 +1,10 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: __dirname,
   testEnvironment: 'node',
   testRegex: '.e2e-spec.ts$',
+  rootDir: '.',
+  moduleFileExtensions: ['ts', 'js', 'json'],
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.ts$': 'ts-jest',
   },
 };
