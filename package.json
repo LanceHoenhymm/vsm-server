@@ -40,6 +40,7 @@
     "@types/luxon": "^3.3.7",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.9.0",
+    "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "@typescript-eslint/parser": "^6.6.0",
     "eslint": "^8.49.0",

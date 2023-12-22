@@ -61,6 +61,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.9.0
     version: 20.9.0
+  '@types/supertest':
+    specifier: ^6.0.0
+    version: 6.0.0
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.6.0
     version: 6.10.0(@typescript-eslint/parser@6.10.0)(eslint@8.53.0)(typescript@5.2.2)
@@ -1250,6 +1253,10 @@ packages:
     dependencies:
       '@types/node': 20.9.0
 
+  /@types/cookiejar@2.1.5:
+    resolution: {integrity: sha512-he+DHOWReW0nghN24E1WUqM0efK4kI9oTqDm6XmK8ZPe2djZ90BSNdGnIyCLzCPw7/pogPlGbzI2wHGGmi4O/Q==}
+    dev: true
+
   /@types/cors@2.8.16:
     resolution: {integrity: sha512-Trx5or1Nyg1Fq138PCuWqoApzvoSLWzZ25ORBiHMbbUT42g578lH1GT4TwYDbiUOLFuDsCkfLneT2105fsFWGg==}
     dependencies:
@@ -1361,6 +1368,10 @@ packages:
     dev: false
     optional: true
 
+  /@types/methods@1.1.4:
+    resolution: {integrity: sha512-ymXWVrDiCxTBE3+RIrrP533E70eA+9qu7zdWoHuOmGujkYtzf4HQF96b8nwHLqhuf4ykX61IGRIB38CC6/sImQ==}
+    dev: true
+
   /@types/mime@1.3.5:
     resolution: {integrity: sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==}
 
@@ -1418,6 +1429,22 @@ packages:
 
   /@types/stack-utils@2.0.3:
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
+    dev: true
+
+  /@types/superagent@8.1.0:
+    resolution: {integrity: sha512-GXR/ZID+mf0z4pHnN25tBma8iZMuoQWbOS5DCUUACC5VI0WiYt2YmeK09ttsci3l2Ucrfn56Bj701z5iLqpiDw==}
+    dependencies:
+      '@types/cookiejar': 2.1.5
+      '@types/methods': 1.1.4
+      '@types/node': 20.9.0
+    dev: true
+
+  /@types/supertest@6.0.0:
+    resolution: {integrity: sha512-j3/Z2avY+H3yn+xp/ef//QyqqE+dg3rWh14Ewi/QZs6uVK+oOs7lFRXtjp2YHAqHJZ4OFGNmCxZO5vd7AuG/Dg==}
+    dependencies:
+      '@types/cookiejar': 2.1.5
+      '@types/methods': 1.1.4
+      '@types/superagent': 8.1.0
     dev: true
 
   /@types/yargs-parser@21.0.3:
