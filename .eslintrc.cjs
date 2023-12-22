@@ -6,15 +6,15 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:jest/recommended',
     'prettier',
   ],
-  overrides: [],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ['./tsconfig.eslint.json'],
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'jest'],
   root: true,
   rules: {
     '@typescript-eslint/no-unused-vars': [
@@ -34,5 +34,11 @@ module.exports = {
     'node_modules',
     'dist',
     'old',
+  ],
+  overrides: [
+    {
+      files: ['e2e', 'src/**/*.spec.ts'],
+      env: { jest: true },
+    },
   ],
 };
