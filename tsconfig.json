@@ -8,7 +8,5 @@
     "sourceMap": true,
     "esModuleInterop": true,
     "resolveJsonModule": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.spec.ts", "e2e"]
+  }
 }
