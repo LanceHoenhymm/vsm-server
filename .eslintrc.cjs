@@ -19,13 +19,7 @@ module.exports = {
   rules: {
     'prefer-const': 'warn',
     'no-shadow': 'off',
-    '@typescript-eslint/no-unused-vars': [
-      'warn',
-      {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-      },
-    ],
+    '@typescript-eslint/no-unused-vars': ['warn'],
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-shadow': 'warn',
     '@typescript-eslint/no-unnecessary-condition': 'warn',
@@ -48,12 +42,6 @@ module.exports = {
       {
         selector: 'enumMember',
         format: ['UPPER_CASE'],
-      },
-      {
-        selector: ['memberLike', 'variableLike'],
-        types: ['boolean'],
-        format: ['PascalCase'],
-        prefix: ['can', 'did', 'has', 'is', 'must', 'needs', 'should', 'will'],
       },
     ],
   },
