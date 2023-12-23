@@ -11,3 +11,10 @@ export const AddUserSchema = z.object({
 });
 
 export type AddUserReqBody = z.infer<typeof AddUserSchema>;
+
+export const AddUserBatchSchema = z.object({
+  data: AddUserSchema.array(),
+  length: z.coerce.number(),
+});
+
+export type AddUserInBatchReqBody = z.infer<typeof AddUserBatchSchema>;
