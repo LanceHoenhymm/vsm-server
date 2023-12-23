@@ -23,27 +23,6 @@ module.exports = {
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-shadow': 'warn',
     '@typescript-eslint/no-unnecessary-condition': 'warn',
-    '@typescript-eslint/naming-convention': [
-      'warn',
-      {
-        selector: 'default',
-        format: ['camelCase'],
-        leadingUnderscore: 'forbid',
-      },
-      {
-        selector: 'typeLike',
-        format: ['PascalCase'],
-      },
-      {
-        selector: 'typeParameter',
-        format: ['PascalCase'],
-        prefix: ['T', 'K'],
-      },
-      {
-        selector: 'enumMember',
-        format: ['UPPER_CASE'],
-      },
-    ],
   },
   ignorePatterns: [
     '.eslintrc.cjs',
