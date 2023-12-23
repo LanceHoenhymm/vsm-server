@@ -6,3 +6,4 @@ type ReqHandler<TReqBody, TResBody> = RequestHandler<
   TReqBody,
   object
 >;
+type AckResponse = { status: string; msg: string };
