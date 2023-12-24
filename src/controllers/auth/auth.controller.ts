@@ -1,4 +1,4 @@
-import { convertedUserCollectionRef, User } from '../../model/User';
+import { convertedUserCollectionRef, User } from '../../model';
 import httpStatus from 'http-status-codes';
 import { getHashedPassword } from '../../utils/hash.util';
 import { BadRequest } from '../../errors';
