@@ -11,7 +11,7 @@ admin.initializeApp({
     'https://vsm-2024-test-default-rtdb.asia-southeast1.firebasedatabase.app',
 });
 
-const firestore = admin.firestore();
-const rtDatabase = admin.database();
+const firestoreDB = admin.firestore();
+const realTimeDB = admin.database();
 
-export { firestore, rtDatabase };
+export { firestoreDB, realTimeDB };
