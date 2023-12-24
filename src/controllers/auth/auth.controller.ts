@@ -3,7 +3,7 @@ import httpStatus from 'http-status-codes';
 import { getHashedPassword } from '../../utils/hash.util';
 import { BadRequest } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
-import type { IRegisterUserDto } from './auth.controller.validator';
+import type { IRegisterUserDto } from './auth.controller.dto';
 
 type AddUserHandler = ReqHandler<IRegisterUserDto, AckResponse>;
 
