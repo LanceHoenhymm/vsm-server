@@ -3,7 +3,7 @@ import httpStatus from 'http-status-codes';
 import { getHashedPassword } from '../../utils/hash.util';
 import { BadRequest } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
-import type { AddUserReqBody } from './admin.controller.validator';
+import type { AddUserReqBody } from './auth.controller.validator';
 
 type AddUserHandler = ReqHandler<AddUserReqBody, AckResponse>;
 
