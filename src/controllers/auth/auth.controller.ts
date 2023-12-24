@@ -3,11 +3,11 @@ import httpStatus from 'http-status-codes';
 import { getHashedPassword } from '../../utils/hash.util';
 import { BadRequest } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
-import type { AddUserReqBody } from './auth.controller.validator';
+import type { IRegisterUserDto } from './auth.controller.validator';
 
-type AddUserHandler = ReqHandler<AddUserReqBody, AckResponse>;
+type AddUserHandler = ReqHandler<IRegisterUserDto, AckResponse>;
 
-export const signUpUser: AddUserHandler = async function (req, res) {
+export const registerUser: AddUserHandler = async function (req, res) {
   const { email, password, p1Name, p2Name } = req.body;
 
   const emailAlreadyExist = !(
