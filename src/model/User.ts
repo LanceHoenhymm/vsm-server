@@ -4,13 +4,13 @@ import type {
   QueryDocumentSnapshot,
 } from 'firebase-admin/firestore';
 
-class User {
+export class User {
   constructor(
     public email: string,
     public password: string,
     public memberCount: 1 | 2,
     public p1Name: string,
-    public p2Name: string,
+    public p2Name?: string,
   ) {}
 }
 
