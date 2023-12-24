@@ -1,6 +1,7 @@
-import { firestore } from '../../services/db';
+import { convertedUserCollectionRef, User } from '../../model/User';
 import httpStatus from 'http-status-codes';
-import { getUniqueId, getHashedPassword } from '../../utils/hash.util';
+import { getHashedPassword } from '../../utils/hash.util';
+import { BadRequest } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
 import type { AddUserReqBody } from './admin.controller.validator';
 
@@ -8,17 +9,21 @@ type AddUserHandler = ReqHandler<AddUserReqBody, AckResponse>;
 
 export const signUpUser: AddUserHandler = async function (req, res) {
   const { email, password, p1Name, p2Name } = req.body;
+
+  const emailAlreadyExist = !(
+    await convertedUserCollectionRef.where('email', '==', email).get()
+  ).empty;
+
+  if (emailAlreadyExist) {
+    throw new BadRequest(`Email: ${email} already exists.`);
+  }
+
   const memberCount = p2Name ? 2 : 1;
   const hashedPassword = await getHashedPassword(password);
-  const teamId = getUniqueId(email);
 
-  await firestore.collection('users').doc(teamId).set({
-    email,
-    memberCount,
-    password: hashedPassword,
-    p1Name,
-    p2Name,
-  });
+  await convertedUserCollectionRef.add(
+    new User(email, hashedPassword, memberCount, p1Name, p2Name),
+  );
 
   res.sendStatus(httpStatus.OK).json({
     status: 'Successful',
