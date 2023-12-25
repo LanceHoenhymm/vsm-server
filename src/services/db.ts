@@ -1,17 +1,29 @@
-import admin from 'firebase-admin';
-(await import('dotenv')).config();
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore, type Firestore } from 'firebase-admin/firestore';
+import { getDatabase, type Database } from 'firebase-admin/database';
+import { rtDatabaseURL, serviceAccountConfig } from '../appConfig';
 
-admin.initializeApp({
-  credential: admin.credential.cert({
-    projectId: process.env.PROJECT_ID,
-    clientEmail: process.env.CLIENT_EMAIL,
-    privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  }),
-  databaseURL:
-    'https://vsm-2024-test-default-rtdb.asia-southeast1.firebasedatabase.app',
-});
+let firestoreDB: Firestore | null = null;
+let realTimeDB: Database | null = null;
 
-const firestoreDB = admin.firestore();
-const realTimeDB = admin.database();
+function initializeFirebase() {
+  const adminApp = initializeApp({
+    credential: cert(serviceAccountConfig),
+    databaseURL: rtDatabaseURL,
+  });
 
-export { firestoreDB, realTimeDB };
+  firestoreDB = getFirestore(adminApp);
+  realTimeDB = getDatabase(adminApp);
+}
+
+function getFirestoreDb() {
+  if (!firestoreDB) initializeFirebase();
+  return firestoreDB!;
+}
+
+function getRealTimeDb() {
+  if (!realTimeDB) initializeFirebase();
+  return realTimeDB!;
+}
+
+export { getFirestoreDb, getRealTimeDb };
