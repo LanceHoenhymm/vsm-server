@@ -5,24 +5,20 @@ import type {
 } from 'firebase-admin/firestore';
 import { gameDataCollectionName } from '../appConfig';
 
-export class News {
-  constructor(
-    public news: string,
-    public forInsider: boolean,
-  ) {}
+interface INews {
+  news: string;
+  forInsider: boolean;
 }
 
-export class Stock {
-  constructor(
-    public name: string,
-    public bpc: number,
-  ) {}
+interface IStock {
+  name: string;
+  bpc: number;
 }
 
 export class GameData {
   constructor(
-    public news: News[],
-    public stocks: Stock[],
+    public news: INews[],
+    public stocks: IStock[],
   ) {}
 }
 

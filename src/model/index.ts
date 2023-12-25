@@ -3,6 +3,4 @@ export {
   convertedGameDataCollectionRef,
   gameDataCollectionRef,
   GameData,
-  News,
-  Stock,
 } from './GameData';
