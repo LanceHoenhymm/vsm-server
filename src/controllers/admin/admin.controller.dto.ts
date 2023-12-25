@@ -25,3 +25,9 @@ export const addGameStateDtoSchema = z.object({
 });
 
 export type IGameDataDto = z.infer<typeof addGameStateDtoSchema>;
+
+export const addGameDataBatchDtoSchema = z.object({
+  data: addGameStateDtoSchema.array(),
+});
+
+export type IGameDataBatchDto = z.infer<typeof addGameDataBatchDtoSchema>;
