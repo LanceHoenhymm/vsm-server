@@ -1,9 +1,26 @@
 import { z } from 'zod';
 
-export const addNewsDtoSchema = z.object({
-  news: z.string(),
-  forInsider: z.coerce.boolean(),
-  roundApplicableAt: z.coerce.number(),
+// export const addNewsDtoSchema = z.object({
+//   news: z.string(),
+//   forInsider: z.coerce.boolean(),
+//   roundApplicableAt: z.coerce.number(),
+// });
+
+// export type IAddNewsDto = z.infer<typeof addNewsDtoSchema>;
+
+export const addGameStateDtoSchema = z.object({
+  news: z
+    .object({
+      news: z.string(),
+      forInsider: z.coerce.boolean(),
+    })
+    .array(),
+  stocks: z
+    .object({
+      name: z.string(),
+      bpc: z.coerce.number(),
+    })
+    .array(),
 });
 
-export type IAddNewsDto = z.infer<typeof addNewsDtoSchema>;
+export type IGameDataDto = z.infer<typeof addGameStateDtoSchema>;
