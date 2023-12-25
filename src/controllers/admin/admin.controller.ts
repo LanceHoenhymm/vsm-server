@@ -1,11 +1,21 @@
-import { convertedNewsCollectionRef, News } from '../../model';
+import { convertedGameDataCollectionRef, GameData } from '../../model';
 import httpStatus from 'http-status-codes';
 import { BadRequest } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
-import type { IAddNewsDto } from './admin.controller.dto';
+import type { IGameDataDto, IGameDataBatchDto } from './admin.controller.dto';
 
-type AddNewHandler = ReqHandler<IAddNewsDto, AckResponse>;
+type AddGameDataHandler = ReqHandler<IGameDataDto, AckResponse>;
 
-const addNews: AddNewHandler = async function (req, res) {
-  const { news, forInsider, roundApplicableAt } = req.body;
+export const addGameData: AddGameDataHandler = async function (req, res) {
+  const { news, stocks, roundNumber } = req.body;
+
+  await convertedGameDataCollectionRef
+    .doc(`R${roundNumber}`)
+    .set(new GameData(news, stocks));
+
+  res.status(httpStatus.OK).json({
+    status: 'Successful',
+    msg: `GameData for round ${roundNumber} was added.`,
+  });
+};
 };
