@@ -21,6 +21,7 @@ export const addGameStateDtoSchema = z.object({
       bpc: z.coerce.number(),
     })
     .array(),
+  roundNumber: z.coerce.number(),
 });
 
 export type IGameDataDto = z.infer<typeof addGameStateDtoSchema>;
