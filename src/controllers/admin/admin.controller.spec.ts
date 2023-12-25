@@ -51,7 +51,7 @@ describe('Admin Controller', () => {
     const gameDataBatch: IGameDataBatchDto = {
       data: [
         {
-          roundNumber: 1,
+          roundNumber: 3,
           news: [
             {
               news: 'Shetty group was getting settled in the drug market',
