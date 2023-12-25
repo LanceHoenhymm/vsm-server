@@ -1,6 +1,2 @@
-export { convertedUserCollectionRef, userCollectionRef, User } from './User';
-export {
-  convertedGameDataCollectionRef,
-  gameDataCollectionRef,
-  GameData,
-} from './GameData';
+export { userConverter } from './User';
+export { gameDataConverter } from './GameData';

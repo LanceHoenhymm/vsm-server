@@ -1,22 +1,18 @@
-import { firestoreDB } from '../services/db';
 import type {
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase-admin/firestore';
-import { userCollectionName } from '../appConfig';
 
-export class User {
-  constructor(
-    public email: string,
-    public password: string,
-    public memberCount: 1 | 2,
-    public p1Name: string,
-    public p2Name?: string,
-  ) {}
+interface IUser {
+  email: string;
+  password: string;
+  memberCount: 1 | 2;
+  p1Name: string;
+  p2Name?: string;
 }
 
-const userConverter = {
-  toFirestore(user: User): DocumentData {
+export const userConverter = {
+  toFirestore(user: IUser): DocumentData {
     return {
       email: user.email,
       password: user.password,
@@ -25,12 +21,7 @@ const userConverter = {
       p2Name: user.p2Name,
     };
   },
-  fromFirestore(snapshot: QueryDocumentSnapshot<User>): User {
+  fromFirestore(snapshot: QueryDocumentSnapshot<IUser>): IUser {
     return snapshot.data();
   },
 };
-
-export const userCollectionRef = firestoreDB.collection(userCollectionName);
-export const convertedUserCollectionRef = firestoreDB
-  .collection(userCollectionName)
-  .withConverter(userConverter);
