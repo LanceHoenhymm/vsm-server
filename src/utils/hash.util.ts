@@ -1,7 +1,5 @@
-import argon2 from 'argon2';
-
-export function getUniqueId(baseString: string) {
-  let uid = `${baseString}${Date.now()}`;
+export function getUniqueId(str: string) {
+  let uid = `${str}${Date.now()}`;
   if (uid.length < 20) {
     uid += Array.from({ length: 20 - uid.length }, () =>
       Math.floor(Math.random() * 10),
@@ -12,6 +10,12 @@ export function getUniqueId(baseString: string) {
   return uid;
 }
 
-export function getHashedPassword(password: string) {
-  return argon2.hash(password);
+export function hashPassword(str: string) {
+  let hash = 0;
+  for (let i = 0, len = str.length; i < len; i++) {
+    const chr = str.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0;
+  }
+  return hash;
 }

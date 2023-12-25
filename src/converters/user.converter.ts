@@ -2,7 +2,7 @@ import type {
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase-admin/firestore';
-import { getHashedPassword, getUniqueId } from '../utils/hash.util';
+import { hashPassword, getUniqueId } from '../utils/hash.util';
 
 interface IUser {
   teamId: string;
@@ -14,9 +14,9 @@ interface IUser {
 }
 
 export const userConverter = {
-  async toFirestore(user: Omit<IUser, 'memberCount'>): Promise<DocumentData> {
+  toFirestore(user: Omit<IUser, 'memberCount'>): DocumentData {
     const teamId = getUniqueId(user.teamId);
-    const hashedPassword = await getHashedPassword(user.password);
+    const hashedPassword = hashPassword(user.password);
     const memberCount = user.p2Name ? 2 : 1;
     return {
       teamId,
