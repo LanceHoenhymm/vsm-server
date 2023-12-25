@@ -3,6 +3,7 @@ import type {
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase-admin/firestore';
+import { userCollectionName } from '../appConfig';
 
 export class User {
   constructor(
@@ -29,7 +30,7 @@ const userConverter = {
   },
 };
 
-export const userCollectionRef = firestoreDB.collection('users');
+export const userCollectionRef = firestoreDB.collection(userCollectionName);
 export const convertedUserCollectionRef = firestoreDB
-  .collection('users')
+  .collection(userCollectionName)
   .withConverter(userConverter);

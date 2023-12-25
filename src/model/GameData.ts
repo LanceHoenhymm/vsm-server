@@ -3,6 +3,7 @@ import type {
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase-admin/firestore';
+import { gameDataCollectionName } from '../appConfig';
 
 export class News {
   constructor(
@@ -37,7 +38,9 @@ const gameDataConverter = {
   },
 };
 
-export const gameDataCollectionRef = firestoreDB.collection('gameData');
+export const gameDataCollectionRef = firestoreDB.collection(
+  gameDataCollectionName,
+);
 export const convertedGameDataCollectionRef = firestoreDB
-  .collection('gameData')
+  .collection(gameDataCollectionName)
   .withConverter(gameDataConverter);
