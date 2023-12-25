@@ -14,15 +14,14 @@ interface IUser {
 }
 
 export const userConverter = {
-  toFirestore(user: Omit<IUser, 'memberCount'>): DocumentData {
+  toFirestore(user: IUser): DocumentData {
     const teamId = getUniqueId(user.teamId);
     const hashedPassword = hashPassword(user.password);
-    const memberCount = user.p2Name ? 2 : 1;
     return {
       teamId,
       email: user.email,
       password: hashedPassword,
-      memberCount,
+      memberCount: user.memberCount,
       p1Name: user.p1Name,
       p2Name: user.p2Name,
     };
