@@ -1,6 +1,7 @@
-import { convertedUserCollectionRef, User } from '../../model';
+import { getFirestoreDb } from '../../services/firebase';
+import { userConverter } from '../../converters';
+import { userCollectionName } from '../../appConfig';
 import httpStatus from 'http-status-codes';
-import { getHashedPassword } from '../../utils/hash.util';
 import { BadRequest } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
 import type { IRegisterUserDto } from './auth.controller.dto';
@@ -8,22 +9,18 @@ import type { IRegisterUserDto } from './auth.controller.dto';
 type AddUserHandler = ReqHandler<IRegisterUserDto, AckResponse>;
 
 export const registerUser: AddUserHandler = async function (req, res) {
-  const { email, password, p1Name, p2Name } = req.body;
+  const userCollection = getFirestoreDb().collection(userCollectionName);
+  const { email } = req.body;
 
   const emailAlreadyExist = !(
-    await convertedUserCollectionRef.where('email', '==', email).get()
+    await userCollection.where('email', '==', email).get()
   ).empty;
 
   if (emailAlreadyExist) {
     throw new BadRequest(`Email: ${email} already exists.`);
   }
 
-  const memberCount = p2Name ? 2 : 1;
-  const hashedPassword = await getHashedPassword(password);
-
-  await convertedUserCollectionRef.add(
-    new User(email, hashedPassword, memberCount, p1Name, p2Name),
-  );
+  await userCollection.withConverter(userConverter).add(req.body);
 
   res.sendStatus(httpStatus.OK).json({
     status: 'Successful',
