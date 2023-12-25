@@ -1,2 +1,8 @@
 export { convertedUserCollectionRef, userCollectionRef, User } from './User';
-export { convertedNewsCollectionRef, newsCollectionRef, News } from './News';
+export {
+  convertedGameDataCollectionRef,
+  gameDataCollectionRef,
+  GameData,
+  News,
+  Stock,
+} from './GameData';
