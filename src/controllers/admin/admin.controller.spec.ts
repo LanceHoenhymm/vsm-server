@@ -1,14 +1,18 @@
 import request from 'supertest';
-import express from 'express';
+import express, { type Express } from 'express';
 import { addGameData, addGameDataBatch } from './admin.controller';
 import type { IGameDataDto, IGameDataBatchDto } from './admin.controller.dto';
 
-const app = express();
-app.use(express.json());
-app.post('/addGameData', addGameData);
-app.post('/addGameDataBatch', addGameDataBatch);
-
 describe('Admin Controller', () => {
+  let app: Express;
+
+  beforeAll(() => {
+    app = express();
+    app.use(express.json());
+    app.post('/addGameData', addGameData);
+    app.post('/addGameDataBatch', addGameDataBatch);
+  });
+
   it('should handle addGameData', async () => {
     const gameData: IGameDataDto = {
       roundNumber: 1,
