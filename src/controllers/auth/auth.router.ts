@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-const gameRoute = Router();
+const router = Router();
 
 // Attach Controllers
 
-export { gameRoute };
+export default router;

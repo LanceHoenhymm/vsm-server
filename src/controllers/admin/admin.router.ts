@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-const adminRoute = Router();
+const router = Router();
 
 // Attach Controllers
 
-export { adminRoute };
+export default router;
