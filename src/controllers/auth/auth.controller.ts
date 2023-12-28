@@ -1,7 +1,7 @@
 import { getFirestoreDb } from '../../services/firebase';
 import { userConverter } from '../../converters';
 import { userCollectionName } from '../../appConfig';
-import httpStatus from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { BadRequest } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
 import type { IRegisterUserDto } from './auth.controller.dto';
@@ -26,7 +26,7 @@ export const registerUser: AddUserHandler = async function (req, res) {
     memberCount: req.body.p2Name ? 2 : 1,
   });
 
-  res.status(httpStatus.OK).json({
+  res.status(StatusCodes.OK).json({
     status: 'Successful',
   });
 };
