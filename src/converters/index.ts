@@ -1,2 +1,2 @@
-export { userConverter } from './user.converter';
+export { userConverter, User } from './user.converter';
 export { gameDataConverter } from './gameData.converter';
