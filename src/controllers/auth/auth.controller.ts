@@ -1,11 +1,12 @@
 import { getFirestoreDb } from '../../services/firebase';
 import { userConverter, User } from '../../converters';
 import { userCollectionName } from '../../common/appConfig';
+import { createToken } from '../../utils/jwt.util';
+import { setupPlayer } from './helpers/auth.helpers';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequest, NotFound, Unauthorized } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
 import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto';
-import { createToken } from '../../utils/jwt.util';
 
 type RegisterUserHandler = ReqHandler<IRegisterUserDto, AckResponse>;
 
@@ -50,6 +51,10 @@ export const loginUser: LoginUserHandler = async function (req, res) {
 
   if (!userDoc.verifyPassword(password)) {
     throw new Unauthorized('Wrong Email or Password');
+  }
+
+  if (!userDoc.admin) {
+    await setupPlayer(userDoc.teamId);
   }
 
   const token = createToken({ teamId: userDoc.teamId, admin: userDoc.admin });
