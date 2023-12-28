@@ -20,9 +20,11 @@ export const registerUser: AddUserHandler = async function (req, res) {
     throw new BadRequest(`Email: ${email} already exists.`);
   }
 
-  await userCollection
-    .withConverter(userConverter)
-    .add({ ...req.body, memberCount: req.body.p2Name ? 2 : 1 });
+  await userCollection.withConverter(userConverter).add({
+    ...req.body,
+    p2Name: req.body.p2Name ?? '',
+    memberCount: req.body.p2Name ? 2 : 1,
+  });
 
   res.sendStatus(httpStatus.OK).json({
     status: 'Successful',
