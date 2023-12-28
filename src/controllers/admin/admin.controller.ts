@@ -18,7 +18,7 @@ export const addGameData: AddGameDataHandler = async function (req, res) {
     .doc(`R${roundNumber}`)
     .set({ news, stocks });
 
-  res.status(StatusCodes.OK).json({
+  res.status(StatusCodes.CREATED).json({
     status: 'Successful',
   });
 };
@@ -45,7 +45,7 @@ export const addGameDataBatch: AddGameDataBatchHandler = async function (
 
   await gameDataWriteBatch.commit();
 
-  res.status(StatusCodes.OK).json({
+  res.status(StatusCodes.CREATED).json({
     status: 'Successful',
     data: { length: data.length },
   });
