@@ -26,7 +26,7 @@ export const registerUser: AddUserHandler = async function (req, res) {
     memberCount: req.body.p2Name ? 2 : 1,
   });
 
-  res.sendStatus(httpStatus.OK).json({
+  res.status(httpStatus.OK).json({
     status: 'Successful',
     msg: `Team: ${email} added to Database`,
   });
