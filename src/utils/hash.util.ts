@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 export function getUniqueId(str: string) {
   let uid = `${str}${Date.now()}`;
   if (uid.length < 20) {
@@ -11,11 +12,5 @@ export function getUniqueId(str: string) {
 }
 
 export function hashPassword(str: string) {
-  let hash = 0;
-  for (let i = 0, len = str.length; i < len; i++) {
-    const chr = str.charCodeAt(i);
-    hash = (hash << 5) - hash + chr;
-    hash |= 0;
-  }
-  return hash;
+  return createHash('md5').update(str).digest('hex');
 }
