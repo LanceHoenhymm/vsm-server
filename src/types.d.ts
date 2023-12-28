@@ -9,3 +9,20 @@ type ReqHandler<TReqBody, TResBody> = RequestHandler<
   object
 >;
 type AckResponse = { status: string; msg: string };
+
+interface RequestUserProp {
+  teamId: string;
+  admin: boolean;
+}
+
+declare module 'express' {
+  interface Request {
+    user: RequestUserProp;
+  }
+}
+
+declare module 'jsonwebtoken' {
+  interface JwtPayload {
+    user: RequestUserProp;
+  }
+}
