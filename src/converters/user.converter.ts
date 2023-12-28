@@ -10,7 +10,7 @@ interface IUser {
   password: string;
   memberCount: 1 | 2;
   p1Name: string;
-  p2Name?: string;
+  p2Name: string;
 }
 
 export const userConverter = {
