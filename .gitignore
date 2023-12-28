@@ -10,3 +10,6 @@ firebase.prod.json
 
 # Misc
 converage
+
+# Editor Exclusive
+.vscode
