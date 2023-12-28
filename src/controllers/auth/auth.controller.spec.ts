@@ -22,7 +22,6 @@ describe('Auth Controller', () => {
       };
       const expectedResponse = {
         status: 'Successful',
-        msg: 'Team: abc@123.com added to Database',
       };
       const res = await request(app).post('/register').send(user);
 

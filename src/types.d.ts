@@ -8,7 +8,7 @@ type ReqHandler<TReqBody, TResBody> = RequestHandler<
   TReqBody,
   object
 >;
-type AckResponse = { status: string; msg: string };
+type AckResponse = { status: string; data?: object };
 
 interface RequestUserProp {
   teamId: string;

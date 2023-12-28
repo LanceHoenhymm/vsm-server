@@ -20,7 +20,6 @@ export const addGameData: AddGameDataHandler = async function (req, res) {
 
   res.status(httpStatus.OK).json({
     status: 'Successful',
-    msg: `GameData for round ${roundNumber} was added.`,
   });
 };
 
@@ -48,6 +47,6 @@ export const addGameDataBatch: AddGameDataBatchHandler = async function (
 
   res.status(httpStatus.OK).json({
     status: 'Successful',
-    msg: `GameData for ${data.length} rounds was added.`,
+    data: { length: data.length },
   });
 };

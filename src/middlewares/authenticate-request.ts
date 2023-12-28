@@ -10,9 +10,7 @@ export function authenticateRequest(
   const authToken = req.headers.authorization;
 
   if (!authToken || !authToken.startsWith('Bearer ')) {
-    throw new Unauthenticated(
-      'Missing Token or Invalid Token: User not signed in.',
-    );
+    throw new Unauthenticated('Invalid or Missing Token');
   }
 
   try {
@@ -21,6 +19,6 @@ export function authenticateRequest(
 
     next();
   } catch {
-    throw new Unauthenticated('Invalid Token: Sign-in Invalid.');
+    throw new Unauthenticated('Invalid Token');
   }
 }

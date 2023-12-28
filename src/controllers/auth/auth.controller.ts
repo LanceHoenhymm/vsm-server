@@ -17,7 +17,7 @@ export const registerUser: AddUserHandler = async function (req, res) {
   ).empty;
 
   if (emailAlreadyExist) {
-    throw new BadRequest(`Email: ${email} already exists.`);
+    throw new BadRequest(`Invalid Email`);
   }
 
   await userCollection.withConverter(userConverter).add({
@@ -28,6 +28,5 @@ export const registerUser: AddUserHandler = async function (req, res) {
 
   res.status(httpStatus.OK).json({
     status: 'Successful',
-    msg: `Team: ${email} added to Database`,
   });
 };

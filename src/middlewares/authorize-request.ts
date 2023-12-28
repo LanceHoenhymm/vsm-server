@@ -7,7 +7,7 @@ export function authorizeRequest(
   next: NextFunction,
 ) {
   if (!req.user.admin) {
-    throw new Unauthorized('Forbidden Endpoint: User not an Admin');
+    throw new Unauthorized('Forbidden Endpoint');
   }
   next();
 }

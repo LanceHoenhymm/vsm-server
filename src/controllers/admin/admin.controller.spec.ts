@@ -39,7 +39,6 @@ describe('Admin Controller', () => {
     };
     const expectedResponse = {
       status: 'Successful',
-      msg: 'GameData for round 1 was added.',
     };
     const res = await request(app).post('/addGameData').send(gameData);
 
@@ -100,7 +99,9 @@ describe('Admin Controller', () => {
     };
     const expectedResponse = {
       status: 'Successful',
-      msg: 'GameData for 2 rounds was added.',
+      data: {
+        length: 2,
+      },
     };
     const res = await request(app)
       .post('/addGameDataBatch')
