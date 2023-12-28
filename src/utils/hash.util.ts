@@ -1,4 +1,5 @@
 import { createHash } from 'crypto';
+
 export function getUniqueId(str: string) {
   let uid = `${str}${Date.now()}`;
   if (uid.length < 20) {
