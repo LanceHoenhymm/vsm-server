@@ -13,9 +13,26 @@ const rtDatabaseURL =
 const gameDataCollectionName = 'game_data_test';
 const userCollectionName = 'users_test';
 
+const gameStateRef = 'game_state_test';
+const userAccountRef = 'user_acc_test';
+const userPortfolioRef = 'user_port_test';
+const userStatusRef = 'status_test';
+const userHistoryRef = 'user_history_test';
+const stocksDataRef = 'stocks_test';
+const stocksDataHistoryRef = 'stocks_history_test';
+const transactionsRef = 'transactions_test';
+
 export {
-  gameDataCollectionName,
-  userCollectionName,
   serviceAccountConfig,
   rtDatabaseURL,
+  gameDataCollectionName,
+  userCollectionName,
+  gameStateRef,
+  userAccountRef,
+  userPortfolioRef,
+  userStatusRef,
+  userHistoryRef,
+  stocksDataRef,
+  stocksDataHistoryRef,
+  transactionsRef,
 };
