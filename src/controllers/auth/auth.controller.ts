@@ -1,6 +1,6 @@
 import { getFirestoreDb } from '../../services/firebase';
 import { userConverter, User } from '../../converters';
-import { userCollectionName } from '../../appConfig';
+import { userCollectionName } from '../../common/appConfig';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequest, NotFound, Unauthorized } from '../../errors';
 import type { ReqHandler, AckResponse } from '../../types';
@@ -30,13 +30,34 @@ export const registerUser: RegisterUserHandler = async function (req, res) {
   });
 };
 
-  await userCollection.withConverter(userConverter).add({
-    ...req.body,
-    p2Name: req.body.p2Name ?? '',
-    memberCount: req.body.p2Name ? 2 : 1,
-  });
+type LoginUserHandler = ReqHandler<ILoginUserDto, AckResponse>;
+
+export const loginUser: LoginUserHandler = async function (req, res) {
+  const userCollection = getFirestoreDb().collection(userCollectionName);
+  const { email, password } = req.body;
+
+  const userEmailQuery = await userCollection
+    .withConverter(userConverter)
+    .where('email', '==', email)
+    .limit(1)
+    .get();
+
+  if (userEmailQuery.empty) {
+    throw new NotFound('Invalid Email: User Does Not Exist');
+  }
+
+  const userDoc = userEmailQuery.docs[0].data();
+
+  if (!userDoc.verifyPassword(password)) {
+    throw new Unauthorized('Wrong Email or Password');
+  }
+
+  const token = createToken({ teamId: userDoc.teamId, admin: userDoc.admin });
 
   res.status(StatusCodes.OK).json({
     status: 'Successful',
+    data: {
+      token,
+    },
   });
 };
