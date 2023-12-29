@@ -13,20 +13,22 @@ describe('Auth Controller', () => {
   });
 
   describe('register endpoint', () => {
-    it('should add user data', async () => {
-      const user: IRegisterUserDto = {
+    it('should run without error', async () => {
+      const req: IRegisterUserDto = {
         teamId: 'Lemon',
         email: 'abc@123.com',
         password: 'listerine',
         p1Name: 'Mocha',
       };
-      const expectedResponse = {
+      const expectedRes = {
         status: 'Successful',
       };
-      const res = await request(app).post('/register').send(user);
+      const res = await request(app).post('/register').send(req);
 
-      expect(res.status).toBe(200);
-      expect(res.body).toEqual(expectedResponse);
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual(expectedRes);
+    });
+  });
     });
   });
 });

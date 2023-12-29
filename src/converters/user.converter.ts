@@ -46,8 +46,11 @@ export class User implements IUser {
       };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<IUser>): User {
-      const { teamId, email, password, p1Name, p2Name } = snapshot.data();
-      return new User(teamId, email, password, p1Name, p2Name);
+      const { teamId, email, password, p1Name, p2Name, admin } =
+        snapshot.data();
+      const newUser = new User(teamId, email, password, p1Name, p2Name);
+      newUser.admin = admin;
+      return newUser;
     },
   };
 }

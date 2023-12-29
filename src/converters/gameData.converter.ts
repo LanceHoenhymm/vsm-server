@@ -1,6 +1,7 @@
 import type {
   DocumentData,
   QueryDocumentSnapshot,
+  FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 
 interface INews {
@@ -18,7 +19,7 @@ interface IGameData {
   stocks: IStock[];
 }
 
-export const gameDataConverter = {
+export const gameDataConverter: FirestoreDataConverter<IGameData> = {
   toFirestore(gameData: IGameData): DocumentData {
     return gameData;
   },

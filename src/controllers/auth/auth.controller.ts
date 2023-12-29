@@ -59,7 +59,7 @@ export const loginUser: LoginUserHandler = async function (req, res) {
 
   const token = createToken({ teamId: userDoc.teamId, admin: userDoc.admin });
 
-  res.status(StatusCodes.OK).json({
+  res.status(StatusCodes.CREATED).json({
     status: 'Successful',
     data: {
       token,

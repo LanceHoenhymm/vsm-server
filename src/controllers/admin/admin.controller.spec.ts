@@ -42,7 +42,7 @@ describe('Admin Controller', () => {
     };
     const res = await request(app).post('/addGameData').send(gameData);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(201);
     expect(res.body).toEqual(expectedResponse);
   });
 
@@ -107,7 +107,7 @@ describe('Admin Controller', () => {
       .post('/addGameDataBatch')
       .send(gameDataBatch);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(201);
     expect(res.body).toEqual(expectedResponse);
   });
 });
