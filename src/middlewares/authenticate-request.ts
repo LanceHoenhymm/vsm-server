@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { Unauthenticated } from '../errors';
-import { verifyToken } from '../utils/jwt.util';
+import { verifyToken } from '../common/utils';
 
 export function authenticateRequest(
   req: Request,

@@ -4,7 +4,7 @@ import {
   playerStatColName,
   playerHistColName,
 } from '../../../common/app-config';
-import { initialStartingAmount } from '../../../common/game-config';
+import { initialStartingAmount } from '../../../game/game-config';
 import {
   PlayerDataConverter,
   PlayerPortfolioConverter,

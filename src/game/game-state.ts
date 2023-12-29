@@ -1,7 +1,4 @@
-export enum PossibleStage {
-  TRADING_STAGE = 0,
-  CALCULATION_STAGE,
-}
+import { PossibleStage } from './game-config';
 
 interface IState {
   roundNo: number;
