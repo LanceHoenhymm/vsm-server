@@ -1,21 +1,20 @@
-const PossibleStage = ['TRADING_STAGE', 'CALCULATION_STAGE'] as const;
+const Stages = ['TRADING_STAGE', 'CALCULATION_STAGE'] as const;
+type StageEnum = (typeof Stages)[number];
 
-type KPossibleStage = (typeof PossibleStage)[number];
+const initialGameRoundNo = 0;
+const initialGameStage: StageEnum = 'TRADING_STAGE';
+const defaultFirstStage: StageEnum = 'TRADING_STAGE';
+
+// Time is in Seconds
+const stageDurations: Record<StageEnum, number> = {
+  TRADING_STAGE: 5 * 60, // 5 minutes
+  CALCULATION_STAGE: 1 * 60, // 1 minute
+};
+const gameRunTime = 3 * 60 * 60; // 3 hours
 
 const startingAmount = 1000;
 const startingValuation = 0;
 const startingDebt = 0;
-const initialGameRoundNo = 0;
-const initialGameStage: KPossibleStage = 'TRADING_STAGE';
-
-const defaultFirstStage: KPossibleStage = 'TRADING_STAGE';
-
-const stageDurations: Record<KPossibleStage, number> = {
-  TRADING_STAGE: 5 * 60 * 1000, // 5 minutes
-  CALCULATION_STAGE: 1 * 60 * 1000, // 1 minute
-};
-
-const gameRunTime = 3 * 60 * 60 * 1000; // 3 hours
 
 export {
   startingAmount,
@@ -23,8 +22,8 @@ export {
   startingDebt,
   initialGameStage,
   initialGameRoundNo,
-  KPossibleStage,
-  PossibleStage,
+  StageEnum,
+  Stages,
   defaultFirstStage,
   stageDurations,
   gameRunTime,
