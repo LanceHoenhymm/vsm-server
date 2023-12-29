@@ -1,5 +1,6 @@
 import {
   PossibleStage,
+  KPossibleStage,
   initialGameRoundNo,
   initialGameStage,
   defaultFirstStage,
@@ -7,7 +8,7 @@ import {
 
 interface IState {
   roundNo: number;
-  stage: PossibleStage;
+  stage: KPossibleStage;
 }
 
 let state: IState = Object.freeze({
@@ -15,20 +16,23 @@ let state: IState = Object.freeze({
   stage: initialGameStage,
 });
 
-export function changeStage(nxtStage: PossibleStage) {
-  const newState: IState = Object.freeze({
-    roundNo: state.roundNo,
-    stage: nxtStage,
-  });
-  state = newState;
+function getNextStage(currentStage: KPossibleStage) {
+  const currentIndex = PossibleStage.indexOf(currentStage);
+  const nextStage = (currentIndex + 1) % PossibleStage.length;
+  return PossibleStage[nextStage];
 }
 
-export function incrementRound() {
-  const newState: IState = Object.freeze({
-    roundNo: state.roundNo + 1,
-    stage: defaultFirstStage,
+export function incrementStage() {
+  const newStage = getNextStage(state.stage);
+  let newRoundNo = state.roundNo;
+  if (newStage === defaultFirstStage) newRoundNo++;
+
+  state = Object.freeze({
+    roundNo: newRoundNo,
+    stage: newStage,
   });
-  state = newState;
+
+  return state;
 }
 
 export function getState() {
