@@ -1,4 +1,9 @@
-import { PossibleStage } from './game-config';
+import {
+  PossibleStage,
+  initialGameRoundNo,
+  initialGameStage,
+  defaultFirstStage,
+} from './game-config';
 
 interface IState {
   roundNo: number;
@@ -6,8 +11,8 @@ interface IState {
 }
 
 let state: IState = Object.freeze({
-  roundNo: 0,
-  stage: PossibleStage.TRADING_STAGE,
+  roundNo: initialGameRoundNo,
+  stage: initialGameStage,
 });
 
 export function changeStage(nxtStage: PossibleStage) {
@@ -21,7 +26,7 @@ export function changeStage(nxtStage: PossibleStage) {
 export function incrementRound() {
   const newState: IState = Object.freeze({
     roundNo: state.roundNo + 1,
-    stage: PossibleStage.TRADING_STAGE,
+    stage: defaultFirstStage,
   });
   state = newState;
 }

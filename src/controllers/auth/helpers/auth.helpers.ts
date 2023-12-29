@@ -4,7 +4,11 @@ import {
   playerStatColName,
   playerHistColName,
 } from '../../../common/app-config';
-import { initialStartingAmount } from '../../../game/game-config';
+import {
+  startingAmount,
+  startingValuation,
+  startingDebt,
+} from '../../../game/game-config';
 import {
   PlayerDataConverter,
   PlayerPortfolioConverter,
@@ -30,10 +34,10 @@ export function setupPlayer(teamId: string) {
 
   return Promise.all([
     playerDataCollection.doc(teamId).set({
-      balance: initialStartingAmount,
-      valuation: 0,
-      debt: 0,
-      total: initialStartingAmount,
+      balance: startingAmount,
+      valuation: startingValuation,
+      debt: startingDebt,
+      total: startingAmount + startingValuation - startingDebt,
     }),
     playerPortCollection.doc(teamId).set({}),
     playerStatCollection.doc(teamId).set({}),
