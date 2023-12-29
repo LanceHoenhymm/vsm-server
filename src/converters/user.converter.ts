@@ -3,7 +3,7 @@ import type {
   QueryDocumentSnapshot,
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
-import { hashPassword, getUniqueId } from '../utils/hash.util';
+import { getHash } from '../common/utils';
 
 interface IUser {
   teamId: string;

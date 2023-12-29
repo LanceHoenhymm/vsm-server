@@ -1,7 +1,7 @@
 import { getFirestoreDb } from '../../services/firebase';
 import { User } from '../../converters';
 import { userCollectionName } from '../../common/appConfig';
-import { createToken } from '../../utils/jwt.util';
+import { createToken, getHash } from '../../common/utils';
 import { setupPlayer } from './helpers/auth.helpers';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequest, NotFound, Unauthorized } from '../../errors';
