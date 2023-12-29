@@ -6,7 +6,6 @@ import type {
 import { getHash } from '../common/utils';
 
 interface IUser {
-  teamId: string;
   email: string;
   password: string;
   memberCount: 1 | 2;
@@ -20,7 +19,6 @@ export class User implements IUser {
   admin: boolean = false;
 
   constructor(
-    public teamId: string,
     public email: string,
     public password: string,
     public p1Name: string,
@@ -30,15 +28,14 @@ export class User implements IUser {
   }
 
   verifyPassword(candidate: string) {
-    return this.password === hashPassword(candidate);
+    return this.password === getHash(candidate);
   }
 
   static converter: FirestoreDataConverter<User> = {
     toFirestore(user: User): DocumentData {
       return {
-        teamId: getUniqueId(user.teamId),
         email: user.email,
-        password: hashPassword(user.password),
+        password: getHash(user.password),
         p1Name: user.p1Name,
         p2Name: user.p2Name,
         memberCount: user.memberCount,
@@ -46,9 +43,8 @@ export class User implements IUser {
       };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<IUser>): User {
-      const { teamId, email, password, p1Name, p2Name, admin } =
-        snapshot.data();
-      const newUser = new User(teamId, email, password, p1Name, p2Name);
+      const { email, password, p1Name, p2Name, admin } = snapshot.data();
+      const newUser = new User(email, password, p1Name, p2Name);
       newUser.admin = admin;
       return newUser;
     },

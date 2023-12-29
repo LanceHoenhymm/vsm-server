@@ -16,7 +16,6 @@ describe('Auth Controller', () => {
   describe('register endpoint', () => {
     it('should run without error', async () => {
       const req: IRegisterUserDto = {
-        teamId: 'Lemon',
         email: 'abc@123.com',
         password: 'listerine',
         p1Name: 'Mocha',

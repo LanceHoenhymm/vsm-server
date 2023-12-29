@@ -12,11 +12,10 @@ type RegisterUserHandler = ReqHandler<IRegisterUserDto, AckResponse>;
 
 export const registerUser: RegisterUserHandler = async function (req, res) {
   const userCollection = getFirestoreDb().collection(userCollectionName);
-  const { teamId, email, password, p1Name, p2Name } = req.body;
+  const { email, password, p1Name, p2Name } = req.body;
 
-  const emailAlreadyExist = !(
-    await userCollection.where('email', '==', email).get()
-  ).empty;
+  const hashEmail = getHash(email);
+  const emailAlreadyExist = (await userCollection.doc(hashEmail).get()).exists;
 
   if (emailAlreadyExist) {
     throw new BadRequest('Invalid Email: User Already Exists');
@@ -24,7 +23,8 @@ export const registerUser: RegisterUserHandler = async function (req, res) {
 
   await userCollection
     .withConverter(User.converter)
-    .add(new User(teamId, email, password, p1Name, p2Name));
+    .doc(hashEmail)
+    .set(new User(email, password, p1Name, p2Name));
 
   res.status(StatusCodes.CREATED).json({
     status: 'Successful',
@@ -37,27 +37,27 @@ export const loginUser: LoginUserHandler = async function (req, res) {
   const userCollection = getFirestoreDb().collection(userCollectionName);
   const { email, password } = req.body;
 
-  const userEmailQuery = await userCollection
+  const hashEmail = getHash(email);
+  const userDocSnap = await userCollection
     .withConverter(User.converter)
-    .where('email', '==', email)
-    .limit(1)
+    .doc(hashEmail)
     .get();
 
-  if (userEmailQuery.empty) {
+  if (!userDocSnap.exists) {
     throw new NotFound('Invalid Email: User Does Not Exist');
   }
 
-  const userDoc = userEmailQuery.docs[0].data();
+  const userDoc = userDocSnap.data()!;
 
   if (!userDoc.verifyPassword(password)) {
     throw new Unauthorized('Wrong Email or Password');
   }
 
   if (!userDoc.admin) {
-    await setupPlayer(userDoc.teamId);
+    await setupPlayer(hashEmail);
   }
 
-  const token = createToken({ teamId: userDoc.teamId, admin: userDoc.admin });
+  const token = createToken({ teamId: hashEmail, admin: userDoc.admin });
 
   res.status(StatusCodes.CREATED).json({
     status: 'Successful',
