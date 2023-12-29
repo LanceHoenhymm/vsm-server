@@ -1,6 +1,6 @@
 import { getFirestoreDb } from '../../services/firebase';
 import { User } from '../../converters';
-import { userCollectionName } from '../../common/appConfig';
+import { userAccountColName } from '../../common/appConfig';
 import { createToken, getHash } from '../../common/utils';
 import { setupPlayer } from './helpers/auth.helpers';
 import { StatusCodes } from 'http-status-codes';
@@ -11,7 +11,7 @@ import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto';
 type RegisterUserHandler = ReqHandler<IRegisterUserDto, AckResponse>;
 
 export const registerUser: RegisterUserHandler = async function (req, res) {
-  const userCollection = getFirestoreDb().collection(userCollectionName);
+  const userCollection = getFirestoreDb().collection(userAccountColName);
   const { email, password, p1Name, p2Name } = req.body;
 
   const hashEmail = getHash(email);
@@ -34,7 +34,7 @@ export const registerUser: RegisterUserHandler = async function (req, res) {
 type LoginUserHandler = ReqHandler<ILoginUserDto, AckResponse>;
 
 export const loginUser: LoginUserHandler = async function (req, res) {
-  const userCollection = getFirestoreDb().collection(userCollectionName);
+  const userCollection = getFirestoreDb().collection(userAccountColName);
   const { email, password } = req.body;
 
   const hashEmail = getHash(email);

@@ -1,6 +1,6 @@
 import { getFirestoreDb } from '../../services/firebase';
 import { GameData } from '../../converters';
-import { gameDataCollectionName } from '../../common/appConfig';
+import { gameDataColName } from '../../common/appConfig';
 import { StatusCodes } from 'http-status-codes';
 import type { ReqHandler, AckResponse } from '../../types';
 import type { IGameDataDto, IGameDataBatchDto } from './admin.controller.dto';
@@ -8,9 +8,7 @@ import type { IGameDataDto, IGameDataBatchDto } from './admin.controller.dto';
 type AddGameDataHandler = ReqHandler<IGameDataDto, AckResponse>;
 
 export const addGameData: AddGameDataHandler = async function (req, res) {
-  const gameDataCollection = getFirestoreDb().collection(
-    gameDataCollectionName,
-  );
+  const gameDataCollection = getFirestoreDb().collection(gameDataColName);
   const { news, stocks, roundNumber } = req.body;
 
   await gameDataCollection
@@ -31,15 +29,15 @@ export const addGameDataBatch: AddGameDataBatchHandler = async function (
 ) {
   const firestore = getFirestoreDb();
   const gameDataWriteBatch = firestore.batch();
-  const gameDataCollection = firestore.collection(gameDataCollectionName);
+  const gameDataCollection = firestore.collection(gameDataColName);
   const { data } = req.body;
 
-  for (const gameState of data) {
+  for (const roundData of data) {
     gameDataWriteBatch.set(
       gameDataCollection
         .withConverter(GameData.converter)
-        .doc(`R${gameState.roundNumber}`),
-      new GameData(gameState.news, gameState.stocks),
+        .doc(`R${roundData.roundNumber}`),
+      new GameData(roundData.news, roundData.stocks),
     );
   }
 
