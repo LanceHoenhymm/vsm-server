@@ -19,11 +19,22 @@ interface IGameData {
   stocks: IStock[];
 }
 
-export const gameDataConverter: FirestoreDataConverter<IGameData> = {
-  toFirestore(gameData: IGameData): DocumentData {
-    return gameData;
-  },
-  fromFirestore(snapshot: QueryDocumentSnapshot<IGameData>): IGameData {
-    return snapshot.data();
-  },
-};
+export class GameData implements IGameData {
+  constructor(
+    public news: INews[],
+    public stocks: IStock[],
+  ) {}
+
+  static converter: FirestoreDataConverter<GameData> = {
+    toFirestore(gameData: GameData): DocumentData {
+      return {
+        news: gameData.news,
+        stocks: gameData.stocks,
+      };
+    },
+    fromFirestore(snapshot: QueryDocumentSnapshot<IGameData>): GameData {
+      const { news, stocks } = snapshot.data();
+      return new GameData(news, stocks);
+    },
+  };
+}
