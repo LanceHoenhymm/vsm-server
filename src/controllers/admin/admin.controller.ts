@@ -1,6 +1,6 @@
 import { getFirestoreDb } from '../../services/firebase';
 import { GameData } from '../../converters';
-import { gameDataColName } from '../../common/appConfig';
+import { gameDataColName } from '../../common/app-config';
 import { StatusCodes } from 'http-status-codes';
 import type { ReqHandler, AckResponse } from '../../types';
 import type { IGameDataDto, IGameDataBatchDto } from './admin.controller.dto';

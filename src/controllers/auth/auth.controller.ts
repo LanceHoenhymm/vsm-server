@@ -1,6 +1,6 @@
 import { getFirestoreDb } from '../../services/firebase';
 import { User } from '../../converters';
-import { userAccountColName } from '../../common/appConfig';
+import { userAccountColName } from '../../common/app-config';
 import { createToken, getHash } from '../../common/utils';
 import { setupPlayer } from './helpers/auth.helpers';
 import { StatusCodes } from 'http-status-codes';

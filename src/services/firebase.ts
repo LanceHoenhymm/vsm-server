@@ -1,7 +1,7 @@
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import { getDatabase, type Database } from 'firebase-admin/database';
-import { rtDatabaseURL, serviceAccountConfig } from '../common/appConfig';
+import { rtDatabaseURL, serviceAccountConfig } from '../common/app-config';
 
 let firestoreDB: Firestore | null = null;
 let realTimeDB: Database | null = null;
