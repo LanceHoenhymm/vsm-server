@@ -9,7 +9,7 @@ firebase.json
 firebase.prod.json
 
 # Misc
-converage
+coverage
 
 # Editor Exclusive
 .vscode
