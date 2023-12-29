@@ -4,37 +4,22 @@ import type {
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 
-interface INews {
-  news: string;
-  forInsider: boolean;
-}
-
-interface IStock {
-  name: string;
-  bpc: number;
-}
-
 interface IGameData {
-  news: INews[];
-  stocks: IStock[];
+  news: Array<{
+    news: string;
+    forInsider: boolean;
+  }>;
+  stocks: Array<{
+    name: string;
+    bpc: number;
+  }>;
 }
 
-export class GameData implements IGameData {
-  constructor(
-    public news: INews[],
-    public stocks: IStock[],
-  ) {}
-
-  static converter: FirestoreDataConverter<GameData> = {
-    toFirestore(gameData: GameData): DocumentData {
-      return {
-        news: gameData.news,
-        stocks: gameData.stocks,
-      };
-    },
-    fromFirestore(snapshot: QueryDocumentSnapshot<IGameData>): GameData {
-      const { news, stocks } = snapshot.data();
-      return new GameData(news, stocks);
-    },
-  };
-}
+export const GameDataConverter: FirestoreDataConverter<IGameData> = {
+  toFirestore(gameData: IGameData): DocumentData {
+    return gameData;
+  },
+  fromFirestore(snapshot: QueryDocumentSnapshot<IGameData>): IGameData {
+    return snapshot.data();
+  },
+};

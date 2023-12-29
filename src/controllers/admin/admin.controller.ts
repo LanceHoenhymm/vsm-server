@@ -1,5 +1,5 @@
 import { getFirestoreDb } from '../../services/firebase';
-import { GameData } from '../../converters';
+import { GameDataConverter } from '../../converters';
 import { gameDataColName } from '../../common/app-config';
 import { StatusCodes } from 'http-status-codes';
 import type { ReqHandler, AckResponse } from '../../types';
@@ -12,9 +12,9 @@ export const addGameData: AddGameDataHandler = async function (req, res) {
   const { news, stocks, roundNumber } = req.body;
 
   await gameDataCollection
-    .withConverter(GameData.converter)
+    .withConverter(GameDataConverter)
     .doc(`R${roundNumber}`)
-    .set(new GameData(news, stocks));
+    .set({ news, stocks });
 
   res.status(StatusCodes.CREATED).json({
     status: 'Successful',
@@ -35,9 +35,9 @@ export const addGameDataBatch: AddGameDataBatchHandler = async function (
   for (const roundData of data) {
     gameDataWriteBatch.set(
       gameDataCollection
-        .withConverter(GameData.converter)
+        .withConverter(GameDataConverter)
         .doc(`R${roundData.roundNumber}`),
-      new GameData(roundData.news, roundData.stocks),
+      { news: roundData.news, stocks: roundData.stocks },
     );
   }
 
