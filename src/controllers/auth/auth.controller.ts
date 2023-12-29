@@ -1,5 +1,5 @@
 import { getFirestoreDb } from '../../services/firebase';
-import { userConverter, User } from '../../converters';
+import { User } from '../../converters';
 import { userCollectionName } from '../../common/appConfig';
 import { createToken } from '../../utils/jwt.util';
 import { setupPlayer } from './helpers/auth.helpers';
@@ -23,7 +23,7 @@ export const registerUser: RegisterUserHandler = async function (req, res) {
   }
 
   await userCollection
-    .withConverter(userConverter)
+    .withConverter(User.converter)
     .add(new User(teamId, email, password, p1Name, p2Name));
 
   res.status(StatusCodes.CREATED).json({
@@ -38,7 +38,7 @@ export const loginUser: LoginUserHandler = async function (req, res) {
   const { email, password } = req.body;
 
   const userEmailQuery = await userCollection
-    .withConverter(userConverter)
+    .withConverter(User.converter)
     .where('email', '==', email)
     .limit(1)
     .get();

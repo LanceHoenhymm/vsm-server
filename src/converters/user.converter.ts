@@ -1,6 +1,7 @@
 import type {
   DocumentData,
   QueryDocumentSnapshot,
+  FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 import { hashPassword, getUniqueId } from '../utils/hash.util';
 
@@ -31,22 +32,22 @@ export class User implements IUser {
   verifyPassword(candidate: string) {
     return this.password === hashPassword(candidate);
   }
-}
 
-export const userConverter = {
-  toFirestore(user: User): DocumentData {
-    return {
-      teamId: getUniqueId(user.teamId),
-      email: user.email,
-      password: hashPassword(user.password),
-      p1Name: user.p1Name,
-      p2Name: user.p2Name,
-      memberCount: user.memberCount,
-      admin: user.admin,
-    };
-  },
-  fromFirestore(snapshot: QueryDocumentSnapshot<IUser>): User {
-    const { teamId, email, password, p1Name, p2Name } = snapshot.data();
-    return new User(teamId, email, password, p1Name, p2Name);
-  },
-};
+  static converter: FirestoreDataConverter<User> = {
+    toFirestore(user: User): DocumentData {
+      return {
+        teamId: getUniqueId(user.teamId),
+        email: user.email,
+        password: hashPassword(user.password),
+        p1Name: user.p1Name,
+        p2Name: user.p2Name,
+        memberCount: user.memberCount,
+        admin: user.admin,
+      };
+    },
+    fromFirestore(snapshot: QueryDocumentSnapshot<IUser>): User {
+      const { teamId, email, password, p1Name, p2Name } = snapshot.data();
+      return new User(teamId, email, password, p1Name, p2Name);
+    },
+  };
+}
