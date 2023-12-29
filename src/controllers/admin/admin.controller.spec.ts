@@ -1,7 +1,10 @@
 import request from 'supertest';
 import express, { type Express } from 'express';
 import { addGameData, addGameDataBatch } from './admin.controller';
-import type { IGameDataDto, IGameDataBatchDto } from './admin.controller.dto';
+import type {
+  IAddGameDataDto,
+  IAddGameDataBatchDto,
+} from './admin.controller.dto';
 
 describe('Admin Controller', () => {
   let app: Express;
@@ -14,7 +17,7 @@ describe('Admin Controller', () => {
   });
 
   it('should handle addGameData', async () => {
-    const gameData: IGameDataDto = {
+    const gameData: IAddGameDataDto = {
       roundNumber: 1,
       news: [
         {
@@ -47,7 +50,7 @@ describe('Admin Controller', () => {
   });
 
   it('should handle addGameDataBatch', async () => {
-    const gameDataBatch: IGameDataBatchDto = {
+    const gameDataBatch: IAddGameDataBatchDto = {
       data: [
         {
           roundNumber: 3,

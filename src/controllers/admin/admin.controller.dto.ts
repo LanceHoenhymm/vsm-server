@@ -16,10 +16,10 @@ export const addGameStateDtoSchema = z.object({
   roundNumber: z.coerce.number(),
 });
 
-export type IGameDataDto = z.infer<typeof addGameStateDtoSchema>;
+export type IAddGameDataDto = z.infer<typeof addGameStateDtoSchema>;
 
 export const addGameDataBatchDtoSchema = z.object({
   data: addGameStateDtoSchema.array(),
 });
 
-export type IGameDataBatchDto = z.infer<typeof addGameDataBatchDtoSchema>;
+export type IAddGameDataBatchDto = z.infer<typeof addGameDataBatchDtoSchema>;

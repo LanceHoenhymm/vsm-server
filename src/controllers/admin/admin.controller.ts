@@ -3,9 +3,12 @@ import { GameDataConverter } from '../../converters';
 import { gameDataColName } from '../../common/app-config';
 import { StatusCodes } from 'http-status-codes';
 import type { ReqHandler, AckResponse } from '../../types';
-import type { IGameDataDto, IGameDataBatchDto } from './admin.controller.dto';
+import type {
+  IAddGameDataDto,
+  IAddGameDataBatchDto,
+} from './admin.controller.dto';
 
-type AddGameDataHandler = ReqHandler<IGameDataDto, AckResponse>;
+type AddGameDataHandler = ReqHandler<IAddGameDataDto, AckResponse>;
 
 export const addGameData: AddGameDataHandler = async function (req, res) {
   const gameDataCollection = getFirestoreDb().collection(gameDataColName);
@@ -21,7 +24,7 @@ export const addGameData: AddGameDataHandler = async function (req, res) {
   });
 };
 
-type AddGameDataBatchHandler = ReqHandler<IGameDataBatchDto, AckResponse>;
+type AddGameDataBatchHandler = ReqHandler<IAddGameDataBatchDto, AckResponse>;
 
 export const addGameDataBatch: AddGameDataBatchHandler = async function (
   req,
