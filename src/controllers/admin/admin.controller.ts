@@ -14,13 +14,14 @@ export const addGameData: AddGameDataHandler = async function (req, res) {
   const gameDataCollection = getFirestoreDb().collection(gameDataColName);
   const { news, stocks, roundNumber } = req.body;
 
-  await gameDataCollection
+  const result = await gameDataCollection
     .withConverter(GameDataConverter)
     .doc(`R${roundNumber}`)
     .set({ news, stocks });
 
   res.status(StatusCodes.CREATED).json({
     status: 'Successful',
+    data: result,
   });
 };
 
@@ -44,10 +45,10 @@ export const addGameDataBatch: AddGameDataBatchHandler = async function (
     );
   }
 
-  await gameDataWriteBatch.commit();
+  const result = await gameDataWriteBatch.commit();
 
   res.status(StatusCodes.CREATED).json({
     status: 'Successful',
-    data: { length: data.length },
+    data: { length: data.length, result },
   });
 };
