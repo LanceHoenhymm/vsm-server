@@ -1,14 +1,15 @@
-import { RequestHandler } from 'express';
+import { RequestHandler, ErrorRequestHandler } from 'express';
 
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-type ReqHandler<TReqBody, TResBody> = RequestHandler<
+type AckResponse = { status: 'Success' | 'Failure'; data?: object };
+type ReqHandler<TReqBody> = RequestHandler<
   object,
-  TResBody,
+  AckResponse,
   TReqBody,
   object
 >;
-type AckResponse = { status: 'Successful' | 'Failed'; data?: object };
+type ErrHandler = ErrorRequestHandler<object, AckResponse, object, object>;
 
 interface RequestUserProp {
   teamId: string;

@@ -2,13 +2,13 @@ import { getFirestoreDb } from '../../services/firebase';
 import { GameDataConverter } from '../../converters';
 import { gameDataColName } from '../../common/app-config';
 import { StatusCodes } from 'http-status-codes';
-import type { ReqHandler, AckResponse } from '../../types';
+import type { ReqHandler } from '../../types';
 import type {
   IAddGameDataDto,
   IAddGameDataBatchDto,
 } from './admin.controller.dto';
 
-type AddGameDataHandler = ReqHandler<IAddGameDataDto, AckResponse>;
+type AddGameDataHandler = ReqHandler<IAddGameDataDto>;
 
 export const addGameData: AddGameDataHandler = async function (req, res) {
   const gameDataCollection = getFirestoreDb().collection(gameDataColName);
@@ -20,12 +20,12 @@ export const addGameData: AddGameDataHandler = async function (req, res) {
     .set({ news, stocks });
 
   res.status(StatusCodes.CREATED).json({
-    status: 'Successful',
+    status: 'Success',
     data: result,
   });
 };
 
-type AddGameDataBatchHandler = ReqHandler<IAddGameDataBatchDto, AckResponse>;
+type AddGameDataBatchHandler = ReqHandler<IAddGameDataBatchDto>;
 
 export const addGameDataBatch: AddGameDataBatchHandler = async function (
   req,
@@ -48,7 +48,7 @@ export const addGameDataBatch: AddGameDataBatchHandler = async function (
   const result = await gameDataWriteBatch.commit();
 
   res.status(StatusCodes.CREATED).json({
-    status: 'Successful',
+    status: 'Failure',
     data: { length: data.length, result },
   });
 };

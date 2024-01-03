@@ -5,10 +5,10 @@ import { createToken, getHash } from '../../common/utils';
 import { setupPlayer } from './helpers/auth.helpers';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequest, NotFound, Unauthorized } from '../../errors';
-import type { ReqHandler, AckResponse } from '../../types';
+import type { ReqHandler } from '../../types';
 import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto';
 
-type RegisterUserHandler = ReqHandler<IRegisterUserDto, AckResponse>;
+type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
 
 export const registerUser: RegisterUserHandler = async function (req, res) {
   const userCollection = getFirestoreDb().collection(userAccountColName);
@@ -27,11 +27,11 @@ export const registerUser: RegisterUserHandler = async function (req, res) {
     .set(new User(email, password, p1Name, p2Name));
 
   res.status(StatusCodes.CREATED).json({
-    status: 'Successful',
+    status: 'Success',
   });
 };
 
-type LoginUserHandler = ReqHandler<ILoginUserDto, AckResponse>;
+type LoginUserHandler = ReqHandler<ILoginUserDto>;
 
 export const loginUser: LoginUserHandler = async function (req, res) {
   const userCollection = getFirestoreDb().collection(userAccountColName);
@@ -60,7 +60,7 @@ export const loginUser: LoginUserHandler = async function (req, res) {
   const token = createToken({ teamId: hashEmail, admin: userDoc.admin });
 
   res.status(StatusCodes.CREATED).json({
-    status: 'Successful',
+    status: 'Success',
     data: {
       token,
     },

@@ -1,23 +1,18 @@
-import { ErrorRequestHandler } from 'express';
+import { ErrHandler } from '../types';
 import { ApplicationError } from '../errors';
 import { StatusCodes } from 'http-status-codes';
 
-export const globalErrorHandler: ErrorRequestHandler = function (
-  err,
-  req,
-  res,
-) {
+export const globalErrorHandler: ErrHandler = function (err, req, res) {
   if (err instanceof ApplicationError) {
     res.status(err.statusCode).json({
-      status: 'Failed',
-      msg: err.message,
-      data: err.data,
+      status: 'Failure',
+      data: err,
     });
     return;
   }
 
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-    status: 'Failed',
+    status: 'Failure',
     data: err as object,
   });
 };
