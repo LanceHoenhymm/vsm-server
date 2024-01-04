@@ -4,18 +4,18 @@ import type {
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 
-interface ITransactions {
+export interface ITransaction {
   teamId: string;
   stock: string;
   volume: number;
   amount: number;
 }
 
-export const TransactionsConverter: FirestoreDataConverter<ITransactions> = {
-  toFirestore(transaction: ITransactions): DocumentData {
+export const TransactionsConverter: FirestoreDataConverter<ITransaction> = {
+  toFirestore(transaction: ITransaction): DocumentData {
     return transaction;
   },
-  fromFirestore(snapshot: QueryDocumentSnapshot<ITransactions>): ITransactions {
+  fromFirestore(snapshot: QueryDocumentSnapshot<ITransaction>): ITransaction {
     return snapshot.data();
   },
 };

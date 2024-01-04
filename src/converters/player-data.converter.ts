@@ -4,13 +4,14 @@ import type {
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 
-interface IPlayerData {
+export interface IPlayerData {
   balance: number;
   valuation: number;
   total: number;
   powercards: {
     muft: boolean;
     insider: boolean;
+    options: boolean;
   };
 }
 

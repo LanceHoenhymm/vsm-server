@@ -4,9 +4,10 @@ import type {
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 
-interface IStockCurrentData {
+export interface IStockCurrentData {
   value: number;
-  volume_traded: number;
+  volTraded: number;
+  maxVolTrad: number;
 }
 
 export const StockCurrentConverter: FirestoreDataConverter<IStockCurrentData> =

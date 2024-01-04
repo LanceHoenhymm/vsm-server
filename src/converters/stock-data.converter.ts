@@ -7,7 +7,7 @@ import type {
 interface IStockData {
   [name: string]: {
     bpc: number;
-    maxVol: number;
+    maxVolTrad: number;
   };
 }
 
