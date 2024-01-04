@@ -45,9 +45,9 @@ export function buyStock(teamId: string, stock: string, volume: number) {
     const amount = volume * stockData.value;
 
     if (amount > playerData.balance) {
-      throw new Error('Insufficient Balance');
+      return Promise.reject('Insufficient Balance');
     } else if (stockData.volTraded >= stockData.maxVolTrad) {
-      throw new Error('Max Transaction Reached');
+      return Promise.reject('Max Transaction Reached');
     } else {
       t.update(stockDoc, { volTraded: stockData.volTraded + volume });
       t.update(playerDoc, {
@@ -65,6 +65,8 @@ export function buyStock(teamId: string, stock: string, volume: number) {
         { mergeFields: [`${stock}.amount`, `${stock}.totalValue`] },
       );
       t.set(transactionDoc, { teamId, stock, volume, amount, type: 'buy' });
+
+      return Promise.resolve('Transaction Complete');
     }
   });
 }
@@ -98,10 +100,11 @@ export function sellStock(teamId: string, stock: string, volume: number) {
     ];
     const amount = stockData.value * volume;
 
-    if (!Object.prototype.hasOwnProperty.call(portData, stock)) {
-      throw new Error(`Insufficient Stocks`);
-    } else if (portData[stock].volume < volume) {
-      throw new Error(`Insufficient Stocks`);
+    if (
+      !Object.prototype.hasOwnProperty.call(portData, stock) ||
+      portData[stock].volume < volume
+    ) {
+      return Promise.reject(`Insufficient Stocks`);
     } else {
       t.update(playerDoc, {
         balance: playerData.balance + amount,
@@ -118,6 +121,8 @@ export function sellStock(teamId: string, stock: string, volume: number) {
         { mergeFields: [`${stock}.amount`, `${stock}.totalValue`] },
       );
       t.set(transactionDoc, { teamId, stock, volume, amount, type: 'sell' });
+
+      return Promise.resolve('Transaction Complete');
     }
   });
 }

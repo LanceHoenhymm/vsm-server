@@ -10,33 +10,34 @@ import {
   defaultFirstStage,
 } from './game-config';
 
+let roundChanged: boolean = true;
+
+const state = {
+  roundNo: initialGameRoundNo,
+  stage: initialGameStage,
+};
+
 function getNextStage(currentStage: StageEnum) {
   const currentIndex = Stages.indexOf(currentStage);
   const nextStage = (currentIndex + 1) % Stages.length;
   return Stages[nextStage];
 }
 
+function incrementStage() {
+  roundChanged = false;
+  state.stage = getNextStage(state.stage);
+  if (state.stage === defaultFirstStage) {
+    state.roundNo++;
+    roundChanged = true;
+  }
+}
+
+export function getState() {
+  return { ...state } as const;
+}
+
 export function getGameLoop(emitter: EventEmitter, startTime: number) {
   const endTime = startTime + gameRunTime;
-  let roundChanged: boolean = true;
-
-  const state = {
-    roundNo: initialGameRoundNo,
-    stage: initialGameStage,
-  };
-
-  function incrementStage() {
-    roundChanged = false;
-    state.stage = getNextStage(state.stage);
-    if (state.stage === defaultFirstStage) {
-      state.roundNo++;
-      roundChanged = true;
-    }
-  }
-
-  function getState() {
-    return { ...state } as const;
-  }
 
   function gameLoop() {
     const now = getUnixTime();
@@ -55,9 +56,5 @@ export function getGameLoop(emitter: EventEmitter, startTime: number) {
       }, stageDuration * 1000);
     }
   }
-
-  return {
-    getState,
-    gameLoop,
-  };
+  return gameLoop;
 }
