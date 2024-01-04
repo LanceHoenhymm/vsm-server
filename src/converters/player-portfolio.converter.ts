@@ -4,7 +4,12 @@ import type {
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 
-interface IPlayerPortfolio {}
+interface IPlayerPortfolio {
+  [name: string]: {
+    amount: number;
+    totalValue: number;
+  };
+}
 
 export const PlayerPortfolioConverter: FirestoreDataConverter<IPlayerPortfolio> =
   {

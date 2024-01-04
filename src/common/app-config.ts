@@ -8,18 +8,17 @@ const serviceAccountConfig = {
 };
 
 const userAccountColName = 'users_test';
-const playerDataColName = 'user_acc_test';
-const playerPortColName = 'user_port_test';
-const playerStatColName = 'status_test';
-const playerHistColName = 'user_history_test';
-const stocksDataColName = 'stocks_test';
-const stocksHistColName = 'stocks_history_test';
+const newsDataColName = 'game_data_test';
+const stocksDataColName = 'stocks_data_test';
+const playerDataColName = 'player_data_test';
+const playerPortColName = 'player_port_test';
+const stocksCurrentColName = 'stocks_curr_test';
 const transactionsColName = 'transactions_test';
 
 export {
   serviceAccountConfig,
-  rtDatabaseURL,
-  gameDataColName,
+  newsDataColName,
+  stocksDataColName,
   userAccountColName,
   playerDataColName,
   playerPortColName,

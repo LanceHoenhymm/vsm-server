@@ -5,8 +5,10 @@ import type {
 } from 'firebase-admin/firestore';
 
 interface IStockData {
-  value: number;
-  volume_traded: number;
+  [name: string]: {
+    bpc: number;
+    maxVol: number;
+  };
 }
 
 export const StockDataConverter: FirestoreDataConverter<IStockData> = {

@@ -7,8 +7,11 @@ import type {
 interface IPlayerData {
   balance: number;
   valuation: number;
-  debt: number;
   total: number;
+  powercards: {
+    muft: boolean;
+    insider: boolean;
+  };
 }
 
 export const PlayerDataConverter: FirestoreDataConverter<IPlayerData> = {
