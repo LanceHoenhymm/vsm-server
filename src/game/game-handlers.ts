@@ -161,14 +161,14 @@ export function usePowercardInsider(teamId: string) {
       await Promise.all([t.get(playerDoc), t.get(newsDoc)])
     ).map((d) => d.data()) as [IPlayerData, INewsData];
 
-    if (!playerData.powercards.options) {
+    if (playerData.powercards.insider === 'used') {
       return Promise.reject('Powercard Already Used');
     } else {
       const insiderNews = Object.values(newsData).filter((n) => n.forInsider);
       const randomInsiderNews =
         insiderNews[Math.floor(Math.random() * insiderNews.length)];
 
-      t.update(playerDoc, { powercards: { insider: false } });
+      t.update(playerDoc, { powercards: { insider: 'used' } });
 
       return Promise.resolve(randomInsiderNews);
     }

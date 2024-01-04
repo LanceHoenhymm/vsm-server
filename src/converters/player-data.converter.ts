@@ -9,9 +9,13 @@ export interface IPlayerData {
   valuation: number;
   total: number;
   powercards: {
-    muft: boolean;
-    insider: boolean;
-    options: boolean;
+    muft: 'unused' | 'active' | 'used';
+    options: {
+      status: 'unused' | 'active' | 'used';
+      forStock: string | null;
+      lockedPrice: number | null;
+    };
+    insider: 'unused' | 'used';
   };
 }
 

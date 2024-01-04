@@ -4,7 +4,7 @@ import type {
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 
-interface IStockData {
+export interface IStockData {
   [name: string]: {
     bpc: number;
     maxVolTrad: number;
