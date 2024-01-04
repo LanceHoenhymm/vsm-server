@@ -1,3 +1,4 @@
+import { FieldValue } from 'firebase-admin/firestore';
 import {
   newsDataColName,
   playerDataColName,
@@ -18,6 +19,7 @@ import {
 } from '../converters';
 import { getFirestoreDb } from '../services/firebase';
 import { getState } from './game-state-loop';
+import { muftMoneyAwarded } from './game-config';
 
 export function buyStock(teamId: string, stock: string, volume: number) {
   const firestore = getFirestoreDb();
@@ -39,13 +41,9 @@ export function buyStock(teamId: string, stock: string, volume: number) {
     .doc();
 
   return firestore.runTransaction(async (t) => {
-    const [stockData, playerData, portData] = (
+    const [stockData, playerData] = (
       await Promise.all([t.get(stockDoc), playerDoc.get(), portDoc.get()])
-    ).map((d) => d.data()) as [
-      IStockCurrentData,
-      IPlayerData,
-      IPlayerPortfolio,
-    ];
+    ).map((d) => d.data()) as [IStockCurrentData, IPlayerData];
     const amount = volume * stockData.value;
 
     if (amount > playerData.balance) {
@@ -53,17 +51,17 @@ export function buyStock(teamId: string, stock: string, volume: number) {
     } else if (stockData.volTraded >= stockData.maxVolTrad) {
       return Promise.reject('Max Transaction Reached');
     } else {
-      t.update(stockDoc, { volTraded: stockData.volTraded + volume });
+      t.update(stockDoc, { volTraded: FieldValue.increment(volume) });
       t.update(playerDoc, {
-        balance: playerData.balance - amount,
-        valuation: playerData.valuation + amount,
+        balance: FieldValue.increment(-amount),
+        valuation: FieldValue.increment(amount),
       });
       t.set(
         portDoc,
         {
           [stock]: {
-            volume: portData[stock].volume + volume,
-            totalValue: portData[stock].totalValue + amount,
+            volume: FieldValue.increment(volume),
+            totalValue: FieldValue.increment(amount),
           },
         },
         { mergeFields: [`${stock}.amount`, `${stock}.totalValue`] },
@@ -102,13 +100,9 @@ export function sellStock(teamId: string, stock: string, volume: number) {
     .doc();
 
   return firestore.runTransaction(async (t) => {
-    const [stockData, playerData, portData] = (
+    const [stockData, portData] = (
       await Promise.all([t.get(stockDoc), t.get(playerDoc), t.get(portDoc)])
-    ).map((d) => d.data()) as [
-      IStockCurrentData,
-      IPlayerData,
-      IPlayerPortfolio,
-    ];
+    ).map((d) => d.data()) as [IStockCurrentData, IPlayerPortfolio];
     const amount = stockData.value * volume;
 
     if (
@@ -118,19 +112,13 @@ export function sellStock(teamId: string, stock: string, volume: number) {
       return Promise.reject(`Insufficient Stocks`);
     } else {
       t.update(playerDoc, {
-        balance: playerData.balance + amount,
-        valuation: playerData.valuation - amount,
+        balance: FieldValue.increment(amount),
+        valuation: FieldValue.increment(-amount),
       });
-      t.set(
-        portDoc,
-        {
-          [stock]: {
-            volume: portData[stock].volume - volume,
-            totalValue: portData[stock].totalValue - amount,
-          },
-        },
-        { mergeFields: [`${stock}.amount`, `${stock}.totalValue`] },
-      );
+      t.update(portDoc, {
+        [`${stock}.volume`]: FieldValue.increment(-volume),
+        [`${stock}.totalValue`]: FieldValue.increment(-amount),
+      });
       t.set(transactionDoc, {
         teamId,
         stock,
@@ -168,9 +156,20 @@ export function usePowercardInsider(teamId: string) {
       const randomInsiderNews =
         insiderNews[Math.floor(Math.random() * insiderNews.length)];
 
-      t.update(playerDoc, { powercards: { insider: 'used' } });
+      t.update(playerDoc, { 'powercards.insider': 'used' });
 
       return Promise.resolve(randomInsiderNews);
     }
   });
+}
+
+export function usePowercardMuft(teamId: string) {
+  return getFirestoreDb()
+    .collection(playerDataColName)
+    .withConverter(PlayerDataConverter)
+    .doc(teamId)
+    .update({
+      balance: FieldValue.increment(muftMoneyAwarded),
+      'powercards.muft': 'active',
+    });
 }
