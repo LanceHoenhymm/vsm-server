@@ -6,7 +6,7 @@ import type {
 
 export interface IPlayerPortfolio {
   [name: string]: {
-    amount: number;
+    volume: number;
     totalValue: number;
   };
 }
