@@ -7,12 +7,6 @@ const serviceAccountConfig = {
   privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
 };
 
-const rtDatabaseURL =
-  'https://vsm-2024-test-default-rtdb.asia-southeast1.firebasedatabase.app';
-
-const gameStateRefName = 'game_state_test';
-
-const gameDataColName = 'game_data_test';
 const userAccountColName = 'users_test';
 const playerDataColName = 'user_acc_test';
 const playerPortColName = 'user_port_test';
@@ -27,12 +21,8 @@ export {
   rtDatabaseURL,
   gameDataColName,
   userAccountColName,
-  gameStateRefName,
   playerDataColName,
   playerPortColName,
-  playerStatColName,
-  playerHistColName,
-  stocksDataColName,
-  stocksHistColName,
+  stocksCurrentColName,
   transactionsColName,
 };
