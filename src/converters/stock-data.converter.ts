@@ -8,6 +8,7 @@ interface IStockData {
   [name: string]: {
     bpc: number;
     maxVolTrad: number;
+    initialValue: number;
   };
 }
 

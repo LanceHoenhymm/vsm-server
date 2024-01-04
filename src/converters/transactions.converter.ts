@@ -10,6 +10,7 @@ export interface ITransaction {
   volume: number;
   amount: number;
   type: 'buy' | 'sell';
+  round: number;
 }
 
 export const TransactionsConverter: FirestoreDataConverter<ITransaction> = {

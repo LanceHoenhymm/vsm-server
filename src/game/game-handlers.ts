@@ -1,4 +1,5 @@
 import {
+  newsDataColName,
   playerDataColName,
   playerPortColName,
   stocksCurrentColName,
@@ -12,8 +13,11 @@ import {
   StockCurrentConverter,
   PlayerPortfolioConverter,
   TransactionsConverter,
+  NewsDataConverter,
+  INewsData,
 } from '../converters';
 import { getFirestoreDb } from '../services/firebase';
+import { getState } from './game-state-loop';
 
 export function buyStock(teamId: string, stock: string, volume: number) {
   const firestore = getFirestoreDb();
@@ -64,7 +68,14 @@ export function buyStock(teamId: string, stock: string, volume: number) {
         },
         { mergeFields: [`${stock}.amount`, `${stock}.totalValue`] },
       );
-      t.set(transactionDoc, { teamId, stock, volume, amount, type: 'buy' });
+      t.set(transactionDoc, {
+        teamId,
+        stock,
+        volume,
+        amount,
+        type: 'buy',
+        round: getState().roundNo,
+      });
 
       return Promise.resolve('Transaction Complete');
     }
@@ -120,7 +131,14 @@ export function sellStock(teamId: string, stock: string, volume: number) {
         },
         { mergeFields: [`${stock}.amount`, `${stock}.totalValue`] },
       );
-      t.set(transactionDoc, { teamId, stock, volume, amount, type: 'sell' });
+      t.set(transactionDoc, {
+        teamId,
+        stock,
+        volume,
+        amount,
+        type: 'sell',
+        round: getState().roundNo,
+      });
 
       return Promise.resolve('Transaction Complete');
     }
