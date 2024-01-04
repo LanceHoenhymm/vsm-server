@@ -1,5 +1,5 @@
 export { User } from './user.converter';
-export { NewsDataConverter } from './news-data.converter';
+export { NewsDataConverter, INewsData } from './news-data.converter';
 export { StockDataConverter } from './stock-data.converter';
 export { PlayerDataConverter, IPlayerData } from './player-data.converter';
 export {

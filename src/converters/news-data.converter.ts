@@ -4,19 +4,18 @@ import type {
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
 
-type NewsId = `${'IN' | 'N'}${number}`;
-interface IGameData {
-  [id: NewsId]: {
+export interface INewsData {
+  [id: string]: {
     news: string;
     forInsider: boolean;
   };
 }
 
-export const NewsDataConverter: FirestoreDataConverter<IGameData> = {
-  toFirestore(gameData: IGameData): DocumentData {
+export const NewsDataConverter: FirestoreDataConverter<INewsData> = {
+  toFirestore(gameData: INewsData): DocumentData {
     return gameData;
   },
-  fromFirestore(snapshot: QueryDocumentSnapshot<IGameData>): IGameData {
+  fromFirestore(snapshot: QueryDocumentSnapshot<INewsData>): INewsData {
     return snapshot.data();
   },
 };

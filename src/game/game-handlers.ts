@@ -127,4 +127,32 @@ export function sellStock(teamId: string, stock: string, volume: number) {
   });
 }
 
-export function usePowercard() {}
+export function usePowercardInsider(teamId: string) {
+  const firestore = getFirestoreDb();
+  const playerDoc = firestore
+    .collection(playerDataColName)
+    .withConverter(PlayerDataConverter)
+    .doc(teamId);
+  const newsDoc = firestore
+    .collection(newsDataColName)
+    .withConverter(NewsDataConverter)
+    .doc(`R${getState().roundNo}`);
+
+  return firestore.runTransaction(async (t) => {
+    const [playerData, newsData] = (
+      await Promise.all([t.get(playerDoc), t.get(newsDoc)])
+    ).map((d) => d.data()) as [IPlayerData, INewsData];
+
+    if (!playerData.powercards.options) {
+      return Promise.reject('Powercard Already Used');
+    } else {
+      const insiderNews = Object.values(newsData).filter((n) => n.forInsider);
+      const randomInsiderNews =
+        insiderNews[Math.floor(Math.random() * insiderNews.length)];
+
+      t.update(playerDoc, { powercards: { insider: false } });
+
+      return Promise.resolve(randomInsiderNews);
+    }
+  });
+}
