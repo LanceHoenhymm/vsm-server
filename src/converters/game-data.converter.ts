@@ -12,6 +12,7 @@ interface IGameData {
   stocks: Array<{
     name: string;
     bpc: number;
+    maxVol: number;
   }>;
 }
 

@@ -11,6 +11,7 @@ export const addGameStateDtoSchema = z.object({
     .object({
       name: z.string(),
       bpc: z.coerce.number(),
+      maxVol: z.coerce.number(),
     })
     .array(),
   roundNumber: z.coerce.number(),
