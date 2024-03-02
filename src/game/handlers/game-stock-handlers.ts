@@ -1,17 +1,17 @@
 import { FieldValue } from 'firebase-admin/firestore';
 import {
   playerDataColName,
-  playerPortColName,
   stocksCurrentColName,
+  stocksDataColName,
   transactionsColName,
 } from '../../common/app-config';
 import {
   IPlayerData,
   IStockCurrentData,
-  IPlayerPortfolio,
+  IStockData,
   PlayerDataConverter,
   StockCurrentConverter,
-  PlayerPortfolioConverter,
+  StockDataConverter,
   TransactionsConverter,
 } from '../../converters';
 import { getFirestoreDb } from '../../services/firebase';
@@ -23,45 +23,40 @@ export function buyStock(teamId: string, stock: string, volume: number) {
     .collection(playerDataColName)
     .withConverter(PlayerDataConverter)
     .doc(teamId);
-  const stockDoc = firestore
+  const stockCurrDoc = firestore
     .collection(stocksCurrentColName)
     .withConverter(StockCurrentConverter)
     .doc(stock);
-  const portDoc = firestore
-    .collection(playerPortColName)
-    .withConverter(PlayerPortfolioConverter)
-    .doc(teamId);
+  const stockDataDoc = firestore
+    .collection(stocksDataColName)
+    .withConverter(StockDataConverter)
+    .doc(stock);
   const transactionDoc = firestore
     .collection(transactionsColName)
     .withConverter(TransactionsConverter)
     .doc();
 
   return firestore.runTransaction(async (t) => {
-    const [stockData, playerData] = (
-      await Promise.all([t.get(stockDoc), playerDoc.get()])
-    ).map((d) => d.data()) as [IStockCurrentData, IPlayerData];
-    const amount = volume * stockData.value;
+    const [stockCurrData, playerData, stockData] = (
+      await Promise.all([
+        t.get(stockCurrDoc),
+        t.get(playerDoc),
+        t.get(stockDataDoc),
+      ])
+    ).map((d) => d.data()) as [IStockCurrentData, IPlayerData, IStockData];
+    const amount = volume * stockCurrData.value;
 
     if (amount > playerData.balance) {
       throw new Error('Insufficient Balance');
-    } else if (stockData.volTraded >= stockData.maxVolTrad) {
+    } else if (stockCurrData.volTraded >= stockData[stock].maxVolTrad) {
       throw new Error('Max Transaction Reached');
     } else {
-      t.update(stockDoc, { volTraded: FieldValue.increment(volume) });
+      t.update(stockCurrDoc, { volTraded: FieldValue.increment(volume) });
       t.update(playerDoc, {
         balance: FieldValue.increment(-amount),
         valuation: FieldValue.increment(amount),
+        [`portfolio.${stock}`]: { volume: FieldValue.increment(volume) },
       });
-      t.set(
-        portDoc,
-        {
-          [stock]: {
-            volume: FieldValue.increment(volume),
-            totalValue: FieldValue.increment(amount),
-          },
-        },
-        { mergeFields: [`${stock}.amount`, `${stock}.totalValue`] },
-      );
       t.set(transactionDoc, {
         teamId,
         stock,
@@ -84,34 +79,27 @@ export function sellStock(teamId: string, stock: string, volume: number) {
     .collection(stocksCurrentColName)
     .withConverter(StockCurrentConverter)
     .doc(stock);
-  const portDoc = firestore
-    .collection(playerPortColName)
-    .withConverter(PlayerPortfolioConverter)
-    .doc(teamId);
   const transactionDoc = firestore
     .collection(transactionsColName)
     .withConverter(TransactionsConverter)
     .doc();
 
   return firestore.runTransaction(async (t) => {
-    const [stockData, portData] = (
-      await Promise.all([t.get(stockDoc), t.get(portDoc)])
-    ).map((d) => d.data()) as [IStockCurrentData, IPlayerPortfolio];
+    const [stockData, playerData] = (
+      await Promise.all([t.get(stockDoc), t.get(playerDoc)])
+    ).map((d) => d.data()) as [IStockCurrentData, IPlayerData];
     const amount = stockData.value * volume;
 
     if (
-      !Object.prototype.hasOwnProperty.call(portData, stock) ||
-      portData[stock].volume < volume
+      !Object.prototype.hasOwnProperty.call(playerData, stock) ||
+      playerData.portfolio[stock].volume < volume
     ) {
       throw new Error(`Insufficient Stocks`);
     } else {
       t.update(playerDoc, {
         balance: FieldValue.increment(amount),
         valuation: FieldValue.increment(-amount),
-      });
-      t.update(portDoc, {
-        [`${stock}.volume`]: FieldValue.increment(-volume),
-        [`${stock}.totalValue`]: FieldValue.increment(-amount),
+        [`portfolio.${stock}`]: { volume: FieldValue.increment(-volume) },
       });
       t.set(transactionDoc, {
         teamId,

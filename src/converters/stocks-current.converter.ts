@@ -7,7 +7,6 @@ import type {
 export interface IStockCurrentData {
   value: number;
   volTraded: number;
-  maxVolTrad: number;
 }
 
 export const StockCurrentConverter: FirestoreDataConverter<IStockCurrentData> =

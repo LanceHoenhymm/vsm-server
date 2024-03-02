@@ -7,7 +7,6 @@ import type {
 export interface IPlayerData {
   balance: number;
   valuation: number;
-  total: number;
   powercards: {
     muft: 'unused' | 'active' | 'used';
     options: {
@@ -16,6 +15,11 @@ export interface IPlayerData {
       lockedPrice: number | null;
     };
     insider: 'unused' | 'used';
+  };
+  portfolio: {
+    [name: string]: {
+      volume: number;
+    };
   };
 }
 

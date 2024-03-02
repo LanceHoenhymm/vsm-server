@@ -8,6 +8,7 @@ import {
   initialGameRoundNo,
   initialGameStage,
   defaultFirstStage,
+  type IGameState,
 } from './game-config';
 import { registerGameRoundHandler } from './handlers/game-round-handlers';
 
@@ -15,7 +16,7 @@ export const gameEmitter = new EventEmitter();
 
 let roundChanged: boolean = true;
 
-const state = {
+const state: IGameState = {
   roundNo: initialGameRoundNo,
   stage: initialGameStage,
 };
@@ -41,7 +42,7 @@ export function getState() {
 
 export function initGame(startTime: number) {
   const endTime = startTime + gameRunTime;
-  registerGameRoundHandler(gameEmitter);
+  registerGameRoundHandler(gameEmitter, getState);
 
   function gameLoop() {
     const now = getUnixTime();

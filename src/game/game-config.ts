@@ -1,6 +1,11 @@
 const Stages = ['TRADING_STAGE', 'CALCULATION_STAGE'] as const;
 type StageEnum = (typeof Stages)[number];
 
+interface IGameState {
+  roundNo: number;
+  stage: StageEnum;
+}
+
 const initialGameRoundNo = 1;
 const initialGameStage: StageEnum = 'TRADING_STAGE';
 const defaultFirstStage: StageEnum = 'TRADING_STAGE';
@@ -24,6 +29,7 @@ export {
   initialGameStage,
   initialGameRoundNo,
   StageEnum,
+  IGameState,
   Stages,
   defaultFirstStage,
   stageDurations,
