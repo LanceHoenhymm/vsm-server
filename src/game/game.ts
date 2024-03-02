@@ -9,6 +9,9 @@ import {
   initialGameStage,
   defaultFirstStage,
 } from './game-config';
+import { registerGameRoundHandler } from './handlers/game-round-handlers';
+
+export const gameEmitter = new EventEmitter();
 
 let roundChanged: boolean = true;
 
@@ -36,19 +39,20 @@ export function getState() {
   return { ...state } as const;
 }
 
-export function getGameLoop(emitter: EventEmitter, startTime: number) {
+export function initGame(startTime: number) {
   const endTime = startTime + gameRunTime;
+  registerGameRoundHandler(gameEmitter);
 
   function gameLoop() {
     const now = getUnixTime();
 
-    if (now > endTime) emitter.emit('game:end');
+    if (now > endTime) gameEmitter.emit('game:end');
     else {
       const currentStage = state.stage;
       const stageDuration = stageDurations[currentStage];
 
-      emitter.emit(`game:stage:${state.stage}`);
-      if (roundChanged) emitter.emit(`game:round`);
+      gameEmitter.emit(`game:stage:${state.stage}`);
+      if (roundChanged) gameEmitter.emit(`game:round`);
 
       setTimeout(() => {
         incrementStage();
@@ -56,5 +60,6 @@ export function getGameLoop(emitter: EventEmitter, startTime: number) {
       }, stageDuration * 1000);
     }
   }
-  return gameLoop;
+
+  gameLoop();
 }

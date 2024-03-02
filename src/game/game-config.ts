@@ -11,6 +11,7 @@ const stageDurations: Record<StageEnum, number> = {
   CALCULATION_STAGE: 1 * 60, // 1 minute
 };
 const gameRunTime = 3 * 60 * 60; // 3 hours
+const gameInitDelay = 120; // 2 minutes
 
 const startingAmount = 1000;
 const startingValuation = 0;
@@ -27,5 +28,6 @@ export {
   defaultFirstStage,
   stageDurations,
   gameRunTime,
+  gameInitDelay,
   muftMoneyAwarded,
 };

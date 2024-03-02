@@ -11,6 +11,17 @@ type ReqHandler<TReqBody> = RequestHandler<
 >;
 type ErrHandler = ErrorRequestHandler<object, AckResponse, object, object>;
 
+interface ServerStockEventHandler {
+  (args: object, callback: (ack: AckResponse) => void): void;
+}
+interface ServerPowercardEventHandler {
+  (callback: (ack: AckResponse) => void): void;
+}
+
+interface ServerGameInfoEventHandler {
+  (callback: (ack: AckResponse) => void): void;
+}
+
 interface RequestUserProp {
   teamId: string;
   admin: boolean;
