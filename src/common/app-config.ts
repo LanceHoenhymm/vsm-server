@@ -7,21 +7,19 @@ const serviceAccountConfig = {
   privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
 };
 
-const userAccountColName = 'users_test';
-const newsDataColName = 'game_data_test';
-const stocksDataColName = 'stocks_data_test';
+const newsDataColName = 'news_data_test';
 const playerDataColName = 'player_data_test';
-const playerPortColName = 'player_port_test';
+const stocksDataColName = 'stocks_data_test';
 const stocksCurrentColName = 'stocks_curr_test';
 const transactionsColName = 'transactions_test';
+const usersColName = 'users_test';
 
 export {
   serviceAccountConfig,
   newsDataColName,
   stocksDataColName,
-  userAccountColName,
+  usersColName,
   playerDataColName,
-  playerPortColName,
   stocksCurrentColName,
   transactionsColName,
 };

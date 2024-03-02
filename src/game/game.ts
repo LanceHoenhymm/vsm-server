@@ -1,15 +1,16 @@
 import EventEmitter from 'events';
 import { getUnixTime } from '../common/utils';
 import {
-  gameRunTime,
-  stageDurations,
-  Stages,
-  type StageEnum,
-  initialGameRoundNo,
-  initialGameStage,
-  defaultFirstStage,
   type IGameState,
-} from './game-config';
+  gameInitRoundNo,
+  gameInitStage,
+  gameDefaultFirstStage,
+  gameStages,
+  type StageEnum,
+  gameStageDurations,
+  gameRunTime,
+  gameInitDelay,
+} from '../common/game-config';
 import { registerGameRoundHandler } from './handlers/game-round-handlers';
 import { Server } from 'socket.io';
 
@@ -18,20 +19,20 @@ export const gameEmitter = new EventEmitter();
 let roundChanged: boolean = true;
 
 const state: IGameState = {
-  roundNo: initialGameRoundNo,
-  stage: initialGameStage,
+  roundNo: gameInitRoundNo,
+  stage: gameInitStage,
 };
 
 function getNextStage(currentStage: StageEnum) {
-  const currentIndex = Stages.indexOf(currentStage);
-  const nextStage = (currentIndex + 1) % Stages.length;
-  return Stages[nextStage];
+  const currentIndex = gameStages.indexOf(currentStage);
+  const nextStage = (currentIndex + 1) % gameStages.length;
+  return gameStages[nextStage];
 }
 
 function incrementStage() {
   roundChanged = false;
   state.stage = getNextStage(state.stage);
-  if (state.stage === defaultFirstStage) {
+  if (state.stage === gameDefaultFirstStage) {
     state.roundNo++;
     roundChanged = true;
   }
@@ -41,8 +42,8 @@ export function getState() {
   return { ...state } as const;
 }
 
-export function initGame(startTime: number, io: Server) {
-  const endTime = startTime + gameRunTime;
+export function initGame(io: Server) {
+  const endTime = getUnixTime() + gameInitDelay + gameRunTime;
   registerGameRoundHandler(gameEmitter, getState, io);
 
   function gameLoop() {
@@ -51,8 +52,9 @@ export function initGame(startTime: number, io: Server) {
     if (now > endTime) gameEmitter.emit('game:end');
     else {
       const currentStage = state.stage;
-      const stageDuration = stageDurations[currentStage];
+      const stageDuration = gameStageDurations[currentStage];
 
+      gameEmitter.emit('game:stage:update', getState());
       gameEmitter.emit(`game:stage:${state.stage}`);
       if (roundChanged) gameEmitter.emit(`game:round`);
 
@@ -63,5 +65,10 @@ export function initGame(startTime: number, io: Server) {
     }
   }
 
-  gameLoop();
+  setTimeout(() => {
+    gameEmitter.emit('game:on');
+    state.roundNo = 1;
+    state.stage = gameDefaultFirstStage;
+    gameLoop();
+  }, gameInitDelay * 1000);
 }

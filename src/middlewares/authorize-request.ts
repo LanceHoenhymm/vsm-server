@@ -6,7 +6,7 @@ export function authorizeRequest(
   res: Response,
   next: NextFunction,
 ) {
-  if (!req.user.admin) {
+  if (!req.player.admin) {
     throw new Unauthorized('Forbidden Endpoint');
   }
   next();

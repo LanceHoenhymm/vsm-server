@@ -15,7 +15,7 @@ export function authenticateRequest(
 
   try {
     const payload = verifyToken(authToken.split(' ')[1]);
-    req.user = payload.user;
+    req.player = payload.user;
 
     next();
   } catch {

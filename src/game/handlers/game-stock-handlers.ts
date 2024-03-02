@@ -30,7 +30,7 @@ export function buyStock(teamId: string, stock: string, volume: number) {
   const stockDataDoc = firestore
     .collection(stocksDataColName)
     .withConverter(StockDataConverter)
-    .doc(stock);
+    .doc(`R${getState().roundNo}`);
   const transactionDoc = firestore
     .collection(transactionsColName)
     .withConverter(TransactionsConverter)

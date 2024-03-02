@@ -11,38 +11,21 @@ type ReqHandler<TReqBody> = RequestHandler<
 >;
 type ErrHandler = ErrorRequestHandler<object, AckResponse, object, object>;
 
-interface ServerStockEventHandler {
-  (args: object, callback: (ack: AckResponse) => void): void;
-}
-interface ServerPowercardEventHandler {
-  (callback: (ack: AckResponse) => void): void;
-}
-
-interface ServerGameInfoEventHandler {
-  (callback: (ack: AckResponse) => void): void;
-}
-
 interface RequestUserProp {
   teamId: string;
   admin: boolean;
 }
 
-declare module 'express' {
-  interface Request {
-    user: RequestUserProp;
+declare global {
+  namespace Express {
+    interface Request {
+      player: RequestUserProp;
+    }
   }
 }
 
 declare module 'jsonwebtoken' {
   interface JwtPayload {
     user: RequestUserProp;
-  }
-}
-
-declare module 'socket.io' {
-  interface Socket {
-    player: {
-      teamId: string;
-    };
   }
 }

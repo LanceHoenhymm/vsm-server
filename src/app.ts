@@ -8,13 +8,10 @@ import { Server } from 'socket.io';
 import { createServer } from 'http';
 
 import { initGame } from './game/game';
-import { getUnixTime, verifyToken } from './common/utils';
-
-import { registerStockHandlers } from './gateways/stocks.gateway';
-import { registerGameInfoHandler } from './gateways/game-info.gateway';
+import { verifyToken } from './common/utils';
 
 import { authRouter } from './controllers/auth/auth.router';
-import { gameInitDelay } from './game/game-config';
+import { gameRouter } from './controllers/game/game.router';
 
 const port = process.env.PORT ?? 8080;
 const app = express();
@@ -24,7 +21,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: '*',
   },
-  path: '/game',
+  path: '/game-updates',
 });
 
 app.use(express.json());
@@ -38,6 +35,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRouter);
+app.use('/game', gameRouter);
 
 io.engine.use(logger('dev'));
 io.use((socket, next) => {
@@ -51,16 +49,10 @@ io.use((socket, next) => {
   next();
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected!');
-  registerStockHandlers(io, socket);
-  registerGameInfoHandler(io, socket);
-});
-
 httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);
 });
 
-initGame(getUnixTime() + gameInitDelay, io);
+initGame(io);
 
-export { app, httpServer };
+export { app, httpServer, io };

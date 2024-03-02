@@ -14,7 +14,7 @@ import {
 } from '../../converters';
 import { getFirestoreDb } from '../../services/firebase';
 import { getState } from '../game';
-import { muftMoneyAwarded } from '../game-config';
+import { muftMoneyAwarded } from '../../common/game-config';
 
 export async function usePowercardInsider(teamId: string) {
   const firestore = getFirestoreDb();
