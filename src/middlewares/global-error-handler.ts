@@ -2,7 +2,8 @@ import { ErrHandler } from '../types';
 import { ApplicationError } from '../errors';
 import { StatusCodes } from 'http-status-codes';
 
-export const globalErrorHandler: ErrHandler = function (err, req, res) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const globalErrorHandler: ErrHandler = function (err, req, res, next) {
   if (err instanceof ApplicationError) {
     res.status(err.statusCode).json({
       status: 'Failure',
