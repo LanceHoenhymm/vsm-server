@@ -6,8 +6,8 @@ interface IGameState {
   stage: StageEnum;
 }
 
-const gameInitRoundNo = 0;
-const gameInitStage: StageEnum = 'CALCULATION_STAGE';
+const gameInitRoundNo = 1;
+const gameInitStage: StageEnum = 'TRADING_STAGE';
 const gameDefaultFirstStage: StageEnum = 'TRADING_STAGE';
 
 // Time is in Seconds
