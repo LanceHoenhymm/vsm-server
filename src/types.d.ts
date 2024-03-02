@@ -25,7 +25,5 @@ declare global {
 }
 
 declare module 'jsonwebtoken' {
-  interface JwtPayload {
-    user: RequestUserProp;
-  }
+  interface JwtPayload extends RequestUserProp {}
 }
