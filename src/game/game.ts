@@ -11,6 +11,7 @@ import {
   type IGameState,
 } from './game-config';
 import { registerGameRoundHandler } from './handlers/game-round-handlers';
+import { Server } from 'socket.io';
 
 export const gameEmitter = new EventEmitter();
 
@@ -40,9 +41,9 @@ export function getState() {
   return { ...state } as const;
 }
 
-export function initGame(startTime: number) {
+export function initGame(startTime: number, io: Server) {
   const endTime = startTime + gameRunTime;
-  registerGameRoundHandler(gameEmitter, getState);
+  registerGameRoundHandler(gameEmitter, getState, io);
 
   function gameLoop() {
     const now = getUnixTime();

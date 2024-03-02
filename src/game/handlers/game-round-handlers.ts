@@ -1,8 +1,10 @@
 import EventEmitter from 'events';
+import { Server } from 'socket.io';
 import {
   stocksCurrentColName,
   stocksDataColName,
   playerDataColName,
+  newsDataColName,
 } from '../../common/app-config';
 import {
   IPlayerData,
@@ -11,13 +13,32 @@ import {
   PlayerDataConverter,
   StockCurrentConverter,
   StockDataConverter,
+  NewsDataConverter,
 } from '../../converters';
 import { getFirestoreDb } from '../../services/firebase';
 import { IGameState, muftMoneyAwarded } from '../game-config';
 import { FieldValue } from 'firebase-admin/firestore';
 
-function onRoundChange() {
-  console.log('every round');
+function sendNews(stateFn: () => IGameState) {
+  return getFirestoreDb()
+    .collection(newsDataColName)
+    .withConverter(NewsDataConverter)
+    .doc(`R${stateFn().roundNo}`)
+    .get()
+    .then((doc) => doc.data()!)
+    .then((data) => Object.values(data).filter((n) => !n.forInsider));
+}
+
+function onTradingStage(stateFn: () => IGameState, io: Server) {
+  return async function () {
+    io.emit('game:TRADING_STAGE');
+    try {
+      const news = await sendNews(stateFn);
+      io.emit('game:news', news);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }
 
 function calculateStockPrice(
@@ -85,7 +106,7 @@ async function handlePowerCardUse(
   }
 }
 
-async function updatePortfolioValuation(
+function updatePortfolioValuation(
   player: FirebaseFirestore.QueryDocumentSnapshot<IPlayerData>,
   stockData: (IStockCurrentData & { id: string })[],
 ) {
@@ -97,7 +118,7 @@ async function updatePortfolioValuation(
     valuation += playerData.portfolio[stock].volume * currentValue;
   }
 
-  await player.ref.update({
+  return player.ref.update({
     valuation: valuation,
   });
 }
@@ -116,7 +137,8 @@ async function updatePlayersData() {
   ).docs.map(function (doc) {
     return { id: doc.id, ...doc.data() };
   });
-  const promises: Promise<void>[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const promises: Promise<any>[] = [];
 
   players.forEach((player) => {
     promises.push(updatePortfolioValuation(player, stockData));
@@ -126,8 +148,9 @@ async function updatePlayersData() {
   await Promise.all(promises);
 }
 
-function onCalculationStage(stateFn: () => IGameState) {
+function onCalculationStage(stateFn: () => IGameState, io: Server) {
   return async function () {
+    io.emit('game:CALCULATION_STAGE');
     try {
       await updateStockPrices(stateFn);
       await updatePlayersData();
@@ -140,7 +163,14 @@ function onCalculationStage(stateFn: () => IGameState) {
 export function registerGameRoundHandler(
   emitter: EventEmitter,
   stateFunction: () => IGameState,
+  io: Server,
 ) {
-  emitter.on('game:stage:CALCULATION_STAGE', onCalculationStage(stateFunction));
-  emitter.on('game:round', onRoundChange);
+  emitter.on(
+    'game:stage:CALCULATION_STAGE',
+    onCalculationStage(stateFunction, io),
+  );
+  emitter.on('game:stage:TRADING_STAGE', onTradingStage(stateFunction, io));
+  emitter.on('game:round', () => {
+    io.emit('game:round');
+  });
 }

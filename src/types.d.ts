@@ -38,3 +38,11 @@ declare module 'jsonwebtoken' {
     user: RequestUserProp;
   }
 }
+
+declare module 'socket.io' {
+  interface Socket {
+    player: {
+      teamId: string;
+    };
+  }
+}

@@ -2,40 +2,20 @@ import { getFirestoreDb } from '../../services/firebase';
 import { User } from '../../converters';
 import { userAccountColName } from '../../common/app-config';
 import { createToken, getHash } from '../../common/utils';
-import { setupPlayer } from './helpers/auth.helpers';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequest, NotFound, Unauthorized } from '../../errors';
 import type { ReqHandler } from '../../types';
-import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto';
-
-type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
-
-export const registerUser: RegisterUserHandler = async function (req, res) {
-  const userCollection = getFirestoreDb().collection(userAccountColName);
-  const { email, password, p1Name, p2Name } = req.body;
-
-  const hashEmail = getHash(email);
-  const emailAlreadyExist = (await userCollection.doc(hashEmail).get()).exists;
-
-  if (emailAlreadyExist) {
-    throw new BadRequest('Invalid Email: User Already Exists');
-  }
-
-  await userCollection
-    .withConverter(User.converter)
-    .doc(hashEmail)
-    .set(new User(email, password, p1Name, p2Name));
-
-  res.status(StatusCodes.CREATED).json({
-    status: 'Success',
-  });
-};
+import type { ILoginUserDto } from './auth.controller.dto';
 
 type LoginUserHandler = ReqHandler<ILoginUserDto>;
 
 export const loginUser: LoginUserHandler = async function (req, res) {
   const userCollection = getFirestoreDb().collection(userAccountColName);
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new BadRequest('Email and Password are Required');
+  }
 
   const hashEmail = getHash(email);
   const userDocSnap = await userCollection
@@ -54,7 +34,7 @@ export const loginUser: LoginUserHandler = async function (req, res) {
   }
 
   if (!userDoc.admin) {
-    await setupPlayer(hashEmail);
+    console.log('User Logged in');
   }
 
   const token = createToken({ teamId: hashEmail, admin: userDoc.admin });
