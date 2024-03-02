@@ -54,8 +54,9 @@ export const getStocks: InfoEndpointHandler = async function (req, res) {
   });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getLeaderboard: InfoEndpointHandler = async function (req, res) {};
+export const getLeaderboard: InfoEndpointHandler = function (req, res) {
+  res.status(StatusCodes.OK).json({ status: 'Success', data: [] });
+};
 
 export const getGameInfo: InfoEndpointHandler = function (req, res) {
   const { roundNo, stage } = getState();

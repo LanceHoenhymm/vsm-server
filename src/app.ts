@@ -53,6 +53,6 @@ httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);
 });
 
-initGame(io);
+// initGame(io);
 
 export { app, httpServer, io };
