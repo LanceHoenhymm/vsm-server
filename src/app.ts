@@ -13,7 +13,8 @@ import { getUnixTime, verifyToken } from './common/utils';
 import { registerStockHandlers } from './gateways/stocks.gateway';
 import { registerGameInfoHandler } from './gateways/game-info.gateway';
 
-import AuthRouter from './controllers/auth/auth.router';
+import { authRouter } from './controllers/auth/auth.router';
+import { gameInitDelay } from './game/game-config';
 
 const port = process.env.PORT ?? 8080;
 const app = express();
@@ -35,7 +36,7 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello, World</h1>');
 });
 
-app.use('/auth', AuthRouter);
+app.use('/auth', authRouter);
 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token as string;
@@ -58,6 +59,6 @@ httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);
 });
 
-initGame(getUnixTime(), io);
+initGame(getUnixTime() + gameInitDelay, io);
 
 export { app, httpServer };

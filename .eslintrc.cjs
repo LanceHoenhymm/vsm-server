@@ -6,15 +6,14 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended-type-checked',
-    'plugin:jest/recommended',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: ['./tsconfig.eslint.json'],
+    project: true,
   },
-  plugins: ['@typescript-eslint', 'jest'],
+  plugins: ['@typescript-eslint'],
   root: true,
   rules: {
     'prefer-const': 'warn',
@@ -26,17 +25,9 @@ module.exports = {
   },
   ignorePatterns: [
     '.eslintrc.cjs',
-    'jest.config.cjs',
-    'e2e/jest-e2e.config.cjs',
     '.prettierrc.cjs',
     'node_modules',
     'dist',
     'old',
-  ],
-  overrides: [
-    {
-      files: ['e2e', 'src/**/*.spec.ts'],
-      env: { jest: true },
-    },
   ],
 };

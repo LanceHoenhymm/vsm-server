@@ -5,7 +5,29 @@ import { createToken, getHash } from '../../common/utils';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequest, NotFound, Unauthorized } from '../../errors';
 import type { ReqHandler } from '../../types';
-import type { ILoginUserDto } from './auth.controller.dto';
+import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto';
+
+type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
+
+export const registerUser: RegisterUserHandler = async function (req, res) {
+  const userCollection = getFirestoreDb().collection(userAccountColName);
+  const { email, password, p1Name, p2Name } = req.body;
+  const hashEmail = getHash(email);
+  const emailAlreadyExist = (await userCollection.doc(hashEmail).get()).exists;
+
+  if (emailAlreadyExist) {
+    throw new BadRequest('Invalid Email: User Already Exists');
+  }
+
+  await userCollection
+    .withConverter(User.converter)
+    .doc(hashEmail)
+    .set(new User(email, password, p1Name, p2Name));
+
+  res.status(StatusCodes.CREATED).json({
+    status: 'Success',
+  });
+};
 
 type LoginUserHandler = ReqHandler<ILoginUserDto>;
 
