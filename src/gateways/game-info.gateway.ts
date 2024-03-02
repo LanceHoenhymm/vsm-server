@@ -1,10 +1,10 @@
-import { type Server, type Socket } from 'socket.io';
+import type { Server, Socket } from 'socket.io';
 import {
   getBalence,
   getPortfolio,
   getLeaderboard,
 } from '../game/handlers/game-info-handlers';
-import { ServerGameInfoEventHandler } from '../types';
+import type { ServerGameInfoEventHandler } from '../types';
 
 export function registerGameInfoHandler(io: Server, socket: Socket) {
   const onLeaderboard: ServerGameInfoEventHandler = (callback) => {

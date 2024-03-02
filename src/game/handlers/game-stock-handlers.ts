@@ -6,9 +6,9 @@ import {
   transactionsColName,
 } from '../../common/app-config';
 import {
-  IPlayerData,
-  IStockCurrentData,
-  IStockData,
+  type IPlayerData,
+  type IStockCurrentData,
+  type IStockData,
   PlayerDataConverter,
   StockCurrentConverter,
   StockDataConverter,

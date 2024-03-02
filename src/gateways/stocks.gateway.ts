@@ -1,5 +1,5 @@
-import { type Server, type Socket } from 'socket.io';
-import { ServerStockEventHandler } from '../types';
+import type { Server, Socket } from 'socket.io';
+import type { ServerStockEventHandler } from '../types';
 
 export function registerStockHandlers(io: Server, socket: Socket) {
   type StockData = { stock: string; amount: number };

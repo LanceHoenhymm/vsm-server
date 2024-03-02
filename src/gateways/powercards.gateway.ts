@@ -1,5 +1,5 @@
-import { type Server, type Socket } from 'socket.io';
-import { ServerPowercardEventHandler } from '../types';
+import type { Server, Socket } from 'socket.io';
+import type { ServerPowercardEventHandler } from '../types';
 
 export function registerPowercardHandler(io: Server, socket: Socket) {
   const onMuft: ServerPowercardEventHandler = (callback) => {

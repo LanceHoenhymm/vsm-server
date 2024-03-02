@@ -5,12 +5,12 @@ import {
   stocksCurrentColName,
 } from '../../common/app-config';
 import {
-  IPlayerData,
-  IStockCurrentData,
+  type IPlayerData,
+  type IStockCurrentData,
+  type INewsData,
   PlayerDataConverter,
   StockCurrentConverter,
   NewsDataConverter,
-  INewsData,
 } from '../../converters';
 import { getFirestoreDb } from '../../services/firebase';
 import { getState } from '../game';

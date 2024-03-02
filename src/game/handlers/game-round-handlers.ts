@@ -7,9 +7,9 @@ import {
   newsDataColName,
 } from '../../common/app-config';
 import {
-  IPlayerData,
-  IStockData,
-  IStockCurrentData,
+  type IPlayerData,
+  type IStockData,
+  type IStockCurrentData,
   PlayerDataConverter,
   StockCurrentConverter,
   StockDataConverter,

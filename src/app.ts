@@ -24,6 +24,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: '*',
   },
+  path: '/game',
 });
 
 app.use(express.json());
@@ -38,6 +39,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRouter);
 
+io.engine.use(logger('dev'));
 io.use((socket, next) => {
   const token = socket.handshake.auth.token as string;
   try {

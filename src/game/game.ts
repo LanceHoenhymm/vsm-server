@@ -4,7 +4,7 @@ import {
   gameRunTime,
   stageDurations,
   Stages,
-  StageEnum,
+  type StageEnum,
   initialGameRoundNo,
   initialGameStage,
   defaultFirstStage,

@@ -12,6 +12,11 @@ type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
 export const registerUser: RegisterUserHandler = async function (req, res) {
   const userCollection = getFirestoreDb().collection(userAccountColName);
   const { email, password, p1Name, p2Name } = req.body;
+
+  if (!email || !password || !p1Name) {
+    throw new BadRequest('Email, Password, and Player 1 Name are Required');
+  }
+
   const hashEmail = getHash(email);
   const emailAlreadyExist = (await userCollection.doc(hashEmail).get()).exists;
 
