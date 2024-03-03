@@ -18,6 +18,7 @@ export const buyStockHandler: BuySellHandler = function (req, res) {
   if (!stock || !amount) {
     throw new BadRequest('Stock Name or Amount Invalid');
   }
+  console.log(stock, amount);
 
   buyStock(teamId, stock, amount)
     .then(() => {

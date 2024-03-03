@@ -51,12 +51,15 @@ export function buyStock(teamId: string, stock: string, volume: number) {
     } else if (stockCurrData.volTraded >= stockData[stock].maxVolTrad) {
       throw new Error('Max Transaction Reached');
     } else {
+      console.log('No error here');
       t.update(stockCurrDoc, { volTraded: FieldValue.increment(volume) });
+      console.log('No error');
       t.update(playerDoc, {
         balance: FieldValue.increment(-amount),
         valuation: FieldValue.increment(amount),
         [`portfolio.${stock}`]: { volume: FieldValue.increment(volume) },
       });
+      console.log('No error still');
       t.set(transactionDoc, {
         teamId,
         stock,
