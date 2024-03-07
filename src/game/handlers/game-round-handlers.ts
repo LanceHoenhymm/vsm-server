@@ -51,6 +51,7 @@ function onCalculationStage(stateFn: () => IGameState) {
 }
 
 async function updateStockPrices(stateFn: () => IGameState) {
+  const stockCurrData = new Map<string, { value: number; volTraded: number }>();
   const firestore = getFirestoreDb();
   const stockData = (
     await firestore
@@ -62,13 +63,13 @@ async function updateStockPrices(stateFn: () => IGameState) {
   const stockCurrColRef = firestore
     .collection(stocksCurrentColName)
     .withConverter(StockCurrentConverter);
-  const stockCurrData = (await stockCurrColRef.get()).docs.map(function (doc) {
-    return { id: doc.id, ...doc.data() };
+  (await stockCurrColRef.get()).docs.forEach(function (doc) {
+    stockCurrData.set(doc.id, doc.data());
   });
   const batch = firestore.batch();
 
   for (const stock in stockData) {
-    const { value, volTraded } = stockCurrData.find((s) => s.id === stock)!;
+    const { value, volTraded } = stockCurrData.get(stock)!;
     const { bpc, maxVolTrad } = stockData[stock];
     const newValue = calculateStockPrice(bpc, value, volTraded, maxVolTrad);
     batch.update(stockCurrColRef.doc(stock), { value: newValue });
@@ -90,13 +91,14 @@ function calculateStockPrice(
 
 async function updatePlayerPortfolioValuation() {
   const firestore = getFirestoreDb();
-  const stockData = (
+  const stockData = new Map<string, { value: number; volTraded: number }>();
+  (
     await firestore
       .collection(stocksCurrentColName)
       .withConverter(StockCurrentConverter)
       .get()
-  ).docs.map(function (doc) {
-    return { id: doc.id, ...doc.data() };
+  ).docs.forEach(function (doc) {
+    stockData.set(doc.id, doc.data());
   });
   const players = await firestore
     .collection(playerDataColName)
@@ -109,7 +111,7 @@ async function updatePlayerPortfolioValuation() {
     let valuation = 0;
 
     for (const stock in playerData.portfolio) {
-      const currentValue = stockData.find((s) => s.id === stock)!.value;
+      const currentValue = stockData.get(stock)!.value;
       valuation += playerData.portfolio[stock].volume * currentValue;
     }
 

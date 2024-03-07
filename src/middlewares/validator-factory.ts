@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import type { Schema } from 'zod';
 import { BadRequest } from '../errors';
 
-export function validatorFactory(schema: Schema) {
+export function validatorFactory<T>(schema: Schema<T>) {
   return function (req: Request, res: Response, next: NextFunction) {
     const result = schema.safeParse(req.body);
 
@@ -12,6 +12,7 @@ export function validatorFactory(schema: Schema) {
       throw new BadRequest('Invalid Input', { problems });
     }
 
+    req.body = result.data;
     next();
   };
 }

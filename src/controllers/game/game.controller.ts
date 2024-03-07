@@ -7,7 +7,7 @@ import { BadRequest, Unauthorized } from '../../errors';
 
 type BuySellHandler = ReqHandler<IBuySellDto>;
 
-export const buyStockHandler: BuySellHandler = function (req, res) {
+export const buyStockHandler: BuySellHandler = async function (req, res) {
   if (getState().stage != 'TRADING_STAGE') {
     throw new Unauthorized('Not Trading Stage');
   }
@@ -18,24 +18,26 @@ export const buyStockHandler: BuySellHandler = function (req, res) {
   if (!stock || !amount) {
     throw new BadRequest('Stock Name or Amount Invalid');
   }
-  console.log(stock, amount);
 
-  buyStock(teamId, stock, amount)
-    .then(() => {
-      res.status(StatusCodes.OK).json({
-        status: 'Success',
-        data: { msg: `${amount} of ${stock} bought` },
-      });
-    })
-    .catch((err) => {
-      res
-        .status(StatusCodes.IM_A_TEAPOT)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        .json({ status: 'Failure', data: { err } });
+  try {
+    await buyStock(teamId, stock, amount);
+
+    res.status(StatusCodes.OK).json({
+      status: 'Success',
+      data: { msg: `${amount} stocks of ${stock} bought` },
     });
+  } catch (error) {
+    if (error instanceof Error) {
+      res
+        .status(StatusCodes.UNPROCESSABLE_ENTITY)
+        .json({ status: 'Failure', data: { msg: error.message } });
+    }
+
+    throw error;
+  }
 };
 
-export const sellStockHandler: BuySellHandler = function (req, res) {
+export const sellStockHandler: BuySellHandler = async function (req, res) {
   if (getState().stage != 'TRADING_STAGE') {
     throw new Unauthorized('Not Trading Stage');
   }
@@ -47,17 +49,20 @@ export const sellStockHandler: BuySellHandler = function (req, res) {
     throw new BadRequest('Stock Name or Amount Invalid');
   }
 
-  sellStock(teamId, stock, amount)
-    .then(() => {
-      res.status(StatusCodes.OK).json({
-        status: 'Success',
-        data: { msg: `${amount} of ${stock} sold` },
-      });
-    })
-    .catch((err) => {
-      res
-        .status(StatusCodes.IM_A_TEAPOT)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        .json({ status: 'Failure', data: { err } });
+  try {
+    await sellStock(teamId, stock, amount);
+
+    res.status(StatusCodes.OK).json({
+      status: 'Success',
+      data: { msg: `${amount} stocks of ${stock} sold` },
     });
+  } catch (error) {
+    if (error instanceof Error) {
+      res
+        .status(StatusCodes.UNPROCESSABLE_ENTITY)
+        .json({ status: 'Failure', data: { err: error.message } });
+    }
+
+    throw error;
+  }
 };

@@ -10,7 +10,7 @@
     "lint": "eslint --report-unused-disable-directives \"src/**/*.ts\"",
     "start": "tsx src/app.ts",
     "start:dev": "tsx watch --clear-screen=false src/app.ts",
-    "start:prod": "tsc && node dist/app"
+    "start:prod": "tsc && node dist/app.js"
   },
   "keywords": [],
   "author": "lanceHoenhymmm",

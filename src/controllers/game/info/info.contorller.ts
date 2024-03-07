@@ -4,12 +4,14 @@ import {
   newsDataColName,
   playerDataColName,
   stocksCurrentColName,
+  usersColName,
 } from '../../../common/app-config';
 import { getState } from '../../../game/game';
 import {
   NewsDataConverter,
   PlayerDataConverter,
   StockCurrentConverter,
+  User,
 } from '../../../converters';
 import { StatusCodes } from 'http-status-codes';
 
@@ -46,7 +48,9 @@ export const getStocks: InfoEndpointHandler = async function (req, res) {
       .collection(stocksCurrentColName)
       .withConverter(StockCurrentConverter)
       .get()
-  ).docs.map((d) => d.data().value);
+  ).docs.map(function (data) {
+    return { id: data.id, value: data.data().value };
+  });
 
   res.status(StatusCodes.OK).json({
     status: 'Success',
@@ -54,8 +58,38 @@ export const getStocks: InfoEndpointHandler = async function (req, res) {
   });
 };
 
-export const getLeaderboard: InfoEndpointHandler = function (req, res) {
-  res.status(StatusCodes.OK).json({ status: 'Success', data: [] });
+export const getLeaderboard: InfoEndpointHandler = async function (req, res) {
+  const playerWealth = new Map<string, number>();
+  const playerNames = new Map<string, string>();
+  const firestore = getFirestoreDb();
+
+  (
+    await firestore
+      .collection(playerDataColName)
+      .withConverter(PlayerDataConverter)
+      .get()
+  ).docs.forEach(function (data) {
+    const { valuation, balance } = data.data();
+    playerWealth.set(data.id, valuation + balance);
+  });
+  (
+    await firestore.collection(usersColName).withConverter(User.converter).get()
+  ).docs.forEach(function (data) {
+    const { p1Name, p2Name } = data.data();
+    playerNames.set(data.id, p1Name + (p2Name ? ` & ${p2Name}` : ''));
+  });
+
+  const leaderboard = Array.from(playerWealth.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(function ([id, wealth], i) {
+      return {
+        rank: i + 1,
+        name: playerNames.get(id)!,
+        wealth,
+      };
+    });
+
+  res.status(StatusCodes.OK).json({ status: 'Success', data: leaderboard });
 };
 
 export const getGameInfo: InfoEndpointHandler = function (req, res) {
@@ -100,23 +134,23 @@ export const getPortfolio: InfoEndpointHandler = async function (req, res) {
       .doc(req.player.teamId)
       .get()
   ).data()!;
-  const stockData = (
-    await firestore
-      .collection(stocksCurrentColName)
-      .withConverter(StockCurrentConverter)
-      .get()
-  ).docs.map(function (d) {
-    return { id: d.id, value: d.data().value };
-  });
+  const stockData = new Map<string, { value: number; volTraded: number }>(
+    (
+      await firestore
+        .collection(stocksCurrentColName)
+        .withConverter(StockCurrentConverter)
+        .get()
+    ).docs.map(function (d) {
+      return [d.id, d.data()];
+    }),
+  );
 
   const portfolio = [];
   for (const stock in playerData.portfolio) {
     portfolio.push({
       name: stock,
       volume: playerData.portfolio[stock].volume,
-      value:
-        stockData.find((s) => s.id === stock)!.value *
-        playerData.portfolio[stock].volume,
+      value: stockData.get(stock)!.value * playerData.portfolio[stock].volume,
     });
   }
 
