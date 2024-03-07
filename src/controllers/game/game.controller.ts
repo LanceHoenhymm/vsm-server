@@ -34,9 +34,9 @@ export const buyStockHandler: BuySellHandler = async function (req, res) {
       res
         .status(StatusCodes.UNPROCESSABLE_ENTITY)
         .json({ status: 'Failure', data: { msg: error.message } });
+    } else {
+      throw error;
     }
-
-    throw error;
   }
 };
 
@@ -64,8 +64,8 @@ export const sellStockHandler: BuySellHandler = async function (req, res) {
       res
         .status(StatusCodes.UNPROCESSABLE_ENTITY)
         .json({ status: 'Failure', data: { err: error.message } });
+    } else {
+      throw error;
     }
-
-    throw error;
   }
 };

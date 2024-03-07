@@ -46,25 +46,28 @@ export function buyStock(teamId: string, stock: string, volume: number) {
     ).map((d) => d.data()) as [IStockCurrentData, IPlayerData, IStockData];
     const amount = volume * stockCurrData.value;
 
-    if (amount > playerData.balance) {
+    if (playerData.balance <= 0 || playerData.balance < amount) {
       throw new Error('Insufficient Balance');
-    } else if (stockCurrData.volTraded >= stockData[stock].maxVolTrad) {
+    } else if (
+      stockCurrData.volTraded + volume >=
+      stockData[stock].maxVolTrad
+    ) {
       throw new Error('Max Transaction Reached');
     } else {
-      t.update(stockCurrDoc, { volTraded: FieldValue.increment(volume) });
-      t.update(playerDoc, {
-        balance: FieldValue.increment(-amount),
-        valuation: FieldValue.increment(amount),
-        [`portfolio.${stock}`]: { volume: FieldValue.increment(volume) },
-      });
-      t.set(transactionDoc, {
-        teamId,
-        stock,
-        volume,
-        amount,
-        type: 'buy',
-        round: getState().roundNo,
-      });
+      t.update(stockCurrDoc, { volTraded: FieldValue.increment(volume) })
+        .update(playerDoc, {
+          balance: FieldValue.increment(-amount),
+          valuation: FieldValue.increment(amount),
+          [`portfolio.${stock}.volume`]: FieldValue.increment(volume),
+        })
+        .set(transactionDoc, {
+          teamId,
+          stock,
+          volume,
+          amount,
+          type: 'buy',
+          round: getState().roundNo,
+        });
     }
   });
 }
@@ -92,6 +95,7 @@ export function sellStock(teamId: string, stock: string, volume: number) {
 
     if (
       !Object.prototype.hasOwnProperty.call(playerData.portfolio, stock) ||
+      playerData.portfolio[stock].volume <= 0 ||
       playerData.portfolio[stock].volume < volume
     ) {
       throw new Error(`Insufficient Stocks`);
@@ -99,9 +103,8 @@ export function sellStock(teamId: string, stock: string, volume: number) {
       t.update(playerDoc, {
         balance: FieldValue.increment(amount),
         valuation: FieldValue.increment(-amount),
-        [`portfolio.${stock}`]: { volume: FieldValue.increment(-volume) },
-      });
-      t.set(transactionDoc, {
+        [`portfolio.${stock}.volume`]: FieldValue.increment(-volume),
+      }).set(transactionDoc, {
         teamId,
         stock,
         volume,
