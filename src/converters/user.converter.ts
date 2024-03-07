@@ -3,7 +3,7 @@ import type {
   QueryDocumentSnapshot,
   FirestoreDataConverter,
 } from 'firebase-admin/firestore';
-import { getHash } from '../common/utils';
+import { getHash } from '../common/utils.js';
 
 interface IUser {
   email: string;

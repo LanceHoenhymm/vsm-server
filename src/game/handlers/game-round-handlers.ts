@@ -4,14 +4,14 @@ import {
   stocksCurrentColName,
   stocksDataColName,
   playerDataColName,
-} from '../../common/app-config';
+} from '../../common/app-config.js';
 import {
   PlayerDataConverter,
   StockCurrentConverter,
   StockDataConverter,
-} from '../../converters';
-import { getFirestoreDb } from '../../services/firebase';
-import { IGameState, muftMoneyAwarded } from '../../common/game-config';
+} from '../../converters/index.js';
+import { getFirestoreDb } from '../../services/firebase.js';
+import { IGameState, muftMoneyAwarded } from '../../common/game-config.js';
 import { FieldValue } from 'firebase-admin/firestore';
 
 export function registerGameRoundHandler(

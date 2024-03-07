@@ -1,5 +1,5 @@
-import { ErrHandler } from '../types';
-import { ApplicationError } from '../errors';
+import type { ErrHandler } from '../types';
+import { ApplicationError } from '../errors/index.js';
 import { StatusCodes } from 'http-status-codes';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

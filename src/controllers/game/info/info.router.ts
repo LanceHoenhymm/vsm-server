@@ -7,7 +7,7 @@ import {
   getProfile,
   getPortfolio,
   getBalence,
-} from './info.contorller';
+} from './info.contorller.js';
 
 export const infoRouter = Router();
 

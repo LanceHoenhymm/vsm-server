@@ -1,18 +1,18 @@
 import type { ReqHandler } from '../../../types';
-import { getFirestoreDb } from '../../../services/firebase';
+import { getFirestoreDb } from '../../../services/firebase.js';
 import {
   newsDataColName,
   playerDataColName,
   stocksCurrentColName,
   usersColName,
-} from '../../../common/app-config';
-import { getState } from '../../../game/game';
+} from '../../../common/app-config.js';
+import { getState } from '../../../game/game.js';
 import {
   NewsDataConverter,
   PlayerDataConverter,
   StockCurrentConverter,
   User,
-} from '../../../converters';
+} from '../../../converters/index.js';
 import { StatusCodes } from 'http-status-codes';
 
 type InfoEndpointHandler = ReqHandler<object>;

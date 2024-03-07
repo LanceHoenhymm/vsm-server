@@ -7,13 +7,13 @@ import logger from 'morgan';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 
-import { initGame } from './game/game';
-import { verifyToken } from './common/utils';
+import { initGame } from './game/game.js';
+import { verifyToken } from './common/utils.js';
 
-import { authRouter } from './controllers/auth/auth.router';
-import { gameRouter } from './controllers/game/game.router';
-import { authenticateRequest } from './middlewares/authenticate-request';
-import { globalErrorHandler } from './middlewares/global-error-handler';
+import { authRouter } from './controllers/auth/auth.router.js';
+import { gameRouter } from './controllers/game/game.router.js';
+import { authenticateRequest } from './middlewares/authenticate-request.js';
+import { globalErrorHandler } from './middlewares/global-error-handler.js';
 
 const port = process.env.PORT ?? 8080;
 const app = express();

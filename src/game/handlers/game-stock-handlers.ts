@@ -4,7 +4,7 @@ import {
   stocksCurrentColName,
   stocksDataColName,
   transactionsColName,
-} from '../../common/app-config';
+} from '../../common/app-config.js';
 import {
   type IPlayerData,
   type IStockCurrentData,
@@ -13,9 +13,9 @@ import {
   StockCurrentConverter,
   StockDataConverter,
   TransactionsConverter,
-} from '../../converters';
-import { getFirestoreDb } from '../../services/firebase';
-import { getState } from '../game';
+} from '../../converters/index.js';
+import { getFirestoreDb } from '../../services/firebase.js';
+import { getState } from '../game.js';
 
 export function buyStock(teamId: string, stock: string, volume: number) {
   const firestore = getFirestoreDb();

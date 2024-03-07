@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { infoRouter } from './info/info.router';
-import { buyStockHandler, sellStockHandler } from './game.controller';
-import { validatorFactory } from '../../middlewares/validator-factory';
-import { stockBuySellDtoSchema } from './game.controller.dto';
+import { infoRouter } from './info/info.router.js';
+import { buyStockHandler, sellStockHandler } from './game.controller.js';
+import { validatorFactory } from '../../middlewares/validator-factory.js';
+import { stockBuySellDtoSchema } from './game.controller.dto.js';
 
 export const gameRouter = Router();
 

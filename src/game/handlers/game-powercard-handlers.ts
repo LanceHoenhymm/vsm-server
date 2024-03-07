@@ -3,7 +3,7 @@ import {
   newsDataColName,
   playerDataColName,
   stocksCurrentColName,
-} from '../../common/app-config';
+} from '../../common/app-config.js';
 import {
   type IPlayerData,
   type IStockCurrentData,
@@ -11,10 +11,10 @@ import {
   PlayerDataConverter,
   StockCurrentConverter,
   NewsDataConverter,
-} from '../../converters';
-import { getFirestoreDb } from '../../services/firebase';
+} from '../../converters/index.js';
+import { getFirestoreDb } from '../../services/firebase.js';
 import { getState } from '../game';
-import { muftMoneyAwarded } from '../../common/game-config';
+import { muftMoneyAwarded } from '../../common/game-config.js';
 
 export async function usePowercardInsider(teamId: string) {
   const firestore = getFirestoreDb();

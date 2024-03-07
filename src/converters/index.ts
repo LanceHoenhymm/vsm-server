@@ -1,12 +1,15 @@
-export { User } from './user.converter';
-export { NewsDataConverter, type INewsData } from './news-data.converter';
-export { StockDataConverter, type IStockData } from './stock-data.converter';
-export { PlayerDataConverter, type IPlayerData } from './player-data.converter';
+export { User } from './user.converter.js';
+export { NewsDataConverter, type INewsData } from './news-data.converter.js';
+export { StockDataConverter, type IStockData } from './stock-data.converter.js';
+export {
+  PlayerDataConverter,
+  type IPlayerData,
+} from './player-data.converter.js';
 export {
   StockCurrentConverter,
   type IStockCurrentData,
-} from './stocks-current.converter';
+} from './stocks-current.converter.js';
 export {
   TransactionsConverter,
   type ITransaction,
-} from './transactions.converter';
+} from './transactions.converter.js';

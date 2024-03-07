@@ -1,9 +1,12 @@
 import type { ReqHandler } from '../../types';
-import { IBuySellDto } from './game.controller.dto';
-import { buyStock, sellStock } from '../../game/handlers/game-stock-handlers';
-import { getState } from '../../game/game';
+import { IBuySellDto } from './game.controller.dto.js';
+import {
+  buyStock,
+  sellStock,
+} from '../../game/handlers/game-stock-handlers.js';
+import { getState } from '../../game/game.js';
 import { StatusCodes } from 'http-status-codes';
-import { BadRequest, Unauthorized } from '../../errors';
+import { BadRequest, Unauthorized } from '../../errors/index.js';
 
 type BuySellHandler = ReqHandler<IBuySellDto>;
 

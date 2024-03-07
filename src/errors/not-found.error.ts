@@ -1,4 +1,4 @@
-import { ApplicationError } from './application.error';
+import { ApplicationError } from './application.error.js';
 import { StatusCodes } from 'http-status-codes';
 
 export class NotFound extends ApplicationError {

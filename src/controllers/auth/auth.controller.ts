@@ -1,11 +1,11 @@
-import { getFirestoreDb } from '../../services/firebase';
-import { User } from '../../converters';
-import { usersColName } from '../../common/app-config';
-import { createToken, getHash } from '../../common/utils';
+import { getFirestoreDb } from '../../services/firebase.js';
+import { User } from '../../converters/index.js';
+import { usersColName } from '../../common/app-config.js';
+import { createToken, getHash } from '../../common/utils.js';
 import { StatusCodes } from 'http-status-codes';
-import { BadRequest, NotFound, Unauthorized } from '../../errors';
+import { BadRequest, NotFound, Unauthorized } from '../../errors/index.js';
 import type { ReqHandler } from '../../types';
-import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto';
+import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto.js';
 
 type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
 

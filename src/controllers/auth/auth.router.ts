@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { validatorFactory } from '../../middlewares/validator-factory';
+import { validatorFactory } from '../../middlewares/validator-factory.js';
 import {
   loginUserDtoSchema,
   registerUserDtoSchema,
-} from './auth.controller.dto';
-import { loginUser, registerUser } from './auth.controller';
+} from './auth.controller.dto.js';
+import { loginUser, registerUser } from './auth.controller.js';
 
 export const authRouter = Router();
 

@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { getUnixTime } from '../common/utils';
+import { getUnixTime } from '../common/utils.js';
 import {
   type IGameState,
   gameInitRoundNo,
@@ -10,8 +10,8 @@ import {
   gameStageDurations,
   gameRunTime,
   gameInitDelay,
-} from '../common/game-config';
-import { registerGameRoundHandler } from './handlers/game-round-handlers';
+} from '../common/game-config.js';
+import { registerGameRoundHandler } from './handlers/game-round-handlers.js';
 import { Server } from 'socket.io';
 
 export const gameEmitter = new EventEmitter();

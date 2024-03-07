@@ -1,6 +1,6 @@
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
-import { serviceAccountConfig } from '../common/app-config';
+import { serviceAccountConfig } from '../common/app-config.js';
 
 let firestoreDB: Firestore | null = null;
 
