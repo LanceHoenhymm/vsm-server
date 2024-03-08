@@ -23,7 +23,6 @@ const io = new Server(httpServer, {
   cors: {
     origin: '*',
   },
-  path: '/game-updates',
 });
 
 app.use(express.json());
@@ -43,10 +42,11 @@ app.use(globalErrorHandler);
 
 io.engine.use(logger('dev'));
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token as string;
+  const token = (socket.handshake.headers['authorization'] ?? '').split(' ')[1];
   try {
     verifyToken(token);
   } catch {
+    console.log('Invalid Token');
     next(new Error('Invalid Token'));
     return;
   }
