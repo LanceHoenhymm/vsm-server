@@ -17,7 +17,7 @@ import {
 } from './middlewares/authenticate-request.js';
 import { globalErrorHandler } from './middlewares/global-error-handler.js';
 
-import { initGame } from './game/game.js';
+import { game, registerGameNotifier } from './game/game.js';
 
 const app = express();
 const httpServer = createServer(app);
@@ -54,6 +54,5 @@ httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);
 });
 
-initGame(io);
-
-export { app, httpServer, io };
+registerGameNotifier(io);
+game();

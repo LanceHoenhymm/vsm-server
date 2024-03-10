@@ -1,61 +1,49 @@
-import EventEmitter from 'events';
-import { Server } from 'socket.io';
+import { FieldValue } from 'firebase-admin/firestore';
 import {
   stocksCurrentColName,
   stocksDataColName,
   playerDataColName,
+  gameStateColName,
+  gameStateDocName,
 } from '../../common/app-config.js';
 import {
   PlayerDataConverter,
   StockCurrentConverter,
   StockDataConverter,
+  GameStateConverter,
 } from '../../converters/index.js';
 import { getFirestoreDb } from '../../services/firebase.js';
-import { IGameState, muftMoneyAwarded } from '../../common/game-config.js';
-import { FieldValue } from 'firebase-admin/firestore';
+import { muftMoneyAwarded } from '../../common/game-config.js';
+import type { IGameState } from '../../types';
 
-export function registerGameRoundHandler(
-  emitter: EventEmitter,
-  stateFunction: () => IGameState,
-  io: Server,
-) {
-  emitter.on('game:stage:CALCULATION_STAGE', onCalculationStage(stateFunction));
-
-  emitter.on('game:on', () => {
-    io.emit('game:on');
-  });
-  emitter.on('game:stage:TRADING_STAGE', () => {
-    io.emit('game:stage:TRADING_STAGE');
-  });
-  emitter.on('game:stage:CALCULATION_STAGE', () => {
-    io.emit('game:stage:CALCULATION_STAGE');
-  });
-  emitter.on('game:round', () => {
-    io.emit('game:round');
-  });
-  emitter.on('game:end', () => {
-    io.emit('game:end');
-  });
-}
-
-async function onStageChange(newGameState: IGameState) {
+export function getPersistedGameState() {
   const firebase = getFirestoreDb();
-  const gameStateDoc = firebase
+  return firebase
     .collection(gameStateColName)
     .withConverter(GameStateConverter)
-    .doc(gameStateDocName);
-
-  await gameStateDoc.set(newGameState);
+    .doc(gameStateDocName)
+    .get()
+    .then((doc) => doc.data());
 }
 
-async function updateStockPrices(stateFn: () => IGameState) {
+export async function persistGameState(newGameState: IGameState) {
+  const firebase = getFirestoreDb();
+  return firebase
+    .collection(gameStateColName)
+    .withConverter(GameStateConverter)
+    .doc(gameStateDocName)
+    .set(newGameState);
+}
+
+export async function updateStockPrices(gameState: IGameState) {
   const stockCurrData = new Map<string, { value: number; volTraded: number }>();
+  const listedStocks = new Array<string>();
   const firestore = getFirestoreDb();
   const stockData = (
     await firestore
       .collection(stocksDataColName)
       .withConverter(StockDataConverter)
-      .doc(`R${stateFn().roundNo}`)
+      .doc(`R${gameState.roundNo}`)
       .get()
   ).data()!;
   const stockCurrColRef = firestore
@@ -63,10 +51,11 @@ async function updateStockPrices(stateFn: () => IGameState) {
     .withConverter(StockCurrentConverter);
   (await stockCurrColRef.get()).docs.forEach(function (doc) {
     stockCurrData.set(doc.id, doc.data());
+    listedStocks.push(doc.id);
   });
   const batch = firestore.batch();
 
-  for (const stock in stockData) {
+  for (const stock of listedStocks) {
     const { value, volTraded } = stockCurrData.get(stock)!;
     const { bpc, maxVolTrad } = stockData[stock];
     const newValue = calculateStockPrice(bpc, value, volTraded, maxVolTrad);
@@ -87,7 +76,34 @@ function calculateStockPrice(
   return value * bpc * demand;
 }
 
-async function updatePlayerPortfolioValuation() {
+export async function enlistNewStocks(gameState: IGameState) {
+  const firestore = getFirestoreDb();
+  const stockData = (
+    await firestore
+      .collection(stocksDataColName)
+      .withConverter(StockDataConverter)
+      .doc(`R${gameState.roundNo}`)
+      .get()
+  ).data()!;
+  const stockCurrColRef = firestore
+    .collection(stocksCurrentColName)
+    .withConverter(StockCurrentConverter);
+  const unlisted = (await stockCurrColRef.get()).docs
+    .map((doc) => doc.id)
+    .filter((stock) => !Object.prototype.hasOwnProperty.call(stockData, stock));
+  const batch = firestore.batch();
+
+  unlisted.forEach(function (stock) {
+    batch.create(stockCurrColRef.doc(stock), {
+      value: stockData[stock].initialValue,
+      volTraded: 0,
+    });
+  });
+
+  await batch.commit();
+}
+
+export async function updatePlayerPortfolioValuation() {
   const firestore = getFirestoreDb();
   const stockData = new Map<string, { value: number; volTraded: number }>();
   (
@@ -119,7 +135,7 @@ async function updatePlayerPortfolioValuation() {
   await batch.commit();
 }
 
-async function updatePlayerPowerCardStatus() {
+export async function updatePlayerPowerCardStatus() {
   const firestore = getFirestoreDb();
   const players = await firestore
     .collection(playerDataColName)

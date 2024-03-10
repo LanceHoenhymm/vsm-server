@@ -1,74 +1,88 @@
 import EventEmitter from 'events';
-import { getUnixTime } from '../common/utils.js';
+import type { Server } from 'socket.io';
 import {
-  type IGameState,
-  gameInitRoundNo,
-  gameInitStage,
-  gameDefaultFirstStage,
-  gameStages,
-  type StageEnum,
-  gameStageDurations,
-  gameRunTime,
+  tradingRoundDuration,
   gameInitDelay,
+  maxGameRounds,
 } from '../common/game-config.js';
-import { registerGameRoundHandler } from './handlers/game-round-handlers.js';
-import { Server } from 'socket.io';
+import type { IGameState } from '../types';
+import {
+  persistGameState,
+  updateStockPrices,
+  enlistNewStocks,
+  updatePlayerPortfolioValuation,
+  updatePlayerPowerCardStatus,
+  // getPersistedGameState,
+} from './handlers/game-round-handlers.js';
+import { initEnlistStocks } from './game-init-helpers.js';
 
 export const gameEmitter = new EventEmitter();
 
-let roundChanged: boolean = true;
-
 const state: IGameState = {
-  roundNo: gameInitRoundNo,
-  stage: gameInitStage,
+  roundNo: 0,
+  stage: 'INVALID',
 };
-
-function getNextStage(currentStage: StageEnum) {
-  const currentIndex = gameStages.indexOf(currentStage);
-  const nextStage = (currentIndex + 1) % gameStages.length;
-  return gameStages[nextStage];
-}
-
-function incrementStage() {
-  roundChanged = false;
-  state.stage = getNextStage(state.stage);
-  if (state.stage === gameDefaultFirstStage) {
-    state.roundNo++;
-    roundChanged = true;
-  }
-}
 
 export function getState() {
   return { ...state } as const;
 }
 
-export function initGame(io: Server) {
-  const endTime = getUnixTime() + gameInitDelay + gameRunTime;
-  registerGameRoundHandler(gameEmitter, getState, io);
+gameEmitter.on('game:on', async () => {
+  // const pState = await getPersistedGameState();
+  // if (!pState) {
+  await initEnlistStocks();
+  //   return;
+  // }
 
-  function gameLoop() {
-    const now = getUnixTime();
+  // state.roundNo = pState.roundNo;
+  // state.stage = pState.stage;
+});
 
-    if (now > endTime) gameEmitter.emit('game:end');
-    else {
-      const currentStage = state.stage;
-      const stageDuration = gameStageDurations[currentStage];
-
-      gameEmitter.emit('game:stage:update', getState());
-      gameEmitter.emit(`game:stage:${state.stage}`);
-      if (roundChanged) gameEmitter.emit(`game:round`);
-
-      setTimeout(() => {
-        incrementStage();
-        gameLoop();
-      }, stageDuration * 1000);
-    }
-  }
-
+gameEmitter.on('game:stage:TRADING_STAGE', async () => {
+  await persistGameState(state);
   setTimeout(() => {
-    gameEmitter.emit('game:on');
+    state.stage = 'CALCULATION_STAGE';
+    gameEmitter.emit('game:stage:CALCULATION_STAGE');
+  }, tradingRoundDuration * 1000);
+});
+
+gameEmitter.on('game:stage:CALCULATION_STAGE', async () => {
+  await persistGameState(state);
+  await updateStockPrices(state);
+  await enlistNewStocks(state);
+  await updatePlayerPortfolioValuation();
+  await updatePlayerPowerCardStatus();
+
+  state.roundNo += 1;
+  state.stage = 'TRADING_STAGE';
+
+  if (state.roundNo >= maxGameRounds) {
+    gameEmitter.emit('game:end');
+    return;
+  }
+  gameEmitter.emit('game:stage:TRADING_STAGE');
+});
+
+export function registerGameNotifier(io: Server) {
+  gameEmitter.on('game:on', () => {
+    io.emit('game:on');
+  });
+  gameEmitter.on('game:stage:CALCULATION_STAGE', () => {
+    io.emit('game:stage:CALCULATION_STAGE');
+  });
+  gameEmitter.on('game:stage:TRADING_STAGE', () => {
+    io.emit('game:stage:TRADING_STAGE');
+  });
+  gameEmitter.on('game:end', () => {
+    io.emit('game:end');
+  });
+}
+
+export function game() {
+  gameEmitter.emit('game:on');
+  setTimeout(() => {
     state.roundNo = 1;
-    state.stage = gameDefaultFirstStage;
-    gameLoop();
+    state.stage = 'TRADING_STAGE';
+    gameEmitter.emit('game:stage:TRADING_STAGE');
   }, gameInitDelay * 1000);
 }
