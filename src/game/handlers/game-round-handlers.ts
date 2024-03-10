@@ -38,16 +38,14 @@ export function registerGameRoundHandler(
   });
 }
 
-function onCalculationStage(stateFn: () => IGameState) {
-  return async function () {
-    try {
-      await updateStockPrices(stateFn);
-      await updatePlayerPortfolioValuation();
-      await updatePlayerPowerCardStatus();
-    } catch (e) {
-      console.error(e);
-    }
-  };
+async function onStageChange(newGameState: IGameState) {
+  const firebase = getFirestoreDb();
+  const gameStateDoc = firebase
+    .collection(gameStateColName)
+    .withConverter(GameStateConverter)
+    .doc(gameStateDocName);
+
+  await gameStateDoc.set(newGameState);
 }
 
 async function updateStockPrices(stateFn: () => IGameState) {

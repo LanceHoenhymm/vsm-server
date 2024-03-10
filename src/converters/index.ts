@@ -13,3 +13,4 @@ export {
   TransactionsConverter,
   type ITransaction,
 } from './transactions.converter.js';
+export { GameStateConverter } from './game-state.converter.js';
