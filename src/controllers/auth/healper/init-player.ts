@@ -19,11 +19,6 @@ export async function initPlayer(teamId: string) {
   return playerDataColRef.doc(teamId).set({
     balance: startingAmount,
     valuation: startingValuation,
-    powercards: {
-      muft: 'unused',
-      options: { status: 'unused', forStock: null, lockedPrice: null },
-      insider: 'unused',
-    },
     portfolio: {
       NI: {
         volume: 20,

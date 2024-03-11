@@ -116,7 +116,6 @@ export const getProfile: InfoEndpointHandler = async function (req, res) {
   const profile = {
     balence: playerData.balance,
     valuation: playerData.valuation,
-    powercards: playerData.powercards,
   };
 
   res.status(StatusCodes.OK).json({
