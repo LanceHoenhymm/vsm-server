@@ -72,7 +72,7 @@ function calculateStockPrice(
 ) {
   const demand = volTraded / maxVolTrad;
   bpc = (100 + bpc) / 100;
-  return value * bpc * demand;
+  return value * (1 + demand) * bpc;
 }
 
 export async function updatePlayerPortfolioValuation() {

@@ -10,13 +10,13 @@ const serviceAccountConfig = {
   privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
 };
 
-const gameStateColName = 'game_state_test';
-const newsDataColName = 'news_data_test';
-const playerDataColName = 'player_data_test';
-const stocksDataColName = 'stocks_data_test';
-const stocksCurrentColName = 'stocks_curr_test';
-const transactionsColName = 'transactions_test';
-const usersColName = 'users_test';
+const gameStateColName = 'game_state';
+const newsDataColName = 'news_data';
+const playerDataColName = 'player_data';
+const stocksDataColName = 'stocks_data';
+const stocksCurrentColName = 'stocks_curr';
+const transactionsColName = 'transactions';
+const usersColName = 'users';
 
 const gameStateDocName = 'gameState';
 

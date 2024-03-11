@@ -8,13 +8,10 @@ const maxGameRounds = Number(process.env.MAX_GAME_ROUNDS);
 const startingAmount = 1000;
 const startingValuation = 0;
 
-const muftMoneyAwarded = 10000;
-
 export {
   startingAmount,
   startingValuation,
   maxGameRounds,
-  muftMoneyAwarded,
   tradingRoundDuration,
   gameInitDelay,
 };
