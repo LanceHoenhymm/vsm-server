@@ -11,10 +11,13 @@ import { port, allowedOrigin } from './common/app-config.js';
 
 import { authRouter } from './controllers/auth/auth.router.js';
 import { gameRouter } from './controllers/game/game.router.js';
+import { adminRouter } from './controllers/admin/admin.router.js';
+
 import {
   authenticateRequest,
   authenticateSocket,
 } from './middlewares/authenticate-request.js';
+import { authorizeRequest } from './middlewares/authorize-request.js';
 import { globalErrorHandler } from './middlewares/global-error-handler.js';
 
 import { game, registerGameNotifier } from './game/game.js';
@@ -43,6 +46,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRouter);
+app.use('/admin', authenticateRequest, authorizeRequest, adminRouter);
 app.use('/game', authenticateRequest, gameRouter);
 
 app.use(globalErrorHandler);
