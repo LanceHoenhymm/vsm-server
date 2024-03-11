@@ -2,7 +2,6 @@ import { FieldValue } from 'firebase-admin/firestore';
 import {
   playerDataColName,
   stocksCurrentColName,
-  stocksDataColName,
   transactionsColName,
 } from '../../common/app-config.js';
 import {
@@ -11,7 +10,6 @@ import {
   type IStockData,
   PlayerDataConverter,
   StockCurrentConverter,
-  StockDataConverter,
   TransactionsConverter,
 } from '../../converters/index.js';
 import { getFirestoreDb } from '../../services/firebase.js';
@@ -27,32 +25,19 @@ export function buyStock(teamId: string, stock: string, volume: number) {
     .collection(stocksCurrentColName)
     .withConverter(StockCurrentConverter)
     .doc(stock);
-  const stockDataDoc = firestore
-    .collection(stocksDataColName)
-    .withConverter(StockDataConverter)
-    .doc(`R${getState().roundNo}`);
   const transactionDoc = firestore
     .collection(transactionsColName)
     .withConverter(TransactionsConverter)
     .doc();
 
   return firestore.runTransaction(async (t) => {
-    const [stockCurrData, playerData, stockData] = (
-      await Promise.all([
-        t.get(stockCurrDoc),
-        t.get(playerDoc),
-        t.get(stockDataDoc),
-      ])
+    const [stockCurrData, playerData] = (
+      await Promise.all([t.get(stockCurrDoc), t.get(playerDoc)])
     ).map((d) => d.data()) as [IStockCurrentData, IPlayerData, IStockData];
     const amount = volume * stockCurrData.value;
 
     if (playerData.balance <= 0 || playerData.balance < amount) {
       throw new Error('Insufficient Balance');
-    } else if (
-      stockCurrData.volTraded + volume >=
-      stockData[stock].maxVolTrad
-    ) {
-      throw new Error('Max Transaction Reached');
     } else {
       t.update(stockCurrDoc, { volTraded: FieldValue.increment(volume) })
         .update(playerDoc, {

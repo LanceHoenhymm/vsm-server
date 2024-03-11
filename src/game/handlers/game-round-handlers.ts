@@ -55,24 +55,18 @@ export async function updateStockPrices(gameState: IGameState) {
   const batch = firestore.batch();
 
   for (const stock of listedStocks) {
-    const { value, volTraded } = stockCurrData.get(stock)!;
-    const { bpc, maxVolTrad } = stockData[stock];
-    const newValue = calculateStockPrice(bpc, value, volTraded, maxVolTrad);
+    const { value } = stockCurrData.get(stock)!;
+    const { bpc } = stockData[stock];
+    const newValue = calculateStockPrice(bpc, value);
     batch.update(stockCurrColRef.doc(stock), { value: newValue });
   }
 
   await batch.commit();
 }
 
-function calculateStockPrice(
-  bpc: number,
-  value: number,
-  volTraded: number,
-  maxVolTrad: number,
-) {
-  const demand = volTraded / maxVolTrad;
+function calculateStockPrice(bpc: number, value: number) {
   bpc = (100 + bpc) / 100;
-  return value * (1 + demand) * bpc;
+  return value * bpc;
 }
 
 export async function updatePlayerPortfolioValuation() {

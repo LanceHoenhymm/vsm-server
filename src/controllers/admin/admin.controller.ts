@@ -44,18 +44,14 @@ export const addStock: AddStocksHandler = async function (req, res) {
   const batch = firestore.batch();
   const { stockData } = req.body;
 
-  stockData.forEach(function (stockDocData) {
-    const stockDoc = stockDataColRef.doc(stockDocData.roundNo);
+  stockData.forEach(function (stockDocData, index) {
+    const stockDoc = stockDataColRef.doc(`R${index + 1}`);
     const stocksData = Object.fromEntries(
-      stockDocData.stocks.map(function (stock) {
-        return [
-          stock.id,
-          {
-            bpc: stock.bpc,
-            maxVolTrad: stock.maxVolTrad,
-            initialValue: stock.maxVolTrad,
-          },
-        ];
+      stockDocData.map(function (stock) {
+        const changes: Record<string, number> = { bpc: stock.bpc };
+        if (stock.freebies) changes.freebies = stock.freebies;
+        if (stock.initialValue) changes.initialValue = stock.initialValue;
+        return [stock.id, changes];
       }),
     );
     batch.create(stockDoc, stocksData);
