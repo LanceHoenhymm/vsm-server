@@ -1,6 +1,12 @@
-import { stocksCurrentColName, stocksDataColName } from '../common/app-config';
-import { StockCurrentConverter, StockDataConverter } from '../converters';
-import { getFirestoreDb } from '../services/firebase';
+import {
+  stocksCurrentColName,
+  stocksDataColName,
+} from '../common/app-config.js';
+import {
+  StockCurrentConverter,
+  StockDataConverter,
+} from '../converters/index.js';
+import { getFirestoreDb } from '../services/firebase.js';
 
 export async function initEnlistStocks() {
   const firestore = getFirestoreDb();
@@ -15,6 +21,8 @@ export async function initEnlistStocks() {
       .get()
   ).data();
   const batch = firestore.batch();
+
+  console.log('stockData:', stockData);
 
   for (const stock in stockData) {
     batch.create(stockCurrColRef.doc(stock), {
