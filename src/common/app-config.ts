@@ -20,7 +20,7 @@ const usersColName = 'users_test';
 
 const gameStateDocName = 'gameState';
 
-const cacheTime = '5 minutes';
+const cacheTime = process.env.CACHE_TIME ?? '5 minutes';
 
 export {
   port,

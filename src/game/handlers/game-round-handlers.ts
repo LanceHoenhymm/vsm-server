@@ -13,7 +13,7 @@ import {
   GameStateConverter,
 } from '../../converters/index.js';
 import { getFirestoreDb } from '../../services/firebase.js';
-import { muftMoneyAwarded } from '../../common/game-config.js';
+import { maxGameRounds, muftMoneyAwarded } from '../../common/game-config.js';
 import type { IGameState } from '../../types';
 
 export function getPersistedGameState() {
@@ -132,12 +132,17 @@ export async function updatePlayerPowerCardStatus() {
 }
 
 export async function enlistNewStocks(gameState: IGameState) {
+  const nextRound = gameState.roundNo + 1;
+  if (nextRound > maxGameRounds) {
+    return;
+  }
+
   const firestore = getFirestoreDb();
   const stockData = (
     await firestore
       .collection(stocksDataColName)
       .withConverter(StockDataConverter)
-      .doc(`R${gameState.roundNo}`)
+      .doc(`R${nextRound}`)
       .get()
   ).data()!;
   const stockCurrColRef = firestore
