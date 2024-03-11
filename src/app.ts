@@ -22,6 +22,8 @@ import { globalErrorHandler } from './middlewares/global-error-handler.js';
 
 import { game, registerGameNotifier } from './game/game.js';
 
+import { appState } from './common/app-config.js';
+
 const app = express();
 const httpServer = createServer(app);
 
@@ -58,5 +60,8 @@ httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);
 });
 
-registerGameNotifier(io);
-game();
+if (appState === 'production') {
+  console.log('Game is running now');
+  registerGameNotifier(io);
+  game();
+}

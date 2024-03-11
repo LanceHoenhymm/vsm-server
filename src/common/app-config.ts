@@ -21,6 +21,7 @@ const usersColName = 'users';
 const gameStateDocName = 'gameState';
 
 const cacheTime = process.env.CACHE_TIME ?? '5 minutes';
+const appState = process.env.APP_STATE ?? 'development';
 
 export {
   port,
@@ -35,4 +36,5 @@ export {
   usersColName,
   gameStateDocName,
   cacheTime,
+  appState,
 };
