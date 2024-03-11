@@ -11,7 +11,7 @@ export type IAddNewsRequestDto = z.infer<typeof addNewsRequestDtoSchema>;
 export const addStockRequestDtoSchema = z.object({
   stockData: z.array(
     z.object({
-      roundNo: z.coerce.number(),
+      roundNo: z.string().regex(/^R\d+$/),
       stocks: z.array(
         z.object({
           id: z.string(),

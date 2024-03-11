@@ -45,7 +45,7 @@ export const addStock: AddStocksHandler = async function (req, res) {
   const { stockData } = req.body;
 
   stockData.forEach(function (stockDocData) {
-    const stockDoc = stockDataColRef.doc(`R${stockDocData.roundNo}`);
+    const stockDoc = stockDataColRef.doc(stockDocData.roundNo);
     const stocksData = Object.fromEntries(
       stockDocData.stocks.map(function (stock) {
         return [

@@ -60,10 +60,6 @@ export const loginUser: LoginUserHandler = async function (req, res) {
     throw new Unauthorized('Wrong Email or Password');
   }
 
-  if (!userDoc.admin) {
-    console.log('User Logged in');
-  }
-
   const token = createToken({ teamId: hashEmail, admin: userDoc.admin });
 
   res.status(StatusCodes.CREATED).json({
