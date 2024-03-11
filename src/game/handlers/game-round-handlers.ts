@@ -1,4 +1,3 @@
-import { FieldValue } from 'firebase-admin/firestore';
 import {
   stocksCurrentColName,
   stocksDataColName,
@@ -13,7 +12,7 @@ import {
   GameStateConverter,
 } from '../../converters/index.js';
 import { getFirestoreDb } from '../../services/firebase.js';
-import { maxGameRounds, muftMoneyAwarded } from '../../common/game-config.js';
+import { maxGameRounds } from '../../common/game-config.js';
 import type { IGameState } from '../../types';
 
 export function getPersistedGameState() {
@@ -108,8 +107,26 @@ export async function updatePlayerPortfolioValuation() {
   await batch.commit();
 }
 
-export async function updatePlayerPowerCardStatus() {
+export async function giveFreebie(gameState: IGameState) {
+  const nextRound = gameState.roundNo + 1;
+  if (nextRound > maxGameRounds) {
+    return;
+  }
+
   const firestore = getFirestoreDb();
+  const stockData = (
+    await firestore
+      .collection(stocksDataColName)
+      .withConverter(StockDataConverter)
+      .doc(`R${nextRound}`)
+      .get()
+  ).data()!;
+  const stockCurrColRef = firestore
+    .collection(stocksCurrentColName)
+    .withConverter(StockCurrentConverter);
+  const unlisted = (await stockCurrColRef.get()).docs
+    .map((doc) => doc.id)
+    .filter((stock) => !Object.prototype.hasOwnProperty.call(stockData, stock));
   const players = await firestore
     .collection(playerDataColName)
     .withConverter(PlayerDataConverter)
@@ -117,15 +134,13 @@ export async function updatePlayerPowerCardStatus() {
   const batch = firestore.batch();
 
   players.forEach(function (player) {
-    const playerData = player.data();
-    if (playerData.powercards.muft === 'active') {
-      batch.update(player.ref, {
-        'powercards.muft': 'used',
-        balance: FieldValue.increment(-muftMoneyAwarded),
-      });
-    } else if (playerData.powercards.options.status === 'active') {
-      // pass
+    type freebieField = `portfolio.${string}`;
+    const freebies: Record<freebieField, { volume: number }> = {};
+    for (const stock of unlisted) {
+      freebies[`portfolio.${stock}`] = { volume: 20 };
     }
+
+    batch.update(player.ref, freebies);
   });
 
   await batch.commit();

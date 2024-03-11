@@ -11,7 +11,7 @@ import {
   updateStockPrices,
   enlistNewStocks,
   updatePlayerPortfolioValuation,
-  updatePlayerPowerCardStatus,
+  giveFreebie,
 } from './handlers/game-round-handlers.js';
 import { initEnlistStocks } from './game-init-helpers.js';
 
@@ -43,7 +43,7 @@ gameEmitter.on('game:stage:CALCULATION_STAGE', async () => {
   try {
     await updateStockPrices(state);
     await updatePlayerPortfolioValuation();
-    await updatePlayerPowerCardStatus();
+    await giveFreebie(state);
     await enlistNewStocks(state);
   } catch (error) {
     console.log(error);

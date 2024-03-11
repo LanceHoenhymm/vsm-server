@@ -24,6 +24,19 @@ export async function initPlayer(teamId: string) {
       options: { status: 'unused', forStock: null, lockedPrice: null },
       insider: 'unused',
     },
-    portfolio: {},
+    portfolio: {
+      NI: {
+        volume: 20,
+      },
+      CSS: {
+        volume: 20,
+      },
+      AID: {
+        volume: 20,
+      },
+      QTI: {
+        volume: 20,
+      },
+    },
   });
 }
