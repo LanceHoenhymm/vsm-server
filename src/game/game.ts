@@ -12,7 +12,6 @@ import {
   enlistNewStocks,
   updatePlayerPortfolioValuation,
   updatePlayerPowerCardStatus,
-  // getPersistedGameState,
 } from './handlers/game-round-handlers.js';
 import { initEnlistStocks } from './game-init-helpers.js';
 
@@ -28,18 +27,11 @@ export function getState() {
 }
 
 gameEmitter.on('game:on', async () => {
-  // const pState = await getPersistedGameState();
-  // if (!pState) {
   await initEnlistStocks();
-  //   return;
-  // }
-
-  // state.roundNo = pState.roundNo;
-  // state.stage = pState.stage;
 });
 
-gameEmitter.on('game:stage:TRADING_STAGE', async () => {
-  await persistGameState(state);
+gameEmitter.on('game:stage:TRADING_STAGE', () => {
+  void persistGameState(state);
   setTimeout(() => {
     state.stage = 'CALCULATION_STAGE';
     gameEmitter.emit('game:stage:CALCULATION_STAGE');
@@ -47,11 +39,15 @@ gameEmitter.on('game:stage:TRADING_STAGE', async () => {
 });
 
 gameEmitter.on('game:stage:CALCULATION_STAGE', async () => {
-  await persistGameState(state);
-  await updateStockPrices(state);
-  await enlistNewStocks(state);
-  await updatePlayerPortfolioValuation();
-  await updatePlayerPowerCardStatus();
+  void persistGameState(state);
+  try {
+    await updateStockPrices(state);
+    await updatePlayerPortfolioValuation();
+    await updatePlayerPowerCardStatus();
+    await enlistNewStocks(state);
+  } catch (error) {
+    console.log(error);
+  }
 
   state.roundNo += 1;
   state.stage = 'TRADING_STAGE';
@@ -61,6 +57,11 @@ gameEmitter.on('game:stage:CALCULATION_STAGE', async () => {
     return;
   }
   gameEmitter.emit('game:stage:TRADING_STAGE');
+});
+
+gameEmitter.on('game:end', () => {
+  state.stage = 'INVALID';
+  state.roundNo -= 1;
 });
 
 export function registerGameNotifier(io: Server) {

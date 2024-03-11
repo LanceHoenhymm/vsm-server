@@ -76,33 +76,6 @@ function calculateStockPrice(
   return value * bpc * demand;
 }
 
-export async function enlistNewStocks(gameState: IGameState) {
-  const firestore = getFirestoreDb();
-  const stockData = (
-    await firestore
-      .collection(stocksDataColName)
-      .withConverter(StockDataConverter)
-      .doc(`R${gameState.roundNo}`)
-      .get()
-  ).data()!;
-  const stockCurrColRef = firestore
-    .collection(stocksCurrentColName)
-    .withConverter(StockCurrentConverter);
-  const unlisted = (await stockCurrColRef.get()).docs
-    .map((doc) => doc.id)
-    .filter((stock) => !Object.prototype.hasOwnProperty.call(stockData, stock));
-  const batch = firestore.batch();
-
-  unlisted.forEach(function (stock) {
-    batch.create(stockCurrColRef.doc(stock), {
-      value: stockData[stock].initialValue,
-      volTraded: 0,
-    });
-  });
-
-  await batch.commit();
-}
-
 export async function updatePlayerPortfolioValuation() {
   const firestore = getFirestoreDb();
   const stockData = new Map<string, { value: number; volTraded: number }>();
@@ -153,6 +126,33 @@ export async function updatePlayerPowerCardStatus() {
     } else if (playerData.powercards.options.status === 'active') {
       // pass
     }
+  });
+
+  await batch.commit();
+}
+
+export async function enlistNewStocks(gameState: IGameState) {
+  const firestore = getFirestoreDb();
+  const stockData = (
+    await firestore
+      .collection(stocksDataColName)
+      .withConverter(StockDataConverter)
+      .doc(`R${gameState.roundNo}`)
+      .get()
+  ).data()!;
+  const stockCurrColRef = firestore
+    .collection(stocksCurrentColName)
+    .withConverter(StockCurrentConverter);
+  const unlisted = (await stockCurrColRef.get()).docs
+    .map((doc) => doc.id)
+    .filter((stock) => !Object.prototype.hasOwnProperty.call(stockData, stock));
+  const batch = firestore.batch();
+
+  unlisted.forEach(function (stock) {
+    batch.create(stockCurrColRef.doc(stock), {
+      value: stockData[stock].initialValue,
+      volTraded: 0,
+    });
   });
 
   await batch.commit();
