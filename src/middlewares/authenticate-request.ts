@@ -32,7 +32,6 @@ export function authenticateSocket(
   try {
     verifyToken(token);
   } catch {
-    console.log('Invalid Token');
     next(new Error('Invalid Token'));
     return;
   }

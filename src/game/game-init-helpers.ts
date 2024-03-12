@@ -22,8 +22,6 @@ export async function initEnlistStocks() {
   ).data();
   const batch = firestore.batch();
 
-  console.log('stockData:', stockData);
-
   for (const stock in stockData) {
     batch.create(stockCurrColRef.doc(stock), {
       value: stockData[stock].initialValue,
