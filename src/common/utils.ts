@@ -1,7 +1,6 @@
 import type { RequestUserProp } from '../types';
 import { createHash } from 'crypto';
 import jwt from 'jsonwebtoken';
-import { DateTime } from 'luxon';
 import { config } from 'dotenv';
 config();
 
@@ -17,8 +16,4 @@ export function createToken(payload: RequestUserProp) {
   return jwt.sign(payload, process.env.AUTH_TOKEN_SECRET!, {
     expiresIn: process.env.AUTH_TOKEN_LIFETIME,
   });
-}
-
-export function getUnixTime() {
-  return DateTime.now().toUnixInteger();
 }
