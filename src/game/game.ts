@@ -13,7 +13,7 @@ import {
   updatePlayerPortfolioValuation,
   giveFreebie,
 } from './handlers/game-round-handlers.js';
-import { initEnlistStocks } from './game-init-helpers.js';
+import { cleanDb, initEnlistStocks } from './game-init-helpers.js';
 
 export const gameEmitter = new EventEmitter();
 
@@ -27,19 +27,23 @@ export function getState() {
 }
 
 gameEmitter.on('game:on', async () => {
+  console.log('game:on');
   try {
+    await cleanDb();
     await initEnlistStocks();
+
+    setTimeout(() => {
+      state.roundNo = 1;
+      state.stage = 'TRADING_STAGE';
+      gameEmitter.emit('game:stage:TRADING_STAGE');
+    }, gameStartDelay * 1000);
   } catch (error) {
     console.log(error);
   }
-  setTimeout(() => {
-    state.roundNo = 1;
-    state.stage = 'TRADING_STAGE';
-    gameEmitter.emit('game:stage:TRADING_STAGE');
-  }, gameStartDelay * 1000);
 });
 
 gameEmitter.on('game:stage:TRADING_STAGE', () => {
+  console.log('game:stage:TRADING_STAGE');
   void persistGameState(state);
   setTimeout(() => {
     state.stage = 'CALCULATION_STAGE';
@@ -48,27 +52,29 @@ gameEmitter.on('game:stage:TRADING_STAGE', () => {
 });
 
 gameEmitter.on('game:stage:CALCULATION_STAGE', async () => {
+  console.log('game:stage:CALCULATION_STAGE');
   void persistGameState(state);
   try {
     await updateStockPrices(state);
     await updatePlayerPortfolioValuation();
     await giveFreebie(state);
     await enlistNewStocks(state);
+
+    state.roundNo += 1;
+    state.stage = 'TRADING_STAGE';
+
+    if (state.roundNo >= maxGameRounds) {
+      gameEmitter.emit('game:end');
+      return;
+    }
+    gameEmitter.emit('game:stage:TRADING_STAGE');
   } catch (error) {
     console.log(error);
   }
-
-  state.roundNo += 1;
-  state.stage = 'TRADING_STAGE';
-
-  if (state.roundNo >= maxGameRounds) {
-    gameEmitter.emit('game:end');
-    return;
-  }
-  gameEmitter.emit('game:stage:TRADING_STAGE');
 });
 
 gameEmitter.on('game:end', () => {
+  console.log('game:end');
   state.stage = 'INVALID';
   state.roundNo -= 1;
 });

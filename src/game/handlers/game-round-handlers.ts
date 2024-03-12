@@ -91,6 +91,7 @@ export async function updatePlayerPortfolioValuation() {
     let valuation = 0;
 
     for (const stock in playerData.portfolio) {
+      console.log(stock);
       const currentValue = stockData.get(stock)!.value;
       valuation += playerData.portfolio[stock].volume * currentValue;
     }

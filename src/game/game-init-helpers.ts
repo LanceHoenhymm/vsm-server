@@ -19,7 +19,6 @@ export async function initEnlistStocks() {
     .doc('R1')
     .get();
 
-  if (stockDataDoc.exists) return;
   const stockData = stockDataDoc.data();
   const batch = firestore.batch();
 
@@ -29,6 +28,21 @@ export async function initEnlistStocks() {
       volTraded: 0,
     });
   }
+
+  await batch.commit();
+}
+
+export async function cleanDb() {
+  const firestore = getFirestoreDb();
+  const batch = firestore.batch();
+  const stockCurrColRef = await firestore
+    .collection(stocksCurrentColName)
+    .get();
+
+  if (stockCurrColRef.empty) return;
+  stockCurrColRef.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
 
   await batch.commit();
 }

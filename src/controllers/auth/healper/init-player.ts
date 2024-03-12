@@ -22,10 +22,6 @@ export async function initPlayer(teamId: string) {
       .get()
   ).data()!;
 
-  if ((await playerDataColRef.doc(teamId).get()).exists) {
-    return;
-  }
-
   const freePortfolio: { [stock: string]: { volume: number } } = {};
   let freeValuation = 0;
   for (const stock in stockData) {
