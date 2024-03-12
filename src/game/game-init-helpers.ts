@@ -13,13 +13,14 @@ export async function initEnlistStocks() {
   const stockCurrColRef = firestore
     .collection(stocksCurrentColName)
     .withConverter(StockCurrentConverter);
-  const stockData = (
-    await firestore
-      .collection(stocksDataColName)
-      .withConverter(StockDataConverter)
-      .doc('R1')
-      .get()
-  ).data();
+  const stockDataDoc = await firestore
+    .collection(stocksDataColName)
+    .withConverter(StockDataConverter)
+    .doc('R1')
+    .get();
+
+  if (stockDataDoc.exists) return;
+  const stockData = stockDataDoc.data();
   const batch = firestore.batch();
 
   for (const stock in stockData) {
