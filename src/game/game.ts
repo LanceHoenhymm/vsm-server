@@ -1,6 +1,10 @@
 import EventEmitter from 'events';
 import type { Server } from 'socket.io';
-import { tradingRoundDuration, maxGameRounds } from '../common/game-config.js';
+import {
+  tradingRoundDuration,
+  maxGameRounds,
+  gameStartDelay,
+} from '../common/game-config.js';
 import type { IGameState } from '../types';
 import {
   persistGameState,
@@ -28,9 +32,11 @@ gameEmitter.on('game:on', async () => {
   } catch (error) {
     console.log(error);
   }
-  state.roundNo = 1;
-  state.stage = 'TRADING_STAGE';
-  gameEmitter.emit('game:stage:TRADING_STAGE');
+  setTimeout(() => {
+    state.roundNo = 1;
+    state.stage = 'TRADING_STAGE';
+    gameEmitter.emit('game:stage:TRADING_STAGE');
+  }, gameStartDelay * 1000);
 });
 
 gameEmitter.on('game:stage:TRADING_STAGE', () => {

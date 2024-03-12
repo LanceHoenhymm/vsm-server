@@ -23,8 +23,6 @@ import { globalErrorHandler } from './middlewares/global-error-handler.js';
 
 import { game, registerGameNotifier } from './game/game.js';
 
-import { checkRunningPollTime } from './common/app-config.js';
-
 config();
 
 const app = express();
@@ -63,11 +61,5 @@ httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);
 });
 
-const intervalId = setInterval(() => {
-  if (process.env.GAME_STATE == 'Running') {
-    console.log('Game is running now');
-    registerGameNotifier(io);
-    game();
-    clearInterval(intervalId);
-  }
-}, checkRunningPollTime * 1000);
+registerGameNotifier(io);
+game();

@@ -3,7 +3,6 @@ config();
 
 const port = 8080;
 const allowedOrigin = '';
-const checkRunningPollTime = 2 * 60;
 
 const serviceAccountConfig = {
   projectId: process.env.PROJECT_ID,
@@ -33,5 +32,4 @@ export {
   transactionsColName,
   usersColName,
   gameStateDocName,
-  checkRunningPollTime,
 };
