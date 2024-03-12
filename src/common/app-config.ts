@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 config();
 
 const port = 8080;
-const allowedOrigin = '';
+const allowedOrigin = 'https://vsm-nine.vercel.app/';
 
 const serviceAccountConfig = {
   projectId: process.env.PROJECT_ID,
