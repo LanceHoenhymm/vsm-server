@@ -3,6 +3,7 @@ import 'express-async-errors';
 import cors from 'cors';
 import helmet from 'helmet';
 import logger from 'morgan';
+import { config } from 'dotenv';
 
 import { Server } from 'socket.io';
 import { createServer } from 'http';
@@ -22,7 +23,9 @@ import { globalErrorHandler } from './middlewares/global-error-handler.js';
 
 import { game, registerGameNotifier } from './game/game.js';
 
-import { appState } from './common/app-config.js';
+import { checkRunningPollTime } from './common/app-config.js';
+
+config();
 
 const app = express();
 const httpServer = createServer(app);
@@ -60,8 +63,11 @@ httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);
 });
 
-if (appState === 'production') {
-  console.log('Game is running now');
-  registerGameNotifier(io);
-  game();
-}
+const intervalId = setInterval(() => {
+  if (process.env.GAME_STATE == 'Running') {
+    console.log('Game is running now');
+    registerGameNotifier(io);
+    game();
+    clearInterval(intervalId);
+  }
+}, checkRunningPollTime * 1000);

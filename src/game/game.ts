@@ -1,10 +1,6 @@
 import EventEmitter from 'events';
 import type { Server } from 'socket.io';
-import {
-  tradingRoundDuration,
-  gameInitDelay,
-  maxGameRounds,
-} from '../common/game-config.js';
+import { tradingRoundDuration, maxGameRounds } from '../common/game-config.js';
 import type { IGameState } from '../types';
 import {
   persistGameState,
@@ -27,7 +23,14 @@ export function getState() {
 }
 
 gameEmitter.on('game:on', async () => {
-  await initEnlistStocks();
+  try {
+    await initEnlistStocks();
+  } catch (error) {
+    console.log(error);
+  }
+  state.roundNo = 1;
+  state.stage = 'TRADING_STAGE';
+  gameEmitter.emit('game:stage:TRADING_STAGE');
 });
 
 gameEmitter.on('game:stage:TRADING_STAGE', () => {
@@ -81,9 +84,4 @@ export function registerGameNotifier(io: Server) {
 
 export function game() {
   gameEmitter.emit('game:on');
-  setTimeout(() => {
-    state.roundNo = 1;
-    state.stage = 'TRADING_STAGE';
-    gameEmitter.emit('game:stage:TRADING_STAGE');
-  }, gameInitDelay * 1000);
 }

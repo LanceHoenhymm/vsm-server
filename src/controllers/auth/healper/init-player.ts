@@ -7,10 +7,7 @@ import {
   playerDataColName,
   stocksDataColName,
 } from '../../../common/app-config.js';
-import {
-  startingAmount,
-  startingValuation,
-} from '../../../common/game-config.js';
+import { startingAmount } from '../../../common/game-config.js';
 
 export async function initPlayer(teamId: string) {
   const firestore = getFirestoreDb();
@@ -38,7 +35,7 @@ export async function initPlayer(teamId: string) {
 
   return playerDataColRef.doc(teamId).set({
     balance: startingAmount,
-    valuation: startingValuation + freeValuation,
+    valuation: freeValuation,
     portfolio: freePortfolio,
   });
 }

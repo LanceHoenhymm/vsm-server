@@ -1,8 +1,9 @@
 import { config } from 'dotenv';
 config();
 
-const port = process.env.PORT ?? 8080;
-const allowedOrigin = process.env.ALLOWED_ORIGIN;
+const port = 8080;
+const allowedOrigin = '';
+const checkRunningPollTime = 2 * 60;
 
 const serviceAccountConfig = {
   projectId: process.env.PROJECT_ID,
@@ -20,9 +21,6 @@ const usersColName = 'users';
 
 const gameStateDocName = 'gameState';
 
-const cacheTime = process.env.CACHE_TIME ?? '5 minutes';
-const appState = process.env.APP_STATE ?? 'development';
-
 export {
   port,
   allowedOrigin,
@@ -35,6 +33,5 @@ export {
   transactionsColName,
   usersColName,
   gameStateDocName,
-  cacheTime,
-  appState,
+  checkRunningPollTime,
 };
