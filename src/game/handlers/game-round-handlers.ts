@@ -118,9 +118,12 @@ export async function giveFreebie(gameState: IGameState) {
   const stockCurrColRef = firestore
     .collection(stocksCurrentColName)
     .withConverter(StockCurrentConverter);
-  const unlisted = (await stockCurrColRef.get()).docs
-    .map((doc) => doc.id)
-    .filter((stock) => !Object.prototype.hasOwnProperty.call(stockData, stock));
+  const listedStocks = new Set(
+    (await stockCurrColRef.get()).docs.map((doc) => doc.id),
+  );
+  const unlistedStocks = Object.keys(stockData).filter(function (stockId) {
+    return !listedStocks.has(stockId);
+  });
   const players = await firestore
     .collection(playerDataColName)
     .withConverter(PlayerDataConverter)
@@ -130,8 +133,8 @@ export async function giveFreebie(gameState: IGameState) {
   players.forEach(function (player) {
     type freebieField = `portfolio.${string}`;
     const freebies: Record<freebieField, { volume: number }> = {};
-    for (const stock of unlisted) {
-      freebies[`portfolio.${stock}`] = { volume: 20 };
+    for (const stock of unlistedStocks) {
+      freebies[`portfolio.${stock}`] = { volume: stockData[stock].freebies };
     }
 
     batch.update(player.ref, freebies);
@@ -157,12 +160,15 @@ export async function enlistNewStocks(gameState: IGameState) {
   const stockCurrColRef = firestore
     .collection(stocksCurrentColName)
     .withConverter(StockCurrentConverter);
-  const unlisted = (await stockCurrColRef.get()).docs
-    .map((doc) => doc.id)
-    .filter((stock) => !Object.prototype.hasOwnProperty.call(stockData, stock));
+  const listedStocks = new Set(
+    (await stockCurrColRef.get()).docs.map((doc) => doc.id),
+  );
+  const unlistedStocks = Object.keys(stockData).filter(function (stockId) {
+    return !listedStocks.has(stockId);
+  });
   const batch = firestore.batch();
 
-  unlisted.forEach(function (stock) {
+  unlistedStocks.forEach(function (stock) {
     batch.create(stockCurrColRef.doc(stock), {
       value: stockData[stock].initialValue,
       volTraded: 0,
