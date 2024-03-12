@@ -6,6 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import { BadRequest, NotFound, Unauthorized } from '../../errors/index.js';
 import type { ReqHandler } from '../../types';
 import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto.js';
+import { initPlayer } from './healper/init-player.js';
 
 type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
 
@@ -61,6 +62,10 @@ export const loginUser: LoginUserHandler = async function (req, res) {
   }
 
   const token = createToken({ teamId: hashEmail, admin: userDoc.admin });
+
+  if (!userDoc.admin) {
+    await initPlayer(hashEmail);
+  }
 
   res.status(StatusCodes.CREATED).json({
     status: 'Success',
