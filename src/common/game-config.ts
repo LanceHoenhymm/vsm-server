@@ -1,6 +1,8 @@
-const gameStartDelay = 10 * 60;
-const tradingRoundDuration = 10 * 60;
-const maxGameRounds = 5;
+// In Seconds
+
+const gameStartDelay = 20;
+const tradingRoundDuration = 10;
+const maxGameRounds = 2;
 
 const startingAmount = 1000;
 
