@@ -1,5 +1,4 @@
 // In Seconds
-
 const gameStartDelay = 20;
 const tradingRoundDuration = 10;
 const maxGameRounds = 2;

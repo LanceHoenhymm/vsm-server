@@ -43,6 +43,7 @@ app.use(
   }),
 );
 app.use(logger('dev'));
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello, World</h1>');
