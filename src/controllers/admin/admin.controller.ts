@@ -1,11 +1,4 @@
 import { StatusCodes } from 'http-status-codes';
-import { newsDataColName, stocksDataColName } from '../../common/app-config.js';
-import {
-  type INewsData,
-  NewsDataConverter,
-  StockDataConverter,
-} from '../../converters/index.js';
-import { getFirestoreDb } from '../../services/firebase.js';
 import type { ReqHandler } from '../../types';
 import type {
   IAddNewsRequestDto,
@@ -14,50 +7,12 @@ import type {
 
 type AddNewsHandler = ReqHandler<IAddNewsRequestDto>;
 
-export const addNews: AddNewsHandler = async function (req, res) {
-  const firestore = getFirestoreDb();
-  const newsDataColRef = firestore
-    .collection(newsDataColName)
-    .withConverter(NewsDataConverter);
-  const batch = firestore.batch();
-  const { newsData } = req.body;
-
-  newsData.forEach(function (newsArr, roundNo) {
-    const newsDoc: INewsData = newsArr.reduce(function (arr, curr, index) {
-      return { ...arr, [index]: curr };
-    }, {});
-    batch.create(newsDataColRef.doc(`R${roundNo + 1}`), newsDoc);
-  });
-
-  await batch.commit();
-
+export const addNews: AddNewsHandler = function (req, res) {
   res.status(StatusCodes.OK).json({ status: 'Success' });
 };
 
 type AddStocksHandler = ReqHandler<IAddStockRequestDto>;
 
-export const addStock: AddStocksHandler = async function (req, res) {
-  const firestore = getFirestoreDb();
-  const stockDataColRef = firestore
-    .collection(stocksDataColName)
-    .withConverter(StockDataConverter);
-  const batch = firestore.batch();
-  const { stockData } = req.body;
-
-  stockData.forEach(function (stockDocData, index) {
-    const stockDoc = stockDataColRef.doc(`R${index + 1}`);
-    const stocksData = Object.fromEntries(
-      stockDocData.map(function (stock) {
-        const changes: Record<string, number> = { bpc: stock.bpc };
-        if (stock.freebies) changes.freebies = stock.freebies;
-        if (stock.initialValue) changes.initialValue = stock.initialValue;
-        return [stock.id, changes];
-      }),
-    );
-    batch.create(stockDoc, stocksData);
-  });
-
-  await batch.commit();
-
+export const addStock: AddStocksHandler = function (req, res) {
   res.status(StatusCodes.OK).json({ status: 'Success' });
 };

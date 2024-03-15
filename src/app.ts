@@ -21,8 +21,6 @@ import {
 import { authorizeRequest } from './middlewares/authorize-request.js';
 import { globalErrorHandler } from './middlewares/global-error-handler.js';
 
-import { game, registerGameNotifier } from './game/game.js';
-
 config();
 
 const app = express();
@@ -61,6 +59,3 @@ io.use(authenticateSocket);
 httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);
 });
-
-registerGameNotifier(io);
-game();

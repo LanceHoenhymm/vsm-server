@@ -11,6 +11,7 @@ firebase.prod.json
 # Misc
 coverage
 data
+old
 
 # Editor Exclusive
 .vscode
