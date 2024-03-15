@@ -12,6 +12,7 @@ firebase.prod.json
 coverage
 data
 old
+postgres-data
 
 # Editor Exclusive
 .vscode
