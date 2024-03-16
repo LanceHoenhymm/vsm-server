@@ -54,6 +54,7 @@ app.use('/auth', authRouter);
 app.use('/admin', authenticateRequest, authorizeAdmin, adminRouter);
 app.use('/game', authenticateRequest, blockAdmin, gameRouter);
 
+app.use(notFoundHandler);
 app.use(globalErrorHandler);
 
 io.engine.use(logger);
