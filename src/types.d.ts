@@ -11,11 +11,6 @@ type ReqHandler<TReqBody> = RequestHandler<
 >;
 type ErrHandler = ErrorRequestHandler<object, AckResponse, object, object>;
 
-interface IGameState {
-  roundNo: number;
-  stage: 'TRADING_STAGE' | 'CALCULATION_STAGE' | 'INVALID';
-}
-
 interface RequestUserProp {
   teamId: string;
   admin: boolean;

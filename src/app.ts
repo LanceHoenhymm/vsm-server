@@ -8,9 +8,13 @@ import helmet from 'helmet';
 import { accessLogger as logger } from './middlewares/access-logger.middleware.js';
 import {
   authenticateRequest,
-  authenticateSocket,
+  authenticateSocketConnection,
 } from './middlewares/authenticator.middleware.js';
-import { authorizeRequest } from './middlewares/authorizer.middleware.js';
+import {
+  authorizeAdmin,
+  blockAdmin,
+} from './middlewares/authorizer.middleware.js';
+import { notFoundHandler } from './middlewares/not-found.middleware.js';
 import { globalErrorHandler } from './middlewares/error-handler.middleware.js';
 
 import { authRouter } from './controllers/auth/auth.router.js';
@@ -47,14 +51,14 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRouter);
-app.use('/admin', authenticateRequest, authorizeRequest, adminRouter);
-app.use('/game', authenticateRequest, gameRouter);
+app.use('/admin', authenticateRequest, authorizeAdmin, adminRouter);
+app.use('/game', authenticateRequest, blockAdmin, gameRouter);
 
 app.use(globalErrorHandler);
 
 io.engine.use(logger);
 io.engine.use(helmet());
-io.use(authenticateSocket);
+io.use(authenticateSocketConnection);
 
 httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);

@@ -1,6 +1,6 @@
 import type { ErrHandler } from '../types';
-import { ApplicationError } from '../errors/index.js';
 import { StatusCodes } from 'http-status-codes';
+import { ApplicationError } from '../errors/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const globalErrorHandler: ErrHandler = function (err, req, res, next) {

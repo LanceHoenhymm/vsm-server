@@ -1,39 +1,34 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { Socket } from 'socket.io';
-import { Unauthenticated } from '../errors/index.js';
 import { verifyToken } from '../common/utils.js';
+import { Unauthenticated } from '../errors/index.js';
 
 export function authenticateRequest(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  const authToken = req.headers.authorization;
-
-  if (!authToken || !authToken.startsWith('Bearer ')) {
-    throw new Unauthenticated('Invalid or Missing Token');
-  }
-
+  const token = (req.headers.authorization ?? '').split(' ')[1];
   try {
-    const payload = verifyToken(authToken.split(' ')[1]);
+    const payload = verifyToken(token);
     req.player = { teamId: payload.teamId, admin: payload.admin };
 
     next();
   } catch {
-    throw new Unauthenticated('Invalid Token');
+    throw new Unauthenticated('Invalid or Missing Token');
   }
 }
 
-export function authenticateSocket(
+export function authenticateSocketConnection(
   socket: Socket,
   next: (err?: Error & { data?: object }) => void,
 ) {
   const token = (socket.handshake.headers['authorization'] ?? '').split(' ')[1];
   try {
     verifyToken(token);
+
+    next();
   } catch {
-    next(new Error('Invalid Token'));
-    return;
+    next(new Error('Invalid or Missing Token'));
   }
-  next();
 }
