@@ -2,6 +2,8 @@
 .DS_Store
 node_modules
 dist
+logs
+coverage
 
 # Config Files or Keys
 .env
@@ -9,7 +11,6 @@ firebase.json
 firebase.prod.json
 
 # Misc
-coverage
 data
 old
 postgres-data
