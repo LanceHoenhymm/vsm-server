@@ -1,11 +1,11 @@
+import type { ReqHandler } from '@/types';
+import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto';
+import { BadRequest, NotFound, Unauthenticated } from '@/errors/index';
 import { StatusCodes } from 'http-status-codes';
+import { db } from '@/services/index';
+import { users } from '@/models/index';
 import { eq } from 'drizzle-orm';
-import type { ReqHandler } from '../../types';
-import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto.js';
-import { BadRequest, NotFound, Unauthenticated } from '../../errors/index.js';
-import { db } from '../../services/index.js';
-import { users } from '../../models/index.js';
-import { getHash, createToken } from '../../common/utils.js';
+import { getHash, createToken } from '@/common/utils';
 
 type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
 

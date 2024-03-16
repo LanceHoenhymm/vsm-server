@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { Socket } from 'socket.io';
-import { verifyToken } from '../common/utils.js';
-import { Unauthenticated } from '../errors/index.js';
+import { verifyToken } from '@common/utils';
+import { Unauthenticated } from '@errors/index';
 
 export function authenticateRequest(
   req: Request,

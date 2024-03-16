@@ -5,21 +5,18 @@ import { createServer } from 'http';
 
 import cors from 'cors';
 import helmet from 'helmet';
-import { accessLogger as logger } from './middlewares/access-logger.middleware.js';
+import { accessLogger as logger } from '@middlewares/access-logger.middleware';
 import {
   authenticateRequest,
   authenticateSocketConnection,
-} from './middlewares/authenticator.middleware.js';
-import {
-  authorizeAdmin,
-  blockAdmin,
-} from './middlewares/authorizer.middleware.js';
-import { notFoundHandler } from './middlewares/not-found.middleware.js';
-import { globalErrorHandler } from './middlewares/error-handler.middleware.js';
+} from '@middlewares/authenticator.middleware';
+import { authorizeAdmin, blockAdmin } from '@middlewares/authorizer.middleware';
+import { notFoundHandler } from '@middlewares/not-found.middleware';
+import { globalErrorHandler } from '@middlewares/error-handler.middleware';
 
-import { authRouter } from './controllers/auth/auth.router.js';
-import { gameRouter } from './controllers/game/game.router.js';
-import { adminRouter } from './controllers/admin/admin.router.js';
+import { authRouter } from '@controllers/auth/auth.router';
+import { gameRouter } from '@controllers/game/game.router';
+import { adminRouter } from '@controllers/admin/admin.router';
 
 import { config } from 'dotenv';
 config();

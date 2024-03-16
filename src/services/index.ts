@@ -1,3 +1,3 @@
-export { db } from './database.service.js';
-export { logger } from './logging.service.js';
-export { cache } from './caching.service.js';
+export { db } from './database.service';
+export { logger } from './logging.service';
+export { cache } from './caching.service';

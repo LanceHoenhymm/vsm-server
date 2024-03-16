@@ -1,5 +1,5 @@
 import { pgTable, uuid, numeric, jsonb } from 'drizzle-orm/pg-core';
-import { playerAccount } from './player-account.model.js';
+import { playerAccount } from './player-account.model';
 
 export const playerPortfolio = pgTable('player_portfolio', {
   playerId: uuid('player_id').references(() => playerAccount.id, {

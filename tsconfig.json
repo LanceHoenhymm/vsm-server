@@ -7,8 +7,16 @@
     "strict": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
-  },
-  "include": ["src"],
+    "baseUrl": "./",
+    "paths": {
+      "@services/*": ["src/services/*"],
+      "@models/*": ["src/models/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@errors/*": ["src/errors/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@game/*": ["src/game/*"],
+      "@common/*": ["src/common/*"],
+      "@/*": ["src/*"]
+    }
   "exclude": ["node_modules", "dist", "old"]
 }

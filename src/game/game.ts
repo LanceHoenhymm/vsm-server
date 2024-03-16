@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { gameCLOSE, gameOFF, gameON, gameOPEN } from './game.events.js';
+import { gameCLOSE, gameOFF, gameON, gameOPEN } from './game.events';
 
 export const gameEmitter = new EventEmitter();
 

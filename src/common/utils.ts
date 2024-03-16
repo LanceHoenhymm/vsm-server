@@ -1,4 +1,4 @@
-import type { RequestUserProp } from '../types';
+import type { RequestUserProp } from '@/types';
 import { createHash } from 'crypto';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';

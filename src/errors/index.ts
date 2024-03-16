@@ -1,6 +1,6 @@
-export { ApplicationError } from './application.error.js';
-export { BadRequest } from './bad-request.error.js';
-export { UnprocessableEntity } from './unprocessable-entity.error.js';
-export { NotFound } from './not-found.error.js';
-export { Unauthenticated } from './unauthenticated.error.js';
-export { Unauthorized } from './unauthorized.error.js';
+export { ApplicationError } from './application.error';
+export { BadRequest } from './bad-request.error';
+export { UnprocessableEntity } from './unprocessable-entity.error';
+export { NotFound } from './not-found.error';
+export { Unauthenticated } from './unauthenticated.error';
+export { Unauthorized } from './unauthorized.error';

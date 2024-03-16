@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { cache } from '../services/index.js';
-import { logger } from '../services/index.js';
+import { cache, logger } from '@services/index';
 
 export function cacherFactory(duration: number) {
   return (req: Request, res: Response, next: NextFunction) => {

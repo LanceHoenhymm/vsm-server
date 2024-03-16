@@ -1,4 +1,4 @@
-import type { ReqHandler } from '../../../types';
+import type { ReqHandler } from '@/types';
 import { StatusCodes } from 'http-status-codes';
 
 type InfoEndpointHandler = ReqHandler<object>;

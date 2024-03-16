@@ -1,5 +1,5 @@
 import { pgTable, integer, numeric, varchar } from 'drizzle-orm/pg-core';
-import { stocks } from './stocks.model.js';
+import { stocks } from './stocks.model';
 
 export const currentStocks = pgTable('current_stocks', {
   symbol: varchar('symbol')

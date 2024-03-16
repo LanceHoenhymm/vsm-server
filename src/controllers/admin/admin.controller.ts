@@ -1,9 +1,9 @@
-import { StatusCodes } from 'http-status-codes';
-import type { ReqHandler } from '../../types';
+import type { ReqHandler } from '@/types';
 import type {
   IAddNewsRequestDto,
   IAddStockRequestDto,
-} from './admin.controller.dto.js';
+} from './admin.controller.dto';
+import { StatusCodes } from 'http-status-codes';
 
 type AddNewsHandler = ReqHandler<IAddNewsRequestDto>;
 

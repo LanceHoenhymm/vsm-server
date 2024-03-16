@@ -1,4 +1,4 @@
-import { ApplicationError } from './application.error.js';
+import { ApplicationError } from './application.error';
 import { StatusCodes } from 'http-status-codes';
 
 export class UnprocessableEntity extends ApplicationError {

@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { validatorFactory } from '../../middlewares/validator.middleware.js';
+import { validatorFactory } from '@/middlewares/validator.middleware';
 import {
   addNewsRequestDtoSchema,
   addStockRequestDtoSchema,
-} from './admin.controller.dto.js';
-import { addNews, addStock } from './admin.controller.js';
+} from './admin.controller.dto';
+import { addNews, addStock } from './admin.controller';
 
 export const adminRouter = Router();
 

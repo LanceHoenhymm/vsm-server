@@ -1,5 +1,4 @@
 import { Router } from 'express';
-
 import {
   getGameInfo,
   getNews,
@@ -8,7 +7,7 @@ import {
   getProfile,
   getPortfolio,
   getBalence,
-} from './info.contorller.js';
+} from './info.contorller';
 
 export const infoRouter = Router();
 
