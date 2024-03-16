@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validatorFactory } from '../../middlewares/validator-factory.js';
+import { validatorFactory } from '../../middlewares/validator.middleware.js';
 import {
   addNewsRequestDtoSchema,
   addStockRequestDtoSchema,

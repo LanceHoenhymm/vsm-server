@@ -1,27 +1,27 @@
 import express from 'express';
 import 'express-async-errors';
-import cors from 'cors';
-import helmet from 'helmet';
-import logger from 'morgan';
-import { config } from 'dotenv';
-
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 
-import { port, allowedOrigin } from './common/app-config.js';
+import cors from 'cors';
+import helmet from 'helmet';
+import logger from 'morgan';
+import {
+  authenticateRequest,
+  authenticateSocket,
+} from './middlewares/authenticator.middleware.js';
+import { authorizeRequest } from './middlewares/authorizer.middleware.js';
+import { globalErrorHandler } from './middlewares/error-handler.middleware.js';
 
 import { authRouter } from './controllers/auth/auth.router.js';
 import { gameRouter } from './controllers/game/game.router.js';
 import { adminRouter } from './controllers/admin/admin.router.js';
 
-import {
-  authenticateRequest,
-  authenticateSocket,
-} from './middlewares/authenticate-request.js';
-import { authorizeRequest } from './middlewares/authorize-request.js';
-import { globalErrorHandler } from './middlewares/global-error-handler.js';
-
+import { config } from 'dotenv';
 config();
+
+const port = process.env.PORT || 8080;
+const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
 
 const app = express();
 const httpServer = createServer(app);
@@ -41,7 +41,6 @@ app.use(
   }),
 );
 app.use(logger('dev'));
-app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello, World</h1>');
@@ -54,6 +53,7 @@ app.use('/game', authenticateRequest, gameRouter);
 app.use(globalErrorHandler);
 
 io.engine.use(logger('dev'));
+io.engine.use(helmet());
 io.use(authenticateSocket);
 
 httpServer.listen(port, () => {
