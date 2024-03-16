@@ -3,7 +3,8 @@ import { eq } from 'drizzle-orm';
 import type { ReqHandler } from '../../types';
 import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto.js';
 import { BadRequest, NotFound, Unauthenticated } from '../../errors/index.js';
-import { db, users } from '../../db/index.js';
+import { db } from '../../services/index.js';
+import { users } from '../../models/index.js';
 import { getHash, createToken } from '../../common/utils.js';
 
 type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
