@@ -17,3 +17,7 @@ export function createToken(payload: RequestUserProp) {
     expiresIn: process.env.AUTH_TOKEN_LIFETIME,
   });
 }
+
+export function deseaialize<T>(data: T) {
+  return JSON.parse(data as unknown as string) as T;
+}
