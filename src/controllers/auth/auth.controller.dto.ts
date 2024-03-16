@@ -5,6 +5,7 @@ export const registerUserDtoSchema = z.object({
   password: z.string().min(8).max(12),
   p1Name: z.string(),
   p2Name: z.optional(z.string()),
+  isAdmin: z.optional(z.boolean()),
 });
 
 export type IRegisterUserDto = z.infer<typeof registerUserDtoSchema>;
