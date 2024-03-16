@@ -6,6 +6,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:drizzle/recommended',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
@@ -13,7 +14,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: true,
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'drizzle'],
   root: true,
   rules: {
     'prefer-const': 'warn',

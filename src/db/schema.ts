@@ -13,7 +13,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
-  id: uuid('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   email: varchar('email').notNull().unique(),
   password: char('password', { length: 32 }).notNull(),
   p1Name: varchar('u1Name').notNull(),
@@ -22,15 +22,17 @@ export const users = pgTable('users', {
 });
 
 export const playerAccount = pgTable('player_account', {
-  id: uuid('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   isBanned: boolean('is_banned').notNull().default(false),
 });
 
 export const playerPortfolio = pgTable('player_portfolio', {
-  playerId: uuid('player_id').references(() => playerAccount.id),
+  playerId: uuid('player_id').references(() => playerAccount.id, {
+    onDelete: 'cascade',
+  }),
   bankBalance: numeric('bank_balance', { precision: 10, scale: 2 }).notNull(),
   totalPortfolioValue: numeric('total_portfolio_value', {
     precision: 10,
