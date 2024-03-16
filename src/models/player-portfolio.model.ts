@@ -1,16 +1,15 @@
-import { pgTable, uuid, numeric, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, doublePrecision, json } from 'drizzle-orm/pg-core';
 import { playerAccount } from './player-account.model';
 
 export const playerPortfolio = pgTable('player_portfolio', {
-  playerId: uuid('player_id').references(() => playerAccount.id, {
-    onDelete: 'cascade',
-  }),
-  bankBalance: numeric('bank_balance', { precision: 10, scale: 2 }).notNull(),
-  totalPortfolioValue: numeric('total_portfolio_value', {
-    precision: 10,
-    scale: 2,
-  }).notNull(),
-  stocks: jsonb('stocks')
+  playerId: uuid('player_id')
+    .references(() => playerAccount.id, {
+      onDelete: 'cascade',
+    })
+    .notNull(),
+  bankBalance: doublePrecision('bank_balance').notNull(),
+  totalPortfolioValue: doublePrecision('total_portfolio_value').notNull(),
+  stocks: json('stocks')
     .$type<{ symbol: string; volume: number }[]>()
     .notNull(),
 });

@@ -28,7 +28,7 @@ module.exports = {
     ],
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-shadow': 'warn',
-    '@typescript-eslint/no-unnecessary-condition': 'warn',
+    '@typescript-eslint/no-unnecessary-condition': 'off',
   },
   ignorePatterns: [
     '.eslintrc.cjs',
