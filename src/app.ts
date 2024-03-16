@@ -5,7 +5,7 @@ import { createServer } from 'http';
 
 import cors from 'cors';
 import helmet from 'helmet';
-import logger from 'morgan';
+import { accessLogger as logger } from './middlewares/access-logger.middleware.js';
 import {
   authenticateRequest,
   authenticateSocket,
@@ -40,7 +40,7 @@ app.use(
     origin: allowedOrigin,
   }),
 );
-app.use(logger('dev'));
+app.use(logger);
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello, World</h1>');
@@ -52,7 +52,7 @@ app.use('/game', authenticateRequest, gameRouter);
 
 app.use(globalErrorHandler);
 
-io.engine.use(logger('dev'));
+io.engine.use(logger);
 io.engine.use(helmet());
 io.use(authenticateSocket);
 
