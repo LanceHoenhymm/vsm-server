@@ -154,7 +154,7 @@ export function getLeaderboard() {
       await trx
         .select({
           id: playerAccount.id,
-          name: sql<string>`CASE WHEN u2Name IS NULL THEN u1Name ELSE concat_ws(' & ', u1Name, u2Name) END`,
+          name: sql<string>`CASE WHEN users.u2Name IS NULL THEN users.u1Name ELSE concat_ws(' & ', users.u1Name, users.u2Name) END`,
         })
         .from(playerAccount)
         .innerJoin(users, eq(playerAccount.userId, users.id)),
