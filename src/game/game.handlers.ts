@@ -154,16 +154,20 @@ export function getLeaderboard() {
       await trx
         .select({
           id: playerAccount.id,
-          name: sql<string>`CASE WHEN users.u2Name IS NULL THEN users.u1Name ELSE concat_ws(' & ', users.u1Name, users.u2Name) END AS name`,
+          u1: users.u1Name,
+          u2: users.u2Name,
         })
         .from(playerAccount)
         .innerJoin(users, eq(playerAccount.userId, users.id)),
       'id',
     );
     const leaderboard = playersData.map((player, index) => {
+      const u1 = usernames.get(player.id)?.u1;
+      const u2 = usernames.get(player.id)?.u2;
+      const name = u2 ? `${u1} & ${u2}` : u1;
       return {
         rank: index + 1,
-        name: usernames.get(player.id)?.name ?? 'NULL',
+        name: name,
         wealth: player.wealth,
       };
     });
