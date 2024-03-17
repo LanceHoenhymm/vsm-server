@@ -1,5 +1,5 @@
 import { db } from '@services/database.service';
-import { news, stocks } from '@models/index';
+import { news, stocks, playerAccount, users } from '@models/index';
 
 export async function uploadNews(
   newsData: {
@@ -28,4 +28,16 @@ export async function flushDatabase() {
   await db.delete(news);
   // eslint-disable-next-line drizzle/enforce-delete-with-where
   await db.delete(stocks);
+  // eslint-disable-next-line drizzle/enforce-delete-with-where
+  await db.delete(playerAccount);
+}
+
+export async function flushPlayerTable() {
+  // eslint-disable-next-line drizzle/enforce-delete-with-where
+  await db.delete(playerAccount);
+}
+
+export async function flushUserTable() {
+  // eslint-disable-next-line drizzle/enforce-delete-with-where
+  await db.delete(users);
 }

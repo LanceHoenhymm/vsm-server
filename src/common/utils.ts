@@ -5,7 +5,7 @@ import { config } from 'dotenv';
 config();
 
 export function getHash(str: string) {
-  return createHash('md5').update(str).digest('hex');
+  return createHash('md5').update(str).digest('hex').slice(0, 32);
 }
 
 export function verifyToken(token: string): jwt.JwtPayload {

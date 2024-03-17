@@ -3,11 +3,6 @@ import { playerPortfolio, playerAccount, stocks } from '@models/index';
 import { initialBankBalance } from '@common/game.config';
 import { eq, ne } from 'drizzle-orm';
 
-export async function initializePlayerTable() {
-  // eslint-disable-next-line drizzle/enforce-delete-with-where
-  await db.delete(playerAccount);
-}
-
 export function initializePlayer(userId: string) {
   return db.transaction(async (trx) => {
     let initialStockValue = 0;

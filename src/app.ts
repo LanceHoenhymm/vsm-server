@@ -10,7 +10,6 @@ import {
   authenticateRequest,
   authenticateSocketConnection,
 } from '@middlewares/authenticator.middleware';
-import { authorizeAdmin, blockAdmin } from '@middlewares/authorizer.middleware';
 import { notFoundHandler } from '@middlewares/not-found.middleware';
 import { globalErrorHandler } from '@middlewares/error-handler.middleware';
 
@@ -18,7 +17,7 @@ import { authRouter } from '@controllers/auth/auth.router';
 import { gameRouter } from '@controllers/game/game.router';
 import { adminRouter } from '@controllers/admin/admin.router';
 
-import { registerGameGateway } from '@game/game.gateway';
+import { registerGameGateway } from '@game/game';
 import { allowedOrigin, port } from '@common/app.config';
 
 const app = express();
@@ -45,8 +44,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRouter);
-app.use('/admin', authenticateRequest, authorizeAdmin, adminRouter);
-app.use('/game', authenticateRequest, blockAdmin, gameRouter);
+app.use('/admin', authenticateRequest, adminRouter);
+app.use('/game', authenticateRequest, gameRouter);
 
 app.use(notFoundHandler);
 app.use(globalErrorHandler);

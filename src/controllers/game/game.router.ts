@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { blockOnNotOpen } from '@middlewares/block-requests.middleware';
 import { validatorFactory } from '@/middlewares/validator.middleware';
+import { blockAdmin } from '@middlewares/authorizer.middleware';
 import { stockBuySellDtoSchema } from './game.controller.dto';
 import { buyStockHandler, sellStockHandler } from './game.controller';
 import { infoRouter } from './info/info.router';
 
 export const gameRouter = Router();
 
-gameRouter.use(blockOnNotOpen);
+gameRouter.use(blockAdmin, blockOnNotOpen);
 
 gameRouter.use('/info', infoRouter);
 gameRouter.post(
