@@ -3,6 +3,6 @@ import postgres from 'postgres';
 import { config } from 'dotenv';
 config();
 
-const connStr = `postgres://${process.env.POSTGRES_USERR}:${process.env.POSTGRES_PASSWORD}@localhost:5432/${process.env.POSTGRES_DB}`;
+const connStr = process.env.DB_URL || '';
 const connection = postgres(connStr);
 export const db = drizzle(connection);
