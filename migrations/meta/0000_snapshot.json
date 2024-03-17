@@ -1,57 +1,9 @@
 {
-  "id": "93ee71e4-cc4e-4779-8aef-de4602efc830",
+  "id": "0e063941-f1e8-4708-97a0-9b421d598f50",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
-    "current_stocks": {
-      "name": "current_stocks",
-      "schema": "",
-      "columns": {
-        "symbol": {
-          "name": "symbol",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "value": {
-          "name": "value",
-          "type": "numeric(10, 2)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "volatility": {
-          "name": "volatility",
-          "type": "numeric(10, 2)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "current_volume_traded": {
-          "name": "current_volume_traded",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "current_stocks_symbol_stocks_symbol_fk": {
-          "name": "current_stocks_symbol_stocks_symbol_fk",
-          "tableFrom": "current_stocks",
-          "tableTo": "stocks",
-          "columnsFrom": [
-            "symbol"
-          ],
-          "columnsTo": [
-            "symbol"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
     "news": {
       "name": "news",
       "schema": "",
@@ -95,7 +47,8 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "user_id": {
           "name": "user_id",
@@ -123,12 +76,20 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "player_account_user_id_unique": {
+          "name": "player_account_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
+        }
+      }
     },
     "player_portfolio": {
       "name": "player_portfolio",
@@ -138,23 +99,23 @@
           "name": "player_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "bank_balance": {
           "name": "bank_balance",
-          "type": "numeric(10, 2)",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
         "total_portfolio_value": {
           "name": "total_portfolio_value",
-          "type": "numeric(10, 2)",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
         "stocks": {
           "name": "stocks",
-          "type": "jsonb",
+          "type": "json",
           "primaryKey": false,
           "notNull": true
         }
@@ -171,21 +132,58 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "player_portfolio_player_id_unique": {
+          "name": "player_portfolio_player_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "player_id"
+          ]
+        }
+      }
     },
     "player_powerups": {
       "name": "player_powerups",
       "schema": "",
-      "columns": {},
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "player_powerups_player_id_player_account_id_fk": {
+          "name": "player_powerups_player_id_player_account_id_fk",
+          "tableFrom": "player_powerups",
+          "tableTo": "player_account",
+          "columnsFrom": [
+            "player_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "player_powerups_player_id_unique": {
+          "name": "player_powerups_player_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "player_id"
+          ]
+        }
+      }
     },
     "stocks": {
       "name": "stocks",
@@ -197,32 +195,26 @@
           "primaryKey": true,
           "notNull": true
         },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
         "round_introduced": {
           "name": "round_introduced",
           "type": "smallint",
           "primaryKey": false,
           "notNull": true
         },
-        "initial_price": {
-          "name": "initial_price",
-          "type": "numeric(10, 2)",
+        "price": {
+          "name": "price",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
-        "initial_volatility": {
-          "name": "initial_volatility",
-          "type": "numeric(10, 2)",
+        "volatility": {
+          "name": "volatility",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
-        "max_volume": {
-          "name": "max_volume",
+        "freebies": {
+          "name": "freebies",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -241,7 +233,8 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "email": {
           "name": "email",
