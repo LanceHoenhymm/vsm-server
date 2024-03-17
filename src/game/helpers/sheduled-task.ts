@@ -32,10 +32,16 @@ export function updateStocks(gameState: IGameState) {
   });
 }
 
-export function updatePlayerPortfolio() {
+export function updatePlayerPortfolio(gameState: IGameState) {
   return db.transaction(async (trx) => {
     const players = await trx.select().from(playerPortfolio);
-    const stocksData = arrayToMap(await trx.select().from(stocks), 'symbol');
+    const stocksData = arrayToMap(
+      await trx
+        .select()
+        .from(stocks)
+        .where(lte(stocks.roundIntorduced, gameState.roundNo)),
+      'symbol',
+    );
 
     const updateAllPlayerPortfolio = players.map((player) => {
       const playerPort = player.stocks;
@@ -52,5 +58,40 @@ export function updatePlayerPortfolio() {
         .where(eq(playerPortfolio.playerId, player.playerId));
     });
     await Promise.all(updateAllPlayerPortfolio);
+  });
+}
+
+export function giveFrebies(gameState: IGameState) {
+  const nextRound = gameState.roundNo + 1;
+  return db.transaction(async (trx) => {
+    const players = await trx.select().from(playerPortfolio);
+    const stockData = arrayToMap(
+      await trx
+        .select()
+        .from(stocks)
+        .where(eq(stocks.roundIntorduced, nextRound)),
+      'symbol',
+    );
+
+    if (!stockData.size) {
+      return;
+    }
+
+    const giveOutFreebies = players.map((player) => {
+      const playerPort = player.stocks;
+      const playerPortWithFreebies = playerPort.map((stock) => {
+        const freebies = stockData.get(stock.symbol)?.freebies || 0;
+        return {
+          symbol: stock.symbol,
+          volume: stock.volume + freebies,
+        };
+      });
+
+      return trx
+        .update(playerPortfolio)
+        .set({ stocks: playerPortWithFreebies })
+        .where(eq(playerPortfolio.playerId, player.playerId));
+    });
+    await Promise.all(giveOutFreebies);
   });
 }

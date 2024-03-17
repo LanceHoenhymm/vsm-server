@@ -18,6 +18,8 @@ import { authRouter } from '@controllers/auth/auth.router';
 import { gameRouter } from '@controllers/game/game.router';
 import { adminRouter } from '@controllers/admin/admin.router';
 
+import { registerGameGateway } from '@game/game.gateway';
+
 import { config } from 'dotenv';
 config();
 
@@ -57,6 +59,8 @@ app.use(globalErrorHandler);
 io.engine.use(logger);
 io.engine.use(helmet());
 io.use(authenticateSocketConnection);
+
+registerGameGateway(io);
 
 httpServer.listen(port, () => {
   console.log(`Server Listening to port: ${port}...`);

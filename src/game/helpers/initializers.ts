@@ -1,6 +1,7 @@
 import { db } from '@services/database.service';
 import { playerPortfolio, playerAccount, stocks } from '@models/index';
 import { initialBankBalance } from '@common/game.config';
+import { eq, ne } from 'drizzle-orm';
 
 export async function initializeDatabase() {
   // eslint-disable-next-line drizzle/enforce-delete-with-where
@@ -9,11 +10,31 @@ export async function initializeDatabase() {
 
 export function initializePlayer(userId: string) {
   return db.transaction(async (trx) => {
-    const stockColumn = (
-      await trx.select({ symbol: stocks.symbol }).from(stocks)
+    let initialStockValue = 0;
+
+    const stockData = (
+      await trx
+        .select({
+          symbol: stocks.symbol,
+          freebie: stocks.freebies,
+          value: stocks.price,
+        })
+        .from(stocks)
+        .where(eq(stocks.roundIntorduced, 1))
     ).map((stock) => {
-      return { symbol: stock.symbol, volume: 0 };
+      initialStockValue += stock.freebie * stock.value;
+      return { symbol: stock.symbol, volume: stock.freebie };
     });
+
+    (
+      await trx
+        .select({ symbol: stocks.symbol })
+        .from(stocks)
+        .where(ne(stocks.roundIntorduced, 1))
+    ).forEach((stock) => {
+      stockData.push({ symbol: stock.symbol, volume: 0 });
+    });
+
     const [{ playerId }] = await trx
       .insert(playerAccount)
       .values({ userId, isBanned: false })
@@ -21,8 +42,8 @@ export function initializePlayer(userId: string) {
     await trx.insert(playerPortfolio).values({
       playerId,
       bankBalance: initialBankBalance,
-      stocks: stockColumn,
-      totalPortfolioValue: 0,
+      stocks: stockData,
+      totalPortfolioValue: initialStockValue,
     });
 
     return playerId;

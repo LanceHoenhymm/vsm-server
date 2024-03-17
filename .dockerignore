@@ -1,6 +1,4 @@
-.vscode
 data
 dist
 node_modules
-old
 postgres-data

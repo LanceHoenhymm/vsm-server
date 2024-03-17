@@ -3,6 +3,7 @@ import EventEmitter from 'events';
 import { logger } from '@services/index';
 import { initializeDatabase } from '@game/helpers/initializers';
 import {
+  giveFrebies,
   updatePlayerPortfolio,
   updateStocks,
 } from '@game/helpers/sheduled-task';
@@ -70,8 +71,12 @@ gameEmitter.on(gameCLOSE, async () => {
     logger.info('Stocks Updated.');
 
     logger.info('Updating Player Portfolios...');
-    await updatePlayerPortfolio();
+    await updatePlayerPortfolio(gameState);
     logger.info('Updated Player Portfolios.');
+
+    logger.info('Giving out Freebies...');
+    await giveFrebies(gameState);
+    logger.info('Gave out Freebie.');
 
     logger.info('Game Ready for Next Round');
   } catch (error) {

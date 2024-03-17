@@ -141,33 +141,35 @@ export async function getStocks(gameState: IGameState) {
     .where(lte(stocks.roundIntorduced, gameState.roundNo));
 }
 
-export async function getLeaderboard() {
-  const playersData = await db
-    .select({
-      id: playerPortfolio.playerId,
-      wealth: sql<number>`(total_portfolio_value + bank_balance)`,
-    })
-    .from(playerPortfolio)
-    .orderBy(sql`(total_portfolio_value + bank_balance) DESC`);
-  const usernames = arrayToMap(
-    await db
+export function getLeaderboard() {
+  return db.transaction(async (trx) => {
+    const playersData = await trx
       .select({
-        id: playerAccount.id,
-        name: sql<string>`CASE WHEN u2Name IS NULL THEN u1Name ELSE concat_ws(' & ', u1Name, u2Name) END`,
+        id: playerPortfolio.playerId,
+        wealth: sql<number>`(total_portfolio_value + bank_balance)`,
       })
-      .from(playerAccount)
-      .innerJoin(users, eq(playerAccount.userId, users.id)),
-    'id',
-  );
-  const leaderboard = playersData.map((player, index) => {
-    return {
-      rank: index + 1,
-      name: usernames.get(player.id)?.name ?? 'NULL',
-      wealth: player.wealth,
-    };
-  });
+      .from(playerPortfolio)
+      .orderBy(sql`(total_portfolio_value + bank_balance) DESC`);
+    const usernames = arrayToMap(
+      await trx
+        .select({
+          id: playerAccount.id,
+          name: sql<string>`CASE WHEN u2Name IS NULL THEN u1Name ELSE concat_ws(' & ', u1Name, u2Name) END`,
+        })
+        .from(playerAccount)
+        .innerJoin(users, eq(playerAccount.userId, users.id)),
+      'id',
+    );
+    const leaderboard = playersData.map((player, index) => {
+      return {
+        rank: index + 1,
+        name: usernames.get(player.id)?.name ?? 'NULL',
+        wealth: player.wealth,
+      };
+    });
 
-  return leaderboard;
+    return leaderboard;
+  });
 }
 
 export async function getPlayerProfile(playerId: string) {
@@ -183,24 +185,26 @@ export async function getPlayerProfile(playerId: string) {
 }
 
 export async function getPlayerPortfolio(playerId: string) {
-  const [playerData] = await db
-    .select({
-      stocks: playerPortfolio.stocks,
-      valuation: playerPortfolio.totalPortfolioValue,
-    })
-    .from(playerPortfolio)
-    .where(eq(playerPortfolio.playerId, playerId));
-  const stocksData = arrayToMap(await db.select().from(stocks), 'symbol');
-  const playerPort = playerData.stocks;
-  const portfolio = playerPort.map((stock) => {
-    const value = stocksData.get(stock.symbol)?.price || 0;
-    return { name: stock.symbol, volume: stock.volume, value };
-  });
+  return db.transaction(async (trx) => {
+    const [playerData] = await trx
+      .select({
+        stocks: playerPortfolio.stocks,
+        valuation: playerPortfolio.totalPortfolioValue,
+      })
+      .from(playerPortfolio)
+      .where(eq(playerPortfolio.playerId, playerId));
+    const stocksData = arrayToMap(await trx.select().from(stocks), 'symbol');
+    const playerPort = playerData.stocks;
+    const portfolio = playerPort.map((stock) => {
+      const value = stocksData.get(stock.symbol)?.price || 0;
+      return { name: stock.symbol, volume: stock.volume, value };
+    });
 
-  return {
-    valuation: playerData.valuation,
-    portfolio,
-  };
+    return {
+      valuation: playerData.valuation,
+      portfolio,
+    };
+  });
 }
 
 export async function getPlayerBalence(playerId: string) {
