@@ -18,6 +18,9 @@ export function createToken(payload: RequestUserProp) {
   });
 }
 
-export function deseaialize<T>(data: T) {
-  return JSON.parse(data as unknown as string) as T;
+export function arrayToMap<T, K extends keyof T>(
+  arr: T[],
+  key: K,
+): Map<T[K], T> {
+  return new Map(arr.map((item) => [item[key], item]));
 }

@@ -1,20 +1,24 @@
 import { Router } from 'express';
 import {
-  getGameInfo,
-  getNews,
-  getStocks,
-  getLeaderboard,
-  getProfile,
-  getPortfolio,
-  getBalence,
+  getGameInfoHandler,
+  getNewsHandler,
+  getStocksHandler,
+  getLeaderboardHandler,
+  getProfileHandler,
+  getPortfolioHandler,
+  getBalenceHandler,
 } from './info.contorller';
+import { cacherFactory } from '@middlewares/cacher.middleware';
+import { cacheTime } from '@common/app.config';
 
 export const infoRouter = Router();
 
-infoRouter.get('/game-info', getGameInfo);
-infoRouter.get('/news', getNews);
-infoRouter.get('/stocks', getStocks);
-infoRouter.get('/leaderboard', getLeaderboard);
-infoRouter.get('/profile', getProfile);
-infoRouter.get('/portfolio', getPortfolio);
-infoRouter.get('/balance', getBalence);
+const cacher = cacherFactory(cacheTime);
+
+infoRouter.get('/game-info', getGameInfoHandler);
+infoRouter.get('/news', cacher, getNewsHandler);
+infoRouter.get('/stocks', cacher, getStocksHandler);
+infoRouter.get('/leaderboard', cacher, getLeaderboardHandler);
+infoRouter.get('/profile', getProfileHandler);
+infoRouter.get('/portfolio', getPortfolioHandler);
+infoRouter.get('/balance', getBalenceHandler);

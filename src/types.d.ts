@@ -11,8 +11,11 @@ type ReqHandler<TReqBody> = RequestHandler<
 >;
 type ErrHandler = ErrorRequestHandler<object, AckResponse, object, object>;
 
+type Stages = 'INVALID' | 'OPEN' | 'CLOSE' | 'OFF' | 'ON';
+type IGameState = { roundNo: number; stage: Stages };
+
 interface RequestUserProp {
-  teamId: string;
+  playerId: string;
   admin: boolean;
 }
 

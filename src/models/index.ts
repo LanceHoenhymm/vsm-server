@@ -4,4 +4,3 @@ export { playerPortfolio } from './player-portfolio.model';
 export { playerPowerups } from './player-powerups.model';
 export { users } from './user.model';
 export { stocks } from './stocks.model';
-export { currentStocks } from './stocks-current.model';

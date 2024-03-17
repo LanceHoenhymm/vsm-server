@@ -2,18 +2,15 @@ import {
   pgTable,
   smallint,
   integer,
-  numeric,
+  doublePrecision,
   varchar,
 } from 'drizzle-orm/pg-core';
 
 export const stocks = pgTable('stocks', {
   symbol: varchar('symbol').notNull().primaryKey(),
-  name: varchar('name').notNull(),
   roundIntorduced: smallint('round_introduced').notNull(),
-  initialPrice: numeric('initial_price', { precision: 10, scale: 2 }).notNull(),
-  initialVolatility: numeric('initial_volatility', {
-    precision: 10,
-    scale: 2,
-  }).notNull(),
-  maxVolume: integer('max_volume').notNull(),
+  price: doublePrecision('price').notNull(),
+  volatility: doublePrecision('volatility').notNull(),
+  currentVolumeTraded: integer('current_volume_traded'),
+  maxVolume: integer('max_volume'),
 });

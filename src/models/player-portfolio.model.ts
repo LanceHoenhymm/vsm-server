@@ -6,7 +6,8 @@ export const playerPortfolio = pgTable('player_portfolio', {
     .references(() => playerAccount.id, {
       onDelete: 'cascade',
     })
-    .notNull(),
+    .notNull()
+    .unique(),
   bankBalance: doublePrecision('bank_balance').notNull(),
   totalPortfolioValue: doublePrecision('total_portfolio_value').notNull(),
   stocks: json('stocks')

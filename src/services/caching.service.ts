@@ -1,5 +1,14 @@
 import NodeCache from 'node-cache';
 
-export const cache = new NodeCache({
-  useClones: false,
-});
+export const cache = {
+  cachingService: new NodeCache({ useClones: false }),
+  get<T>(key: string) {
+    return this.cachingService.get<T>(key);
+  },
+  set<T>(key: string, body: T, duration: number) {
+    return this.cachingService.set<T>(key, body, duration);
+  },
+  flushAll() {
+    this.cachingService.flushAll();
+  },
+};

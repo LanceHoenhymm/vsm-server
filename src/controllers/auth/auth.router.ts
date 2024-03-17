@@ -1,14 +1,25 @@
 import { Router } from 'express';
+import { blockOnInvalid } from '@middlewares/block-requests.middleware';
 import { validatorFactory } from '@middlewares/validator.middleware';
 import {
   loginUserDtoSchema,
   registerUserDtoSchema,
 } from './auth.controller.dto';
-import { loginUser, registerUser } from './auth.controller';
+import { loginAdmin, loginUser, registerUser } from './auth.controller';
 
 export const authRouter = Router();
 
-authRouter.post('/login', validatorFactory(loginUserDtoSchema), loginUser);
+authRouter.post(
+  '/login',
+  blockOnInvalid,
+  validatorFactory(loginUserDtoSchema),
+  loginUser,
+);
+authRouter.post(
+  '/login-admin',
+  validatorFactory(loginUserDtoSchema),
+  loginAdmin,
+);
 authRouter.post(
   '/register',
   validatorFactory(registerUserDtoSchema),

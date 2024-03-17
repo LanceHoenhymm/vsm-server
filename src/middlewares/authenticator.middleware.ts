@@ -11,7 +11,7 @@ export function authenticateRequest(
   const token = (req.headers.authorization ?? '').split(' ')[1];
   try {
     const payload = verifyToken(token);
-    req.player = { teamId: payload.teamId, admin: payload.admin };
+    req.player = { playerId: payload.playerId, admin: payload.admin };
 
     next();
   } catch {
