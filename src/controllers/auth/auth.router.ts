@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { blockOnInvalid } from '@middlewares/block-requests.middleware';
-import { validatorFactory } from '@middlewares/validator.middleware';
+import { blockOnInvalid } from '../../middlewares/block-requests.middleware';
+import { validatorFactory } from '../../middlewares/validator.middleware';
 import {
   loginUserDtoSchema,
   registerUserDtoSchema,

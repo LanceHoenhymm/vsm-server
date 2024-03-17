@@ -1,11 +1,11 @@
-import type { ReqHandler } from '@/types';
+import type { ReqHandler } from '../../types';
 import type {
   IAddNewsRequestDto,
   IAddStockRequestDto,
 } from './admin.controller.dto';
 import { StatusCodes } from 'http-status-codes';
-import { uploadNews, uploadStock } from '@game/helpers/chore';
-import { startGame, startRound, terminateGame } from '@game/game';
+import { uploadNews, uploadStock } from '../../game/helpers/chore';
+import { startGame, startRound, terminateGame } from '../../game/game';
 
 type AddNewsHandler = ReqHandler<IAddNewsRequestDto>;
 

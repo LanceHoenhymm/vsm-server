@@ -1,15 +1,15 @@
-import { IGameState } from '@/types';
-import { NotFound, UnprocessableEntity } from '@errors/index';
+import { IGameState } from '../types';
+import { NotFound, UnprocessableEntity } from '../errors/index';
 import {
   news,
   playerAccount,
   playerPortfolio,
   stocks,
   users,
-} from '@models/index';
-import { db } from '@services/index';
+} from '../models/index';
+import { db } from '../services/index';
 import { eq, and, lte, sql } from 'drizzle-orm';
-import { arrayToMap } from '@common/utils';
+import { arrayToMap } from '../common/utils';
 
 export function buyStock(
   playerId: string,

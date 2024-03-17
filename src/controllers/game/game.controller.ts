@@ -1,9 +1,9 @@
-import type { ReqHandler } from '@/types';
+import type { ReqHandler } from '../../types';
 import { IBuySellDto } from './game.controller.dto';
-import { BadRequest } from '@errors/index';
+import { BadRequest } from '../../errors/index';
 import { StatusCodes } from 'http-status-codes';
-import { buyStock, sellStock } from '@game/game.handlers';
-import { getGameState } from '@game/game';
+import { buyStock, sellStock } from '../../game/game.handlers';
+import { getGameState } from '../../game/game';
 
 type BuySellHandler = ReqHandler<IBuySellDto>;
 

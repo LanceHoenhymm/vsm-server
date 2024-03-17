@@ -1,8 +1,8 @@
-import { IGameState } from '@/types';
-import { playerPortfolio, stocks } from '@models/index';
-import { db } from '@services/index';
+import { IGameState } from '../../types';
+import { playerPortfolio, stocks } from '../../models/index';
+import { db } from '../../services/index';
 import { eq, lte } from 'drizzle-orm';
-import { arrayToMap } from '@common/utils';
+import { arrayToMap } from '../../common/utils';
 
 function calculateNewStockPrice(price: number, volatility: number) {
   const valChange = (volatility + 100) / 100;

@@ -1,5 +1,5 @@
-import { db } from '@services/database.service';
-import { news, stocks, playerAccount, users } from '@models/index';
+import { db } from '../../services/database.service';
+import { news, stocks, playerAccount, users } from '../../models/index';
 
 export async function uploadNews(
   newsData: {

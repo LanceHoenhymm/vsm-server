@@ -1,14 +1,14 @@
 import type { Server } from 'socket.io';
-import { IGameState } from '@/types';
+import { IGameState } from '../types';
 import EventEmitter from 'events';
-import { logger } from '@services/index';
-import { flushPlayerTable } from '@game/helpers/chore';
+import { logger } from '../services/index';
+import { flushPlayerTable } from './helpers/chore';
 import {
   giveFrebies,
   updatePlayerPortfolio,
   updateStocks,
-} from '@game/helpers/sheduled-task';
-import { maxGameRounds, roundDuration } from '@common/game.config';
+} from '../game/helpers/sheduled-task';
+import { maxGameRounds, roundDuration } from '../common/game.config';
 
 const gameEmitter = new EventEmitter();
 

@@ -5,20 +5,20 @@ import { createServer } from 'http';
 
 import cors from 'cors';
 import helmet from 'helmet';
-import { accessLogger as logger } from '@middlewares/access-logger.middleware';
+import { accessLogger as logger } from './middlewares/access-logger.middleware';
 import {
   authenticateRequest,
   authenticateSocketConnection,
-} from '@middlewares/authenticator.middleware';
-import { notFoundHandler } from '@middlewares/not-found.middleware';
-import { globalErrorHandler } from '@middlewares/error-handler.middleware';
+} from './middlewares/authenticator.middleware';
+import { notFoundHandler } from './middlewares/not-found.middleware';
+import { globalErrorHandler } from './middlewares/error-handler.middleware';
 
-import { authRouter } from '@controllers/auth/auth.router';
-import { gameRouter } from '@controllers/game/game.router';
-import { adminRouter } from '@controllers/admin/admin.router';
+import { authRouter } from './controllers/auth/auth.router';
+import { gameRouter } from './controllers/game/game.router';
+import { adminRouter } from './controllers/admin/admin.router';
 
-import { registerGameGateway } from '@game/game';
-import { allowedOrigin, port } from '@common/app.config';
+import { registerGameGateway } from './game/game';
+import { allowedOrigin, port } from './common/app.config';
 
 const app = express();
 const httpServer = createServer(app);

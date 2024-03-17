@@ -1,17 +1,17 @@
-import type { ReqHandler } from '@/types';
+import type { ReqHandler } from '../../types';
 import type { ILoginUserDto, IRegisterUserDto } from './auth.controller.dto';
 import {
   BadRequest,
   NotFound,
   Unauthenticated,
   Unauthorized,
-} from '@/errors/index';
+} from '../../errors/index';
 import { StatusCodes } from 'http-status-codes';
-import { db } from '@/services/index';
-import { users } from '@/models/index';
+import { db } from '../../services/index';
+import { users } from '../../models/index';
 import { eq } from 'drizzle-orm';
-import { getHash, createToken } from '@/common/utils';
-import { initializePlayer } from '@game/helpers/initializers';
+import { getHash, createToken } from '../../common/utils';
+import { initializePlayer } from '../../game/helpers/initializers';
 
 type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
 

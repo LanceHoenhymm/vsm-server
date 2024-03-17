@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { ServiceUnavailable } from '@errors/index';
-import { getGameState } from '@game/game';
+import { ServiceUnavailable } from '../errors/index';
+import { getGameState } from '../game/game';
 
 export function blockOnNotOpen(
   req: Request,

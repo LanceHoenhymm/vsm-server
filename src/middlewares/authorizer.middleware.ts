@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { Unauthorized } from '@errors/index';
+import { Unauthorized } from '../errors/index';
 
 export function authorizeAdmin(
   req: Request,

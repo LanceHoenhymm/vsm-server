@@ -1,6 +1,6 @@
-import { db } from '@services/database.service';
-import { playerPortfolio, playerAccount, stocks } from '@models/index';
-import { initialBankBalance } from '@common/game.config';
+import { db } from '../../services/database.service';
+import { playerPortfolio, playerAccount, stocks } from '../../models/index';
+import { initialBankBalance } from '../../common/game.config';
 import { eq, ne } from 'drizzle-orm';
 
 export function initializePlayer(userId: string) {

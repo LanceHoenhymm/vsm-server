@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { authorizeAdmin } from '@middlewares/authorizer.middleware';
-import { validatorFactory } from '@/middlewares/validator.middleware';
+import { authorizeAdmin } from '../../middlewares/authorizer.middleware';
+import { validatorFactory } from '../../middlewares/validator.middleware';
 import {
   addNewsRequestDtoSchema,
   addStockRequestDtoSchema,

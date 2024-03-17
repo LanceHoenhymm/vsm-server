@@ -1,4 +1,4 @@
-import type { ReqHandler } from '@/types';
+import type { ReqHandler } from '../../../types';
 import { StatusCodes } from 'http-status-codes';
 import {
   getLeaderboard,
@@ -7,8 +7,8 @@ import {
   getPlayerPortfolio,
   getStocks,
   getPlayerBalence,
-} from '@game/game.handlers';
-import { getGameState } from '@game/game';
+} from '../../../game/game.handlers';
+import { getGameState } from '../../../game/game';
 
 type InfoEndpointHandler = ReqHandler<object>;
 

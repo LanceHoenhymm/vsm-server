@@ -8,8 +8,8 @@ import {
   getPortfolioHandler,
   getBalenceHandler,
 } from './info.contorller';
-import { cacherFactory } from '@middlewares/cacher.middleware';
-import { cacheTime } from '@common/app.config';
+import { cacherFactory } from '../../../middlewares/cacher.middleware';
+import { cacheTime } from '../../../common/app.config';
 
 export const infoRouter = Router();
 

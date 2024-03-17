@@ -1,6 +1,6 @@
-import type { ErrHandler } from '@/types';
+import type { ErrHandler } from '../types';
 import { StatusCodes } from 'http-status-codes';
-import { ApplicationError } from '@errors/index';
+import { ApplicationError } from '../errors/index';
 
 export const globalErrorHandler: ErrHandler = function (err, req, res, _next) {
   if (err instanceof ApplicationError) {
