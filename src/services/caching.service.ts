@@ -5,7 +5,7 @@ export const cache = {
   get<T>(key: string) {
     return this.cachingService.get<T>(key);
   },
-  set<T>(key: string, body: T, duration: number) {
+  set<T>(key: string, body: T, duration: number | string) {
     return this.cachingService.set<T>(key, body, duration);
   },
   flushAll() {

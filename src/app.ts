@@ -19,12 +19,7 @@ import { gameRouter } from '@controllers/game/game.router';
 import { adminRouter } from '@controllers/admin/admin.router';
 
 import { registerGameGateway } from '@game/game.gateway';
-
-import { config } from 'dotenv';
-config();
-
-const port = process.env.PORT || 8080;
-const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
+import { allowedOrigin, port } from '@common/app.config';
 
 const app = express();
 const httpServer = createServer(app);

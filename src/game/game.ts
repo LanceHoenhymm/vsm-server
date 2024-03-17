@@ -1,7 +1,7 @@
 import { IGameState } from '@/types';
 import EventEmitter from 'events';
 import { logger } from '@services/index';
-import { initializeDatabase } from '@game/helpers/initializers';
+import { initializePlayerTable } from '@game/helpers/initializers';
 import {
   giveFrebies,
   updatePlayerPortfolio,
@@ -46,7 +46,7 @@ export function startRound() {
 gameEmitter.on(gameON, async () => {
   try {
     logger.info('Initializing Database');
-    await initializeDatabase();
+    await initializePlayerTable();
     logger.info('Database Initialized: Server Open to Login Requests');
 
     logger.info('Game is ON');
