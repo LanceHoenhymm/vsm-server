@@ -4,5 +4,5 @@ import { config } from 'dotenv';
 config();
 
 const connStr = process.env.DB_URL || '';
-const connection = postgres(connStr);
+const connection = postgres(connStr, { prepare: false });
 export const db = drizzle(connection);
