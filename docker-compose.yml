@@ -19,6 +19,7 @@ services:
       MAX_GAME_ROUNDS: ${MAX_GAME_ROUNDS}
       ROUND_DURATION: ${ROUND_DURATION}
       CACHE_TIME: ${CACHE_TIME}
+    command: ['node', 'dist/app.js']
     ports:
       - '8080:8080'
     volumes:
