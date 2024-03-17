@@ -16,6 +16,7 @@ const gameON = Symbol();
 const gameOFF = Symbol();
 const gameOPEN = Symbol();
 const gameCLOSE = Symbol();
+let timeoutId: NodeJS.Timeout;
 
 const gameState: IGameState = {
   roundNo: 0,
@@ -25,8 +26,6 @@ const gameState: IGameState = {
 export function getGameState() {
   return { ...gameState } as const;
 }
-
-let timeoutId: NodeJS.Timeout;
 
 export async function startGame() {
   try {

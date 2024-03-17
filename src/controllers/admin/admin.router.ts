@@ -5,13 +5,17 @@ import {
   addNewsRequestDtoSchema,
   addStockRequestDtoSchema,
 } from './admin.controller.dto';
-import { addNews, addStock } from './admin.controller';
-import { controlRouter } from './control/control.router';
+import {
+  addNews,
+  addStock,
+  startGameHandler,
+  startRoundHandler,
+  terminateGameHandler,
+} from './admin.controller';
 
 export const adminRouter = Router();
 
 adminRouter.use(authorizeAdmin);
-adminRouter.use('/control', controlRouter);
 adminRouter.post(
   '/add-news',
   validatorFactory(addNewsRequestDtoSchema),
@@ -22,3 +26,6 @@ adminRouter.post(
   validatorFactory(addStockRequestDtoSchema),
   addStock,
 );
+adminRouter.post('/start-game', startGameHandler);
+adminRouter.post('/start-round', startRoundHandler);
+adminRouter.post('/terminate-game', terminateGameHandler);

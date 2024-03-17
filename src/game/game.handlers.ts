@@ -138,7 +138,7 @@ export async function getStocks(gameState: IGameState) {
   return db
     .select({ id: stocks.symbol, value: stocks.price })
     .from(stocks)
-    .where(lte(stocks.roundIntorduced, gameState.roundNo));
+    .where(eq(stocks.roundIntorduced, gameState.roundNo));
 }
 
 export function getLeaderboard() {

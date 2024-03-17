@@ -5,7 +5,7 @@ LABEL author "Abhinav Pandey <abhinav.pandey.1512@gmail.com>"
 WORKDIR /app
 
 RUN npm install -g pnpm
-COPY pacakge.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
 
 COPY . .
