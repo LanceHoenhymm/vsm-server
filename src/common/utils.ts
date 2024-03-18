@@ -24,3 +24,7 @@ export function arrayToMap<T, K extends keyof T>(
 ): Map<T[K], T> {
   return new Map(arr.map((item) => [item[key], item]));
 }
+
+export function roundTo2Places(num: number) {
+  return Math.round(num * 100) / 100;
+}

@@ -7,7 +7,12 @@ export function blockOnNotOpen(
   res: Response,
   next: NextFunction,
 ) {
-  if (getGameState().stage != 'OPEN') {
+  const stage = getGameState().stage;
+  if (req.url.endsWith('/leaderboard')) {
+    next();
+    return;
+  }
+  if (stage === 'OFF') {
     throw new ServiceUnavailable(
       'Not Accepting Requests: Game is not in Trading Stage',
     );

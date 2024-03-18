@@ -2,13 +2,16 @@ import { IGameState } from '../../types';
 import { playerPortfolio, stocks } from '../../models/index';
 import { db } from '../../services/index';
 import { eq, lte } from 'drizzle-orm';
-import { arrayToMap } from '../../common/utils';
+import { arrayToMap, roundTo2Places } from '../../common/utils';
 
 function calculateNewStockPrice(price: number, volatility: number) {
   const valChange = (volatility + 100) / 100;
   const cointoss = Math.random() > 0.5 ? 1 : -1;
   const volChange = (volatility * cointoss + 100) / 100;
-  return { newPrice: price * valChange, newVolatility: volatility * volChange };
+  return {
+    newPrice: roundTo2Places(price * valChange),
+    newVolatility: roundTo2Places(volatility * volChange),
+  };
 }
 
 export function updateStocks(gameState: IGameState) {

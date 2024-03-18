@@ -46,7 +46,7 @@ export function startRound() {
   if (nextRound === 1) {
     logger.info('Game is OPEN: Server Open to Game Requests');
   }
-  if (nextRound >= maxGameRounds) {
+  if (nextRound > maxGameRounds) {
     logger.info('Max Game Rounds Reached');
     endGame();
     return;
