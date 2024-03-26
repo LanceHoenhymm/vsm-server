@@ -1,8 +1,9 @@
 import { IGameState } from '../../types';
-import { playerPortfolio, stocks } from '../../models/index';
+import { playerPortfolio, playerPowerups, stocks } from '../../models/index';
 import { db } from '../../services/index';
-import { eq, lte } from 'drizzle-orm';
+import { eq, lte, sql } from 'drizzle-orm';
 import { arrayToMap, roundTo2Places } from '../../common/utils';
+import { muftPaisa } from '../../common/game.config';
 
 function calculateNewStockPrice(price: number, volatility: number) {
   const valChange = (volatility + 100) / 100;
@@ -64,37 +65,89 @@ export function updatePlayerPortfolio(gameState: IGameState) {
   });
 }
 
-export function giveFrebies(gameState: IGameState) {
-  const nextRound = gameState.roundNo + 1;
+export async function updatePlayerStatus() {
   return db.transaction(async (trx) => {
-    const players = await trx.select().from(playerPortfolio);
-    const stockData = arrayToMap(
-      await trx
-        .select()
-        .from(stocks)
-        .where(eq(stocks.roundIntorduced, nextRound)),
-      'symbol',
+    const players = await trx.select().from(playerPowerups);
+    const stocksData = arrayToMap(
+      await trx.select({ price: stocks.price, id: stocks.symbol }).from(stocks),
+      'id',
     );
+    const updateAllPlayerStatus: Promise<object>[] = [];
 
-    if (!stockData.size) {
-      return;
-    }
+    players.forEach((player) => {
+      const muftKaPaisaStatus = player.muftKaPaisaStatus;
+      const stockBettingStatus = player.stockBettingStatus;
 
-    const giveOutFreebies = players.map((player) => {
-      const playerPort = player.stocks;
-      const playerPortWithFreebies = playerPort.map((stock) => {
-        const freebies = stockData.get(stock.symbol)?.freebies || 0;
-        return {
-          symbol: stock.symbol,
-          volume: stock.volume + freebies,
-        };
-      });
+      if (muftKaPaisaStatus === 'Active') {
+        updateAllPlayerStatus.push(
+          trx
+            .update(playerPowerups)
+            .set({ muftKaPaisaStatus: 'Used' })
+            .where(eq(playerPowerups.playerId, player.playerId)),
+        );
+        updateAllPlayerStatus.push(
+          trx
+            .update(playerPortfolio)
+            .set({
+              bankBalance: sql`${playerPortfolio.bankBalance} - ${muftPaisa}`,
+            })
+            .where(eq(playerPortfolio.playerId, player.playerId)),
+        );
+      }
 
-      return trx
-        .update(playerPortfolio)
-        .set({ stocks: playerPortWithFreebies })
-        .where(eq(playerPortfolio.playerId, player.playerId));
+      if (stockBettingStatus === 'Active') {
+        updateAllPlayerStatus.push(
+          trx
+            .update(playerPowerups)
+            .set({ stockBettingStatus: 'Used' })
+            .where(eq(playerPowerups.playerId, player.playerId)),
+        );
+
+        const stockBettingAmount = player.stockBettingAmount;
+        const stockBettingPrediction = player.stockBettingPrediction;
+        const stockBettingLockedPrice = player.stockBettingLockedPrice;
+        const stockBettingLockedSymbol = player.stockBettingLockedSymbol;
+
+        if (
+          !stockBettingAmount ||
+          !stockBettingPrediction ||
+          !stockBettingLockedPrice ||
+          !stockBettingLockedSymbol
+        ) {
+          throw new Error('Stock Betting data is missing.');
+        }
+
+        const newPrice = stocksData.get(stockBettingLockedSymbol)?.price;
+        if (!newPrice) {
+          throw new Error('Stock Betting data is missing.');
+        }
+
+        const actualPrediction =
+          newPrice > stockBettingLockedPrice ? 'UP' : 'DOWN';
+        const isPredictionCorrect = actualPrediction === stockBettingPrediction;
+
+        if (isPredictionCorrect) {
+          updateAllPlayerStatus.push(
+            trx
+              .update(playerPortfolio)
+              .set({
+                bankBalance: sql`${playerPortfolio.bankBalance} + ${2 * stockBettingAmount}`,
+              })
+              .where(eq(playerPortfolio.playerId, player.playerId)),
+          );
+        } else {
+          updateAllPlayerStatus.push(
+            trx
+              .update(playerPortfolio)
+              .set({
+                bankBalance: sql`${playerPortfolio.bankBalance} - ${stockBettingAmount}`,
+              })
+              .where(eq(playerPortfolio.playerId, player.playerId)),
+          );
+        }
+      }
     });
-    await Promise.all(giveOutFreebies);
+
+    await Promise.all(updateAllPlayerStatus);
   });
 }

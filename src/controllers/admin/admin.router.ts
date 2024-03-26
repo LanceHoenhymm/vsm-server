@@ -11,6 +11,9 @@ import {
   startGameHandler,
   startRoundHandler,
   terminateGameHandler,
+  flushDatabaseHandler,
+  flushPlayerTableHandler,
+  flushUserTableHandler,
 } from './admin.controller';
 
 export const adminRouter = Router();
@@ -29,3 +32,6 @@ adminRouter.post(
 adminRouter.post('/start-game', startGameHandler);
 adminRouter.post('/start-round', startRoundHandler);
 adminRouter.post('/terminate-game', terminateGameHandler);
+adminRouter.post('/flush-database', flushDatabaseHandler);
+adminRouter.post('/flush-player-table', flushPlayerTableHandler);
+adminRouter.post('/flush-user-table', flushUserTableHandler);

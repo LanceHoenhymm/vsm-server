@@ -5,12 +5,14 @@ import { blockAdmin } from '../../middlewares/authorizer.middleware';
 import { stockBuySellDtoSchema } from './game.controller.dto';
 import { buyStockHandler, sellStockHandler } from './game.controller';
 import { infoRouter } from './info/info.router';
+import { powerupRouter } from './powerup/powerup.router';
 
 export const gameRouter = Router();
 
 gameRouter.use(blockAdmin, blockOnNotOpen);
 
 gameRouter.use('/info', infoRouter);
+gameRouter.use('/powerup', powerupRouter);
 gameRouter.post(
   '/buy-stock',
   validatorFactory(stockBuySellDtoSchema),

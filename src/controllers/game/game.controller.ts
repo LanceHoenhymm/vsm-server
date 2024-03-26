@@ -15,7 +15,6 @@ export const buyStockHandler: BuySellHandler = async function (req, res) {
   await buyStock(req.player.playerId, stockId, quantity, getGameState());
   res.status(StatusCodes.OK).json({
     status: 'Success',
-    data: { msg: `${quantity} stocks of ${stockId} bought` },
   });
 };
 
@@ -27,6 +26,5 @@ export const sellStockHandler: BuySellHandler = async function (req, res) {
   await sellStock(req.player.playerId, stockId, quantity, getGameState());
   res.status(StatusCodes.OK).json({
     status: 'Success',
-    data: { msg: `${quantity} stocks of ${stockId} sold` },
   });
 };

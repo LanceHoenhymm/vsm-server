@@ -4,7 +4,13 @@ import type {
   IAddStockRequestDto,
 } from './admin.controller.dto';
 import { StatusCodes } from 'http-status-codes';
-import { uploadNews, uploadStock } from '../../game/helpers/chore';
+import {
+  flushDatabase,
+  flushPlayerTable,
+  flushUserTable,
+  uploadNews,
+  uploadStock,
+} from '../../game/helpers/chore';
 import { startGame, startRound, terminateGame } from '../../game/game';
 
 type AddNewsHandler = ReqHandler<IAddNewsRequestDto>;
@@ -44,6 +50,61 @@ export const terminateGameHandler: ControlEndpointHandler = function (
   res,
 ) {
   setTimeout(terminateGame, 0);
+  res.status(StatusCodes.OK).json({
+    status: 'Success',
+  });
+};
+
+export const flushDatabaseHandler: ControlEndpointHandler = async function (
+  req,
+  res,
+) {
+  const { pass } = req.body as { pass: string };
+
+  if (pass !== 'flush_db_bro') {
+    res.status(StatusCodes.FORBIDDEN).json({
+      status: 'Failure',
+    });
+    return;
+  }
+  await flushDatabase();
+  res.status(StatusCodes.OK).json({
+    status: 'Success',
+  });
+};
+
+export const flushPlayerTableHandler: ControlEndpointHandler = async function (
+  req,
+  res,
+) {
+  const { pass } = req.body as { pass: string };
+
+  if (pass !== 'flush_player_table_bro') {
+    res.status(StatusCodes.FORBIDDEN).json({
+      status: 'Failure',
+    });
+    return;
+  }
+  await flushPlayerTable();
+  res.status(StatusCodes.OK).json({
+    status: 'Success',
+  });
+};
+
+export const flushUserTableHandler: ControlEndpointHandler = async function (
+  req,
+  res,
+) {
+  const { pass } = req.body as { pass: string };
+
+  if (pass !== 'flush_user_table_bro') {
+    res.status(StatusCodes.FORBIDDEN).json({
+      status: 'Failure',
+    });
+    return;
+  }
+
+  await flushUserTable();
   res.status(StatusCodes.OK).json({
     status: 'Success',
   });

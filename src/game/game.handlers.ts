@@ -4,12 +4,14 @@ import {
   news,
   playerAccount,
   playerPortfolio,
+  playerPowerups,
   stocks,
   users,
 } from '../models/index';
 import { db } from '../services/index';
 import { eq, and, lte, sql } from 'drizzle-orm';
 import { arrayToMap } from '../common/utils';
+import { muftPaisa } from '../common/game.config';
 
 export function buyStock(
   playerId: string,
@@ -218,4 +220,97 @@ export async function getPlayerBalence(playerId: string) {
     .where(eq(playerPortfolio.playerId, playerId));
 
   return { balance: playerData.balance };
+}
+
+export async function useInsiderTrading(
+  playerId: string,
+  gameState: IGameState,
+) {
+  return db.transaction(async (trx) => {
+    const [{ status }] = await trx
+      .select({ status: playerPowerups.insiderTradingStatus })
+      .from(playerPowerups)
+      .where(eq(playerPowerups.playerId, playerId));
+
+    if (status == 'Used') {
+      throw new UnprocessableEntity('Insider Trading already used');
+    }
+
+    await trx
+      .update(playerPowerups)
+      .set({ insiderTradingStatus: 'Used' })
+      .where(eq(playerPowerups.playerId, playerId));
+
+    const newsData = await trx
+      .select({ content: news.content })
+      .from(news)
+      .where(
+        and(
+          eq(news.roundApplicable, gameState.roundNo),
+          eq(news.forInsider, true),
+        ),
+      );
+
+    return newsData.map((newsContent) => newsContent.content);
+  });
+}
+
+export async function useMuftKaPaisa(playerId: string) {
+  return db.transaction(async (trx) => {
+    const [{ status }] = await trx
+      .select({ status: playerPowerups.muftKaPaisaStatus })
+      .from(playerPowerups)
+      .where(eq(playerPowerups.playerId, playerId));
+
+    if (status == 'Used') {
+      throw new UnprocessableEntity('Muft Ka Paisa already used');
+    }
+
+    await trx
+      .update(playerPowerups)
+      .set({ muftKaPaisaStatus: 'Active' })
+      .where(eq(playerPowerups.playerId, playerId));
+
+    await trx
+      .update(playerPortfolio)
+      .set({ bankBalance: sql`${playerPortfolio.bankBalance} + ${muftPaisa}` })
+      .where(eq(playerPortfolio.playerId, playerId));
+  });
+}
+
+export async function useStockBetting(
+  playerId: string,
+  stockBettingAmount: number,
+  stockBettingPrediction: 'UP' | 'DOWN',
+  stockBettingLockedPrice: number,
+  stockBettingLockedSymbol: string,
+) {
+  return db.transaction(async (trx) => {
+    const [{ status }] = await trx
+      .select({ status: playerPowerups.stockBettingStatus })
+      .from(playerPowerups)
+      .where(eq(playerPowerups.playerId, playerId));
+
+    if (status == 'Used') {
+      throw new UnprocessableEntity('Stock Betting already used');
+    }
+
+    await trx
+      .update(playerPortfolio)
+      .set({
+        bankBalance: sql`${playerPortfolio.bankBalance} - ${stockBettingAmount}`,
+      })
+      .where(eq(playerPortfolio.playerId, playerId));
+
+    await trx
+      .update(playerPowerups)
+      .set({
+        stockBettingStatus: 'Active',
+        stockBettingAmount,
+        stockBettingPrediction,
+        stockBettingLockedPrice,
+        stockBettingLockedSymbol,
+      })
+      .where(eq(playerPowerups.playerId, playerId));
+  });
 }

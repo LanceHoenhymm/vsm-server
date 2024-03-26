@@ -4,7 +4,7 @@ import EventEmitter from 'events';
 import { logger } from '../services/index';
 import { flushPlayerTable } from './helpers/chore';
 import {
-  giveFrebies,
+  updatePlayerStatus,
   updatePlayerPortfolio,
   updateStocks,
 } from '../game/helpers/sheduled-task';
@@ -76,9 +76,9 @@ async function endRound() {
     await updatePlayerPortfolio(gameState);
     logger.info('Updated Player Portfolios.');
 
-    logger.info('Giving out Freebies...');
-    await giveFrebies(gameState);
-    logger.info('Gave out Freebie.');
+    logger.info('Updating Powercards...');
+    await updatePlayerStatus();
+    logger.info('Updated Player Powercard Status.');
 
     logger.info('Game Ready for Next Round');
   } catch (error) {
