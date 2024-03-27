@@ -10,7 +10,7 @@ import { StatusCodes } from 'http-status-codes';
 import { db } from '../../services/index';
 import { users } from '../../models/index';
 import { eq } from 'drizzle-orm';
-import { getHash, createToken } from '../../common/utils';
+import { createToken } from '../../common/utils';
 import { initializePlayer } from '../../game/helpers/initializers';
 
 type RegisterUserHandler = ReqHandler<IRegisterUserDto>;
@@ -20,9 +20,7 @@ export const registerUser: RegisterUserHandler = async function (req, res) {
   if (!email || !password || !u1Name) {
     throw new BadRequest('Email, Password, and Player 1 Name are Required');
   }
-  await db
-    .insert(users)
-    .values({ email, password: getHash(password), u1Name, u2Name, isAdmin });
+  await db.insert(users).values({ email, password, u1Name, u2Name, isAdmin });
   res.status(StatusCodes.CREATED).json({
     status: 'Success',
   });
@@ -38,7 +36,7 @@ export const loginUser: LoginUserHandler = async function (req, res) {
   }
 
   const user = result[0];
-  if (user.password !== getHash(password)) {
+  if (user.password !== password) {
     throw new Unauthenticated('Invalid Password');
   }
 
@@ -63,7 +61,7 @@ export const loginAdmin: LoginUserHandler = async function (req, res) {
   }
 
   const user = result[0];
-  if (user.password !== getHash(password)) {
+  if (user.password !== password) {
     throw new Unauthenticated('Invalid Password');
   }
 
