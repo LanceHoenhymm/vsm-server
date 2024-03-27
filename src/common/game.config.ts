@@ -11,7 +11,7 @@ export const roundDuration =
 const envInitialBankBalance = Number(process.env.INITIAL_BANK_BALANCE);
 export const initialBankBalance = isNaN(envInitialBankBalance)
   ? 0
-  : envRoundDuration;
+  : envInitialBankBalance;
 
 const envMuftPaisa = Number(process.env.MUFT_KA_PAISA);
-export const muftPaisa = isNaN(envMuftPaisa) ? 0 : envRoundDuration;
+export const muftPaisa = isNaN(envMuftPaisa) ? 0 : envMuftPaisa;

@@ -5,7 +5,7 @@ import {
   stocks,
   playerPowerups,
 } from '../../models/index';
-import { muftPaisa } from '../../common/game.config';
+import { initialBankBalance } from '../../common/game.config';
 
 export function initializePlayer(userId: string) {
   return db.transaction(async (trx) => {
@@ -23,7 +23,7 @@ export function initializePlayer(userId: string) {
       .returning({ playerId: playerAccount.id });
     await trx.insert(playerPortfolio).values({
       playerId,
-      bankBalance: muftPaisa,
+      bankBalance: initialBankBalance,
       stocks: stockData,
       totalPortfolioValue: 0,
     });
