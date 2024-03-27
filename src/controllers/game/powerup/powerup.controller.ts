@@ -40,14 +40,12 @@ export const useStockBettingHandler: StockBettingHandler = async function (
   const {
     stockBettingAmount,
     stockBettingPrediction,
-    stockBettingLockedPrice,
     stockBettingLockedSymbol,
   } = req.body;
   await useStockBetting(
     req.player.playerId,
     stockBettingAmount,
     stockBettingPrediction,
-    stockBettingLockedPrice,
     stockBettingLockedSymbol,
   );
   res.status(StatusCodes.OK).json({

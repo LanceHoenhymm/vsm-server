@@ -282,7 +282,6 @@ export async function useStockBetting(
   playerId: string,
   stockBettingAmount: number,
   stockBettingPrediction: 'UP' | 'DOWN',
-  stockBettingLockedPrice: number,
   stockBettingLockedSymbol: string,
 ) {
   return db.transaction(async (trx) => {
@@ -301,6 +300,11 @@ export async function useStockBetting(
         bankBalance: sql`${playerPortfolio.bankBalance} - ${stockBettingAmount}`,
       })
       .where(eq(playerPortfolio.playerId, playerId));
+
+    const [{ price: stockBettingLockedPrice }] = await trx
+      .select({ price: stocks.price })
+      .from(stocks)
+      .where(eq(stocks.symbol, stockBettingLockedSymbol));
 
     await trx
       .update(playerPowerups)
