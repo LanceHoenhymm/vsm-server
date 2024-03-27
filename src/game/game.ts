@@ -108,7 +108,7 @@ export function registerGameGateway(io: Server) {
     io.emit('game:stage:CALCULATION_STAGE');
   });
   gameEmitter.on(gameOPEN, () => {
-    io.emit('game:stage:TRADING_STAGE');
+    io.emit('game:stage:TRADING_STAGE', new Date().getTime());
   });
   gameEmitter.on(gameOFF, () => {
     io.emit('game:end');
