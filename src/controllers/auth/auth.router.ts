@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { blockOnInvalid } from '../../middlewares/block-requests.middleware';
+import { blockLoginRequest } from '../../middlewares/block-requests.middleware';
 import { validatorFactory } from '../../middlewares/validator.middleware';
 import {
   loginUserDtoSchema,
@@ -11,7 +11,7 @@ export const authRouter = Router();
 
 authRouter.post(
   '/login',
-  blockOnInvalid,
+  blockLoginRequest,
   validatorFactory(loginUserDtoSchema),
   loginUser,
 );

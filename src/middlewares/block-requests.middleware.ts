@@ -2,17 +2,16 @@ import type { Request, Response, NextFunction } from 'express';
 import { ServiceUnavailable } from '../errors/index';
 import { getGameState } from '../game/game';
 
-export function blockOnNotOpen(
+export function blockGameRequest(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  const stage = getGameState().stage;
-  if (req.url.endsWith('/leaderboard')) {
+  if (req.url.endsWith('/leaderboard') && getGameState().stage === 'OFF') {
     next();
     return;
   }
-  if (stage === 'OFF') {
+  if (getGameState().stage !== 'OPEN') {
     throw new ServiceUnavailable(
       'Not Accepting Requests: Game is not in Trading Stage',
     );
@@ -20,15 +19,17 @@ export function blockOnNotOpen(
   next();
 }
 
-export function blockOnInvalid(
+export function blockLoginRequest(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  if (getGameState().stage === 'INVALID') {
-    throw new ServiceUnavailable(
-      'Not Accepting Requests: Game is in Invalid Stage',
-    );
+  if (
+    getGameState().stage === 'INVALID' ||
+    getGameState().stage === 'OFF' ||
+    getGameState().stage === 'CLOSE'
+  ) {
+    throw new ServiceUnavailable('Cannot Login right now.');
   }
   next();
 }

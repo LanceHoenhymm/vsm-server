@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { blockOnNotOpen } from '../../middlewares/block-requests.middleware';
+import { blockGameRequest } from '../../middlewares/block-requests.middleware';
 import { validatorFactory } from '../../middlewares/validator.middleware';
 import { blockAdmin } from '../../middlewares/authorizer.middleware';
 import { stockBuySellDtoSchema } from './game.controller.dto';
@@ -9,7 +9,7 @@ import { powerupRouter } from './powerup/powerup.router';
 
 export const gameRouter = Router();
 
-gameRouter.use(blockAdmin, blockOnNotOpen);
+gameRouter.use(blockAdmin, blockGameRequest);
 
 gameRouter.use('/info', infoRouter);
 gameRouter.use('/powerup', powerupRouter);
