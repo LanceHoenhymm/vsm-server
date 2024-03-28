@@ -1,5 +1,11 @@
 import { db } from '../../services/database.service';
-import { news, stocks, playerAccount, users } from '../../models/index';
+import {
+  news,
+  stocks,
+  playerAccount,
+  users,
+  stockGameData,
+} from '../../models/index';
 
 export async function uploadNews(
   newsData: {
@@ -15,12 +21,21 @@ export async function uploadStock(
   stockData: {
     symbol: string;
     volatility: number;
-    freebies: number;
     price: number;
     roundIntorduced: number;
   }[],
 ) {
   await db.insert(stocks).values(stockData);
+}
+
+export async function uploadStockUpdate(
+  stockData: {
+    symbol: string;
+    volatility: number;
+    forRound: number;
+  }[],
+) {
+  await db.insert(stockGameData).values(stockData);
 }
 
 export async function flushDatabase() {

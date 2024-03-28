@@ -4,10 +4,12 @@ import { validatorFactory } from '../../middlewares/validator.middleware';
 import {
   addNewsRequestDtoSchema,
   addStockRequestDtoSchema,
+  addStockUpdateDataDtoSchema,
 } from './admin.controller.dto';
 import {
   addNews,
   addStock,
+  addStockUpdateData,
   startGameHandler,
   startRoundHandler,
   terminateGameHandler,
@@ -28,6 +30,11 @@ adminRouter.post(
   '/add-stock',
   validatorFactory(addStockRequestDtoSchema),
   addStock,
+);
+adminRouter.post(
+  '/add-stock-update',
+  validatorFactory(addStockUpdateDataDtoSchema),
+  addStockUpdateData,
 );
 adminRouter.post('/start-game', startGameHandler);
 adminRouter.post('/start-round', startRoundHandler);

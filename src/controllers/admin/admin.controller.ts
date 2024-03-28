@@ -2,6 +2,7 @@ import type { ReqHandler } from '../../types';
 import type {
   IAddNewsRequestDto,
   IAddStockRequestDto,
+  IAddStockUpdateDataDto,
 } from './admin.controller.dto';
 import { StatusCodes } from 'http-status-codes';
 import {
@@ -10,6 +11,7 @@ import {
   flushUserTable,
   uploadNews,
   uploadStock,
+  uploadStockUpdate,
 } from '../../game/helpers/chore';
 import { startGame, startRound, terminateGame } from '../../game/game';
 
@@ -26,6 +28,17 @@ type AddStocksHandler = ReqHandler<IAddStockRequestDto>;
 export const addStock: AddStocksHandler = async function (req, res) {
   const stockData = req.body;
   await uploadStock(stockData);
+  res.status(StatusCodes.OK).json({ status: 'Success' });
+};
+
+type AddStockUpdateDataHandler = ReqHandler<IAddStockUpdateDataDto>;
+
+export const addStockUpdateData: AddStockUpdateDataHandler = async function (
+  req,
+  res,
+) {
+  const stockData = req.body;
+  await uploadStockUpdate(stockData);
   res.status(StatusCodes.OK).json({ status: 'Success' });
 };
 

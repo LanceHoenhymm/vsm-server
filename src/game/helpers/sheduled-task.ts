@@ -1,5 +1,10 @@
 import { IGameState } from '../../types';
-import { playerPortfolio, playerPowerups, stocks } from '../../models/index';
+import {
+  playerPortfolio,
+  playerPowerups,
+  stocks,
+  stockGameData,
+} from '../../models/index';
 import { db } from '../../services/index';
 import { eq, lte, sql } from 'drizzle-orm';
 import { arrayToMap, roundTo2Places } from '../../common/utils';
@@ -7,29 +12,39 @@ import { muftPaisa } from '../../common/game.config';
 
 function calculateNewStockPrice(price: number, volatility: number) {
   const valChange = (volatility + 100) / 100;
-  const cointoss = Math.random() > 0.5 ? 1 : -1;
-  const volChange = (volatility * cointoss + 100) / 100;
-  return {
-    newPrice: roundTo2Places(price * valChange),
-    newVolatility: roundTo2Places(volatility * volChange),
-  };
+  return roundTo2Places(price * valChange);
 }
 
 export function updateStocks(gameState: IGameState) {
   return db.transaction(async (trx) => {
     const stocksData = await trx
-      .select()
+      .select({
+        symbol: stocks.symbol,
+        price: stocks.price,
+        currentVolatality: stocks.volatility,
+      })
       .from(stocks)
       .where(lte(stocks.roundIntorduced, gameState.roundNo));
 
+    const stockGameDataMap = arrayToMap(
+      await trx
+        .select()
+        .from(stockGameData)
+        .where(eq(stockGameData.forRound, gameState.roundNo + 1)),
+      'symbol',
+    );
+
     const updateAllStocks = stocksData.map((stockData) => {
-      const { newPrice: newPrice, newVolatility } = calculateNewStockPrice(
+      const newPrice = calculateNewStockPrice(
         stockData.price,
-        stockData.volatility,
+        stockData.currentVolatality,
       );
       return trx
         .update(stocks)
-        .set({ price: newPrice, volatility: newVolatility })
+        .set({
+          price: newPrice,
+          volatility: stockGameDataMap.get(stockData.symbol)?.volatility ?? 0,
+        })
         .where(eq(stocks.symbol, stockData.symbol));
     });
     await Promise.all(updateAllStocks);
