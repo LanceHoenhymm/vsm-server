@@ -14,17 +14,17 @@ export const playerPowerups = pgTable('player_powerups', {
     })
     .notNull()
     .unique(),
-  insiderTradingStatus: char('insider_trading_status', {
+  insiderTradingStatus: varchar('insider_trading_status', {
     enum: ['Unused', 'Used'],
   })
     .notNull()
     .default('Unused'),
-  muftKaPaisaStatus: char('muft_ka_paisa_status', {
+  muftKaPaisaStatus: varchar('muft_ka_paisa_status', {
     enum: ['Unused', 'Active', 'Used'],
   })
     .notNull()
     .default('Unused'),
-  stockBettingStatus: char('stock_betting_status', {
+  stockBettingStatus: varchar('stock_betting_status', {
     enum: ['Unused', 'Active', 'Used'],
   })
     .notNull()

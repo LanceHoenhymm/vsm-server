@@ -1,5 +1,5 @@
 {
-  "id": "74495b93-43a3-4c37-b7b5-c98ee657d809",
+  "id": "28541e49-57dc-4ee5-8caa-edd6c5039a07",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -159,21 +159,21 @@
         },
         "insider_trading_status": {
           "name": "insider_trading_status",
-          "type": "char",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true,
           "default": "'Unused'"
         },
         "muft_ka_paisa_status": {
           "name": "muft_ka_paisa_status",
-          "type": "char",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true,
           "default": "'Unused'"
         },
         "stock_betting_status": {
           "name": "stock_betting_status",
-          "type": "char",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true,
           "default": "'Unused'"
@@ -234,6 +234,12 @@
       "name": "stocks",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
         "symbol": {
           "name": "symbol",
           "type": "varchar",
@@ -243,7 +249,7 @@
         "round_applicable": {
           "name": "round_applicable",
           "type": "smallint",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "volatility": {
@@ -311,7 +317,7 @@
         },
         "password": {
           "name": "password",
-          "type": "char(32)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },

@@ -36,7 +36,7 @@ export const loginUser: LoginUserHandler = async function (req, res) {
   }
 
   const user = result[0];
-  if (user.password.trim() !== password) {
+  if (user.password !== password) {
     throw new Unauthenticated('Invalid Password');
   }
 
@@ -61,7 +61,7 @@ export const loginAdmin: LoginUserHandler = async function (req, res) {
   }
 
   const user = result[0];
-  if (user.password.trim() !== password) {
+  if (user.password !== password) {
     throw new Unauthenticated('Invalid Password');
   }
 
