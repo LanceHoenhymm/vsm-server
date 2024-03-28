@@ -22,15 +22,27 @@ CREATE TABLE IF NOT EXISTS "player_portfolio" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "player_powerups" (
 	"player_id" uuid NOT NULL,
+	"insider_trading_status" "char" DEFAULT 'Unused' NOT NULL,
+	"muft_ka_paisa_status" "char" DEFAULT 'Unused' NOT NULL,
+	"stock_betting_status" "char" DEFAULT 'Unused' NOT NULL,
+	"stock_betting_amount" double precision,
+	"stock_betting_prediction" "char",
+	"stock_betting_locked_symbol" varchar,
+	"stock_betting_locked_price" double precision,
 	CONSTRAINT "player_powerups_player_id_unique" UNIQUE("player_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "stocks" (
+	"symbol" varchar NOT NULL,
+	"round_applicable" smallint PRIMARY KEY NOT NULL,
+	"volatility" double precision NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "stocks_game" (
 	"symbol" varchar PRIMARY KEY NOT NULL,
 	"round_introduced" smallint NOT NULL,
 	"price" double precision NOT NULL,
-	"volatility" double precision NOT NULL,
-	"freebies" integer NOT NULL
+	"volatility" double precision NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
