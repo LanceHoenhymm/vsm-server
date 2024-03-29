@@ -232,6 +232,10 @@ export async function useInsiderTrading(
       .from(playerPowerups)
       .where(eq(playerPowerups.playerId, playerId));
 
+    if (!status) {
+      throw new NotFound('Player not found');
+    }
+
     if (status == 'Used') {
       throw new UnprocessableEntity('Insider Trading already used');
     }
@@ -262,6 +266,10 @@ export async function useMuftKaPaisa(playerId: string) {
       .from(playerPowerups)
       .where(eq(playerPowerups.playerId, playerId));
 
+    if (!status) {
+      throw new NotFound('Player not found');
+    }
+
     if (status == 'Used') {
       throw new UnprocessableEntity('Muft Ka Paisa already used');
     }
@@ -290,14 +298,27 @@ export async function useStockBetting(
       .from(playerPowerups)
       .where(eq(playerPowerups.playerId, playerId));
 
+    if (!status) {
+      throw new NotFound('Player not found');
+    }
+
     if (status == 'Used') {
       throw new UnprocessableEntity('Stock Betting already used');
+    }
+
+    const [{ bankBalance }] = await trx
+      .select({ bankBalance: playerPortfolio.bankBalance })
+      .from(playerPortfolio)
+      .where(eq(playerPortfolio.playerId, playerId));
+
+    if (bankBalance < stockBettingAmount) {
+      throw new UnprocessableEntity('Insufficient funds');
     }
 
     await trx
       .update(playerPortfolio)
       .set({
-        bankBalance: sql`${playerPortfolio.bankBalance} - ${stockBettingAmount}`,
+        bankBalance: bankBalance - stockBettingAmount,
       })
       .where(eq(playerPortfolio.playerId, playerId));
 
