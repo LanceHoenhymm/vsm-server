@@ -13,7 +13,7 @@ export const playerPowerups = pgTable('player_powerups', {
       onDelete: 'cascade',
     })
     .notNull()
-    .unique(),
+    .primaryKey(),
   insiderTradingStatus: varchar('insider_trading_status', {
     enum: ['Unused', 'Used'],
   })

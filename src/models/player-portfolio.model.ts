@@ -7,7 +7,7 @@ export const playerPortfolio = pgTable('player_portfolio', {
       onDelete: 'cascade',
     })
     .notNull()
-    .unique(),
+    .primaryKey(),
   bankBalance: doublePrecision('bank_balance').notNull(),
   totalPortfolioValue: doublePrecision('total_portfolio_value').notNull(),
   stocks: json('stocks')
